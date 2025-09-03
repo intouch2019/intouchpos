@@ -23529,7 +23529,7 @@ $page = end( $link_array );
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form action="purchase-list.php">
+				<form action="save_purchase.php" method="POST" id="purchaseForm">
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-lg-4 col-md-6 col-sm-12">
@@ -23537,11 +23537,8 @@ $page = end( $link_array );
 									<label class="form-label">Supplier Name<span class="text-danger ms-1">*</span></label>
 									<div class="row">
 										<div class="col-lg-10 col-sm-10 col-10">
-											<select class="select">
-												<option>Select</option>
-												<option>Apex Computers</option>
-												<option>Dazzle Shoes</option>
-												<option>Best Accessories</option>
+											<select class="form-control" name="supplier_id" id="supplier_id" required>
+											    <option value="" disabled>Select Supplier</option>
 											</select>
 										</div>
 										<div class="col-lg-2 col-sm-2 col-2 ps-0">
@@ -23558,14 +23555,14 @@ $page = end( $link_array );
 
 									<div class="input-groupicon calender-input">
 										<i data-feather="calendar" class="info-img"></i>
-										<input type="text" class="datetimepicker form-control p-2" placeholder="dd/mm/yyyy">
+										<input type="text" class="datetimepicker form-control p-2" name="purchase_date" placeholder="dd/mm/yyyy">
 									</div>
 								</div>
 							</div>
 							<div class="col-lg-4 col-sm-12">
 								<div class="mb-3">
 									<label class="form-label">Reference<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control">
+									<input type="text" name="reference_no" class="form-control">
 								</div>
 							</div>
 						</div>
@@ -23573,38 +23570,28 @@ $page = end( $link_array );
 							<div class="col-lg-12">
 								<div class="mb-3">
 									<label class="form-label">Product<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control" placeholder="Search Product">
+									<select id="productSelect" class="form-control" style="width:100%;">
+									    <option value="">Search Product</option>
+									</select>
 								</div>
 							</div>
 							<div class="col-lg-12">
 								<div class="modal-body-table mt-3">
-									<div class="table-responsive">
-										<table class="table datatable rounded-1">
-											<thead>
-												<tr>
-													<th class="bg-secondary-transparent p-3">Product</th>
-													<th class="bg-secondary-transparent p-3">Qty</th>
-													<th class="bg-secondary-transparent p-3">Purchase Price($)</th>
-													<th class="bg-secondary-transparent p-3">Discount($)</th>
-													<th class="bg-secondary-transparent p-3">Tax(%)</th>
-													<th class="bg-secondary-transparent p-3">Tax Amount($)</th>
-													<th class="bg-secondary-transparent p-3">Unit Cost($)</th>
-													<th class="bg-secondary-transparent p-3">Total Cost(%)</th>
-												</tr>
-											</thead>
-
-											<tbody>
-												<tr>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-													<td class="p-0"></td>
-												</tr>
-											</tbody>
+									<div class="table-responsive" style="width: 104.5%;margin-left: -24px;margin-top: -24px;margin-bottom: -25px;">
+										<table id="purchaseTable" class="table datatable rounded-1">
+										    <thead>
+										        <tr>
+										            <th>Product</th>
+										            <th>Qty</th>
+										            <th>Purchase Price</th>
+										            <th>Discount</th>
+										            <th>Tax(%)</th>
+										            <th>Tax Amount</th>
+										            <th>Unit Cost</th>
+										            <th>Total Cost</th>
+										        </tr>
+										    </thead>
+										    <tbody></tbody>
 										</table>
 									</div>
 								</div>
@@ -23613,27 +23600,27 @@ $page = end( $link_array );
 							<div class="row">
 								<div class="col-lg-3 col-md-6 col-sm-12">
 									<div class="mb-3">
-										<label class="form-label">Order Tax<span class="text-danger ms-1">*</span></label>
-										<input type="text" class="form-control">
+										<label class="form-label">Order Tax</label>
+										<input type="text" name="order_tax" class="form-control">
 									</div>
 								</div>
 								<div class="col-lg-3 col-md-6 col-sm-12">
 									<div class="mb-3">
-										<label class="form-label">Discount<span class="text-danger ms-1">*</span></label>
-										<input type="text" class="form-control">
+										<label class="form-label">Discount</label>
+										<input type="text" name="order_discount" class="form-control">
 									</div>
 								</div>
 								<div class="col-lg-3 col-md-6 col-sm-12">
 									<div class="mb-3">
-										<label class="form-label">Shipping<span class="text-danger ms-1">*</span></label>
-										<input type="text" class="form-control">
+										<label class="form-label">Shipping</label>
+										<input type="text" name="shipping" class="form-control">
 									</div>
 								</div>
 								<div class="col-lg-3 col-md-6 col-sm-12">
 									<div class="mb-3">
 										<label class="form-label">Status<span class="text-danger ms-1">*</span></label>
-										<select class="select">
-											<option>Select</option>
+										<select name="status" class="select">
+											<option disabled>Select</option>
 											<option>Received</option>
 											<option>Pending</option>
 										</select>
@@ -23644,8 +23631,7 @@ $page = end( $link_array );
 						<div class="col-lg-12 mt-3">
 							<div class="mb-3 summer-description-box">
 								<label class="form-label">Description</label>
-								<div class="editor pages-editor"></div>
-								<p class="mt-1">Maximum 60 Words</p>
+								<textarea name="description" class="form-control" rows="3"></textarea>
 							</div>
 						</div>
 					</div>
@@ -23671,11 +23657,11 @@ $page = end( $link_array );
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
-				<form action="purchase-list.php">
+				<form id="supplierForm" method="POST">
 					<div class="modal-body">
 						<div>
 							<label class="form-label">Supplier<span class="text-danger">*</span></label>
-							<input type="text" class="form-control">
+							<input type="text" name="name" class="form-control">
 						</div>												
 					</div>
 					<div class="modal-footer">
@@ -23690,181 +23676,163 @@ $page = end( $link_array );
 
 	<!-- Edit Purchase -->
 	<div class="modal fade" id="edit-purchase">
-		<div class="modal-dialog purchase modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<div class="page-title">
-						<h4>Edit Purchase</h4>
-					</div>
-					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<form action="purchase-list.php">
-					<div class="modal-body">
-						<div class="row">
-							<div class="col-lg-4 col-md-6 col-sm-12">
-								<div class="mb-3 add-product">
-									<label class="form-label">Supplier Name<span class="text-danger ms-1">*</span></label>
-									<div class="row">
-										<div class="col-lg-10 col-sm-10 col-10">
-											<select class="select">
-												<option>Select</option>
-												<option>Apex Computers</option>
-												<option>Dazzle Shoes</option>
-												<option>Best Accessories</option>
-											</select>
-										</div>
-										<div class="col-lg-2 col-sm-2 col-2 ps-0">
-											<div class="add-icon tab">
-												<a href="javascript:void(0);"><i data-feather="plus-circle" class="feather-plus-circles"></i></a>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-4 col-md-6 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Date<span class="text-danger ms-1">*</span></label>
+	    <div class="modal-dialog purchase modal-dialog-centered">
+	        <div class="modal-content">
+	            <div class="modal-header">
+	                <div class="page-title">
+	                    <h4>Edit Purchase</h4>
+	                </div>
+	                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+	                    <span aria-hidden="true">&times;</span>
+	                </button>
+	            </div>
 
-									<div class="input-groupicon calender-input">
-										<i data-feather="calendar" class="info-img"></i>
-										<input type="text" class="datetimepicker form-control p-2" placeholder="24 Dec 2024">
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-4 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Supplier<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control" value="Elite Retail">
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-lg-12">
-								<div class="mb-3">
-									<label class="form-label">Product<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control" placeholder="Search Product">
-								</div>
-							</div>
-							<div class="col-lg-12">
-							<div class="modal-body-table">
-								<div class="table-responsive">
-									<table class="table">
-										<thead>
-											<tr>
-												<th class="bg-secondary-transparent p-3">Product Name</th>
-												<th class="bg-secondary-transparent p-3">QTY</th>
-												<th class="bg-secondary-transparent p-3">Purchase Price($) </th>
-												<th class="bg-secondary-transparent p-3">Discount($) </th>
-												<th class="bg-secondary-transparent p-3">Tax %</th>
-												<th class="bg-secondary-transparent p-3">Tax Amount($)</th>
-												<th class="text-end bg-secondary-transparent p-3">Unit Cost($)</th>
-												<th class="text-end bg-secondary-transparent p-3">Total Cost ($) </th>
-												
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td class="p-4">
-													<div class="d-flex align-items-center">
-														<a href="javascript:void(0);" class="avatar avatar-md me-2">
-															<img src="assets/img/products/stock-img-02.png" alt="product">
-														</a>
-														<a href="javascript:void(0);">Nike Jordan</a>
-													</div>
-												</td>
-												<td class="p-4"><div class="product-quantity">
-													<span class="quantity-btn">+<i data-feather="plus-circle" class="plus-circle"></i></span>
-													<input type="text" class="quntity-input" value="10">
-													<span class="quantity-btn"><i data-feather="minus-circle" class="feather-search"></i></span>
-												</div></td>
-												<td class="p-4">300</td>
-												<td class="p-4">50</td>
-												<td class="p-4">0</td>
-												<td class="p-4">0.00</td>
-												<td class="p-4">300</td>
-												<td class="p-4">600</td>
-									
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
-							</div>
-						</div>
+	            <form id="editPurchaseForm" method="POST">
+	                <input type="hidden" name="purchase_id" id="edit_purchase_id">
+
+	                <div class="modal-body">
+	                    <div class="row">
+	                        <!-- Supplier -->
+	                        <div class="col-lg-4 col-md-6 col-sm-12">
+	                            <div class="mb-3 add-product">
+	                                <label class="form-label">Supplier Name<span class="text-danger ms-1">*</span></label>
+	                                <div class="row">
+	                                    <div class="col-lg-10 col-sm-10 col-10">
+	                                        <select class="form-control" name="supplier_id" id="edit_supplier_id" required>
+	                                            <option value="" disabled>Select Supplier</option>
+	                                        </select>
+	                                    </div>
+	                                </div>
+	                            </div>
+	                        </div>
+
+	                        <!-- Date -->
+	                        <div class="col-lg-4 col-md-6 col-sm-12">
+	                            <div class="mb-3">
+	                                <label class="form-label">Date<span class="text-danger ms-1">*</span></label>
+	                                <div class="input-groupicon calender-input">
+	                                    <i data-feather="calendar" class="info-img"></i>
+	                                    <input type="text" class="datetimepicker form-control p-2" name="purchase_date" id="edit_purchase_date" placeholder="dd/mm/yyyy">
+	                                </div>
+	                            </div>
+	                        </div>
+
+	                        <!-- Reference -->
+	                        <div class="col-lg-4 col-sm-12">
+	                            <div class="mb-3">
+	                                <label class="form-label">Reference<span class="text-danger ms-1">*</span></label>
+	                                <input type="text" class="form-control" name="reference_no" id="edit_reference_no">
+	                            </div>
+	                        </div>
+	                    </div>
+
+	                    <!-- Product Selection -->
+	                    <div class="row">
+	                        <div class="col-lg-12">
+	                            <div class="mb-3">
+	                                <label class="form-label">Product<span class="text-danger ms-1">*</span></label>
+	                                <select id="editProductSelect" class="form-control" style="width:100%;">
+						                <option value="">Search Product</option>
+						            </select>
+	                            </div>
+	                        </div>
+
+	                        <!-- Products Table -->
+	                        <div class="col-lg-12">
+	                            <div class="modal-body-table mt-3">
+	                                <div class="table-responsive" style="width: 104.5%;margin-left: -24px;margin-top: -24px;margin-bottom: -25px;">
+	                                    <table id="editPurchaseTable" class="table datatable rounded-1">
+	                                        <thead>
+	                                            <tr>
+	                                                <th>Product</th>
+	                                                <th>Qty</th>
+	                                                <th>Purchase Price</th>
+	                                                <th>Discount</th>
+	                                                <th>Tax(%)</th>
+	                                                <th>Tax Amount</th>
+	                                                <th>Unit Cost</th>
+	                                                <th>Total Cost</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody></tbody>
+	                                    </table>
+	                                </div>
+	                            </div>
+	                        </div>
+	                    </div>
+	                    <!-- Order Summary -->
 						<div class="row">
 							<div class="col-lg-12 float-md-right">
 								<div class="total-order m-2 mb-3 ms-auto">
 									<ul class="border-1 rounded-1">
-										<li class="border-0 border-bottom">
-											<h4 class="border-0">Order Tax</h4>
-											<h5>$ 0.00</h5>
-										</li>
-										<li class="border-0 border-bottom">
-											<h4 class="border-0">Discount</h4>
-											<h5>$ 0.00</h5>
-										</li>
-										<li class="border-0 border-bottom">
-											<h4 class="border-0">Shipping</h4>
-											<h5>$ 0.00</h5>
-										</li>
-										<li class="total border-0">
-											<h4 class="border-0">Grand Total</h4>
-											<h5>$1800.00</h5>
-										</li>
-									</ul>
-								</div>
-							</div>
+						                <li class="border-0 border-bottom">
+						                    <h4 class="border-0">Order Tax</h4>
+						                    <h5 id="summary_order_tax"></h5>
+						                </li>
+						                <li class="border-0 border-bottom">
+						                    <h4 class="border-0">Discount</h4>
+						                    <h5 id="summary_discount"></h5>
+						                </li>
+						                <li class="border-0 border-bottom">
+						                    <h4 class="border-0">Shipping</h4>
+						                    <h5 id="summary_shipping"></h5>
+						                </li>
+						                <li class="total border-0">
+						                    <h4 class="border-0">Grand Total</h4>
+						                    <h5 id="summary_grand_total"></h5>
+						                </li>
+						            </ul>
+						        </div>
+						    </div>
 						</div>
-						<div class="row">
-							<div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Order Tax<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control" value="0">
-								</div>
-							</div>
-							<div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Discount<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control" value="0">
-								</div>
-							</div>
-							<div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Shipping<span class="text-danger ms-1">*</span></label>
-									<input type="text" class="form-control" value="0">
-								</div>
-							</div>
-							<div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Status<span class="text-danger ms-1">*</span></label>
-									<select class="select">
-										<option>Select</option>
-										<option>Received</option>
-										<option>Pending</option>
-									</select>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							
-						<div class="col-lg-12">
-							<div class="mb-3 summer-description-box">
-								<label class="form-label">Description</label>
-								<div class="editor pages-editor">
-								<p class="mt-1">Maximum 60 Words</p>
-							</div>
-						</div>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-primary">Save Changes </button>
-					</div>
-				</form>
-			</div>
-		</div>
+	                        <!-- Summary -->
+	                        <div class="row">
+	                            <div class="col-lg-3 col-md-6 col-sm-12">
+	                                <div class="mb-3">
+	                                    <label class="form-label">Order Tax</label>
+	                                    <input type="text" name="order_tax" class="form-control" id="edit_order_tax">
+	                                </div>
+	                            </div>
+	                            <div class="col-lg-3 col-md-6 col-sm-12">
+	                                <div class="mb-3">
+	                                    <label class="form-label">Discount</label>
+	                                    <input type="text" name="order_discount" class="form-control" id="edit_order_discount">
+	                                </div>
+	                            </div>
+	                            <div class="col-lg-3 col-md-6 col-sm-12">
+	                                <div class="mb-3">
+	                                    <label class="form-label">Shipping</label>
+	                                    <input type="text" name="shipping" class="form-control" id="edit_shipping">
+	                                </div>
+	                            </div>
+	                            <div class="col-lg-3 col-md-6 col-sm-12">
+	                                <div class="mb-3">
+	                                    <label class="form-label">Status<span class="text-danger ms-1">*</span></label>
+	                                    <select class="form-control" name="status" id="edit_status">
+	                                        <option disabled>Select</option>
+	                                        <option value="Received">Received</option>
+	                                        <option value="Pending">Pending</option>
+	                                    </select>
+	                                </div>
+	                            </div>
+	                        </div>
+
+	                    <!-- Description -->
+	                    <div class="col-lg-12 mt-3">
+	                        <div class="mb-3 summer-description-box">
+	                            <label class="form-label">Description</label>
+	                            <textarea class="form-control" name="description" id="edit_description" rows="3"></textarea>
+	                        </div>
+	                    </div>
+	                </div>
+
+	                <div class="modal-footer">
+	                    <button type="button" class="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
+	                    <button type="submit" class="btn btn-primary">Save Changes</button>
+	                </div>
+	            </form>
+	        </div>
+	    </div>
 	</div>
 	<!-- /Edit Purchase -->
 
@@ -23974,7 +23942,7 @@ $page = end( $link_array );
 	<!-- /Import Purchase -->		
 
 	<!-- Delete -->
-	<div class="modal fade modal-default" id="delete-modal">
+	<!-- <div class="modal fade modal-default" id="delete-modal">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
 				<div class="modal-body p-0">
@@ -23994,7 +23962,7 @@ $page = end( $link_array );
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 	<!-- /Delete -->
 <?php }?>
 

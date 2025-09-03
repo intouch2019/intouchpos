@@ -1,409 +1,582 @@
-<?php ob_start();?>
+<?php ob_start();
+require_once __DIR__ . '/../partials/config.php';
 
-    <!-- ========================
-        Start Page Content
-    ========================= -->
+// Fetch all purchases to display in the table
+$purchases = [];
+$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id ORDER BY p.purchase_date DESC";
+$result_purchases = mysqli_query($link, $sql_purchases);
+if ($result_purchases) {
+	while ($row = mysqli_fetch_assoc($result_purchases)) {
+		$purchases[] = $row;
+	}
+}
+?>
+<!-- ========================
+Start Page Content
+========================= -->
 
-    <div class="page-wrapper">
+<div class="page-wrapper">
 
-        <!-- Start Content -->
-		<div class="content">
-			<div class="page-header transfer">
-				<div class="add-item d-flex">
-					<div class="page-title">
-						<h4 class="fw-bold">Purchase</h4>
-						<h6>Manage your purchases</h6>
-					</div>
-				</div>
-				<ul class="table-top-head">
-					<li>
-						<a data-bs-toggle="tooltip" data-bs-placement="top" title="Pdf"><img
-								src="assets/img/icons/pdf.svg" alt="img"></a>
-					</li>
-					<li>
-						<a data-bs-toggle="tooltip" data-bs-placement="top" title="Excel"><img
-								src="assets/img/icons/excel.svg" alt="img"></a>
-					</li>
-					<li>
-						<a data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh"><i
-								data-feather="rotate-ccw" class="feather-rotate-ccw"></i></a>
-					</li>		
-					<li>
-						<a data-bs-toggle="tooltip" data-bs-placement="top" title="Collapse" id="collapse-header"><i class="ti ti-chevron-up"></i></a>
-					</li>
-				</ul>
-				<div class="d-flex purchase-pg-btn">
-					<div class="page-btn">
-						<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-purchase"><i
-								data-feather="plus-circle" class="me-1"></i>Add Purchase</a>
-					</div>
-					<div class="page-btn import">
-						<a href="#" class="btn btn-secondary color" data-bs-toggle="modal" data-bs-target="#view-notes"><i
-								data-feather="download" class="me-2"></i>Import Purchase</a>
-					</div>
-				</div>
-				
-			</div>
-
-			<div class="card">
-				<div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
-					<div class="search-set">
-						<div class="search-input">
-							<span class="btn-searchset"><i class="ti ti-search fs-14 feather-search"></i></span>
-						</div>
-					</div>
-					<div class="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-						<div class="dropdown">
-							<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-							Payment Status
-							</a>
-							<ul class="dropdown-menu  dropdown-menu-end p-3">
-								<li>
-									<a href="javascript:void(0);" class="dropdown-item rounded-1">Paid</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);" class="dropdown-item rounded-1">Unpaid</a>
-								</li>
-								<li>
-									<a href="javascript:void(0);" class="dropdown-item rounded-1">Overdue</a>
-								</li>
-							</ul>
-						</div>
-					</div>
-				</div>
-				<div class="card-body p-0">
-					<div class="table-responsive">
-						<table class="table datatable">
-							<thead class="thead-light">
-								<tr>
-									<th class="no-sort">
-										<label class="checkboxs">
-											<input type="checkbox" id="select-all">
-											<span class="checkmarks"></span>
-										</label>
-									</th>
-									<th>Supplier Name</th>
-									<th>Reference</th>
-									<th>Date</th>
-									<th>Status</th>
-									<th>Total</th>
-									<th>Paid</th>
-									<th>Due</th>
-									<th>Payment Status</th>
-									<th class="no-sort"></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Electro Mart</td>
-									<td>PT001 </td>
-									<td>24 Dec 2024</td>
-									<td><span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span></td>
-									<td>$1000</td>
-									<td>$1000</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Quantum Gadgets</td>
-									<td>PT002</td>
-									<td>10 Dec 2024</td>
-									<td><span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span></td>
-									<td>$1500</td>
-									<td>$0.00</td>
-									<td>$1500</td>
-									<td><span class="p-1 pe-2 rounded-1 text-danger bg-danger-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Unpaid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Prime Bazaar</td>
-									<td>PT003</td>
-									<td>27 Nov 2024</td>
-									<td><span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span></td>
-									<td>$1500</td>
-									<td>$1800</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Gadget World</td>
-									<td>PT004</td>
-									<td>18 Nov 2024</td>
-									<td><span class="badges status-badge bg-warning fs-10 p-1 px-2 rounded-1">Ordered</span></td>
-									<td>$2000</td>
-									<td>$1000</td>
-									<td>$1000</td>
-									<td><span class="p-1 pe-2 rounded-1 text-warning bg-warning-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Overdue</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-							
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Volt Vault</td>
-									<td>PT005</td>
-									<td>06 Nov 2024</td>
-									<td><span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span></td>
-									<td>$800</td>
-									<td>$800</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Elite Retail</td>
-									<td>PT006</td>
-									<td>25 Oct 2024</td>
-									<td><span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span></td>
-									<td>$750</td>
-									<td>$0.00</td>
-									<td>$750</td>
-									<td><span class="p-1 pe-2 rounded-1 text-danger bg-danger-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Unpaid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Prime Mart</td>
-									<td>PT007</td>
-									<td>14 Oct 2024</td>
-									<td><span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span></td>
-									<td>$1300</td>
-									<td>$1300</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>NeoTech Store</td>
-									<td>PT008</td>
-									<td>03 Oct 2024</td>
-									<td><span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span></td>
-									<td>$1100</td>
-									<td>$1100</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Urban Mart</td>
-									<td>PT009</td>
-									<td>20 Sep 2024</td>
-									<td><span class="badges status-badge bg-warning fs-10 p-1 px-2 rounded-1">Ordered</span></td>
-									<td>$2300</td>
-									<td>$2300</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
-									<td>Travel Mart</td>
-									<td>PT010</td>
-									<td>10 Sep 2024</td>
-									<td><span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span></td>
-									<td>$1700</td>
-									<td>$1700</td>
-									<td>$0.00</td>
-									<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<a class="me-2 p-2" href="javascript:void(0);">
-												<i data-feather="eye" class="action-eye"></i>
-											</a>
-											<a class="me-2 p-2" data-bs-toggle="modal" data-bs-target="#edit-purchase">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a data-bs-toggle="modal" data-bs-target="#delete-modal" class="p-2" href="javascript:void(0);">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-
+	<!-- Start Content -->
+	<div class="content" style="margin-top: -42px;">
+		<div class="page-header transfer">
+			<div class="add-item d-flex">
+				<div class="page-title">
+					<h4 class="fw-bold">Purchase</h4>
+					<h6>Manage your purchases</h6>
 				</div>
 			</div>
-			<!-- /product list -->
+			<ul class="table-top-head">
+				<li>
+					<a data-bs-toggle="tooltip" data-bs-placement="top" title="Pdf">
+						<img src="assets/img/icons/pdf.svg" alt="img">
+					</a>
+				</li>
+				<li>
+					<a data-bs-toggle="tooltip" data-bs-placement="top" title="Excel">
+						<img src="assets/img/icons/excel.svg" alt="img">
+					</a>
+				</li>
+				<li>
+					<a data-bs-toggle="tooltip" data-bs-placement="top" title="Refresh">
+						<i data-feather="rotate-ccw" class="feather-rotate-ccw"></i>
+					</a>
+				</li>		
+				<li>
+					<a data-bs-toggle="tooltip" data-bs-placement="top" title="Collapse" id="collapse-header"><i class="ti ti-chevron-up"></i>
+					</a>
+				</li>
+			</ul>
+			<div class="d-flex purchase-pg-btn">
+				<div class="page-btn">
+					<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-purchase">
+						<i data-feather="plus-circle" class="me-1"></i>Add Purchase
+					</a>
+				</div>
+				<!-- <div class="page-btn import">
+					<a href="#" class="btn btn-secondary color" data-bs-toggle="modal" data-bs-target="#view-notes">
+						<i data-feather="download" class="me-2"></i>Import Purchase
+					</a>
+				</div> -->
+			</div>
 		</div>
-        <!-- End Content -->
-    
-        <?php require_once '../partials/footer.php'; ?>
 
-    </div>
+		<div class="card">
+			<div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
+				<div class="search-set">
+					<div class="search-input">
+						<span class="btn-searchset"><i class="ti ti-search fs-14 feather-search"></i></span>
+					</div>
+				</div>
+				<div class="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
+					<div class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
+							Payment Status
+						</a>
+						<ul class="dropdown-menu  dropdown-menu-end p-3">
+							<li>
+								<a href="javascript:void(0);" class="dropdown-item rounded-1">Paid</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);" class="dropdown-item rounded-1">Unpaid</a>
+							</li>
+							<li>
+								<a href="javascript:void(0);" class="dropdown-item rounded-1">Overdue</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<div class="card-body p-0">
+				<div class="table-responsive">
+					<table class="table datatable">
+						<thead class="thead-light">
+							<tr>
+								<th class="no-sort">
+									<label class="checkboxs">
+										<input type="checkbox" id="select-all">
+										<span class="checkmarks"></span>
+									</label>
+								</th>
+								<th>Supplier Name</th>
+								<th>Reference</th>
+								<th>Date</th>
+								<th>Status</th>
+								<th>Total</th>
+								<th>Paid</th>
+								<th>Due</th>
+								<th>Payment Status</th>
+								<th class="no-sort"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php foreach ($purchases as $purchase): ?>
+								<tr>
+									<td>
+										<label class="checkboxs">
+											<input type="checkbox">
+											<span class="checkmarks"></span>
+										</label>
+									</td>
+									<td><?php echo htmlspecialchars($purchase['supplier_name']); ?></td>
+									<td><?php echo htmlspecialchars($purchase['reference_no']); ?></td>
+									<td><?php echo date("d M Y", strtotime($purchase['purchase_date'])); ?></td>
+									<td>
+										<?php if ($purchase['status'] == 'Received'): ?>
+											<span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span>
+											<?php 
+										elseif ($purchase['status'] == 'Pending'): 
+											?>
+											<span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span>
+										<?php else: 
+											?>
+											<span class="badges status-badge bg-warning fs-10 p-1 px-2 rounded-1"><?php echo htmlspecialchars($purchase['status']); ?></span>
+										<?php endif; ?>
+									</td>
+									<td><?php echo number_format($purchase['grand_total'], 2); ?></td>
+									<td>0.00</td> <!-- Placeholder for Paid Amount -->
+									<td><?php echo number_format($purchase['grand_total'], 2); ?></td> <!-- Placeholder for Due Amount -->
+									<td><span class="p-1 pe-2 rounded-1 text-danger bg-danger-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Unpaid</span></td> <!-- Placeholder for Payment Status -->
+									<td class="action-table-data">
+										<div class="edit-delete-action">
+											<!-- <a class="me-2 p-2 btn-view-purchase" data-purchase-id="<?php echo (int)$purchase['id']; ?>" href="javascript:void(0);">
+												<i data-feather="eye" class="action-eye"></i>
+											</a> -->
+											<a class="me-2 p-2 btn-edit-purchase" data-purchase-id="<?php echo (int)$purchase['id']; ?>" data-bs-toggle="modal" data-bs-target="#edit-purchase">
+												<i data-feather="edit" class="feather-edit"></i>
+											</a>
+											<a class="p-2 d-flex align-items-center border rounded btn-delete-purchase" data-del-purchase-id="<?php echo (int)$purchase['id']; ?>">
+												<i data-feather="trash-2" class="feather-trash-2"></i>
+											</a>
+										</div>
+									</td>
+								</tr>
+							<?php endforeach; ?>
+						</tbody>
+					</table>
+				</div>
 
-    <!-- ========================
-        End Page Content
-    ========================= -->
+			</div>
+		</div>
+		<!-- /product list -->
+	</div>
+	<div class="modal fade modal-default" id="delete-purchase">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body p-0">
+					<div class="success-wrap text-center">
+						<div class="icon-success bg-danger-transparent text-danger mb-2">
+							<i class="ti ti-trash"></i>
+						</div>
+						<input type="hidden" id="delete_purchase_id">
+						<h3 class="mb-2">Delete purchase</h3>
+						<p class="fs-16 mb-3">Are you sure you want to delete this purchase?</p>
+						<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+							<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">No, Cancel</button>
+							<button type="button" id="confirmDeletePurchase" class="btn btn-md btn-primary">Yes, Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Content -->
+
+	<?php require_once '../partials/footer.php'; ?>
+
+</div>
+
+<!-- ========================
+End Page Content
+========================= -->
 
 <?php
 $content = ob_get_clean();
 
 require_once '../partials/main.php'; ?>      
+
+<script>
+
+	$(document).ready(function() {
+
+    	// Function to populate a select element with supplier data
+    	function populateSuppliers(selectId) {
+    		$.getJSON("getData.php", { type: "suppliers" }, function(data) {
+    			let supplierSelect = $(selectId);
+    			supplierSelect.empty().append('<option value="">Select Supplier</option>');
+
+    			$.each(data, function(index, supplier) {
+    				supplierSelect.append('<option value="'+ supplier.id +'">'+ supplier.name +'</option>');
+    			});
+
+		        // If using Select2 or Bootstrap select, refresh it
+		        if (supplierSelect.hasClass("select")) {
+		        	supplierSelect.trigger("change");
+		        }
+		    });
+    	}
+
+		// Populate both selects
+		populateSuppliers("#supplier_id");
+		populateSuppliers("#edit_supplier_id");
+
+    	// Fetch products
+    	$.getJSON("getData.php", { type: "products" }, function(data) {
+    		let productSelect = $("#productSelect");
+    		productSelect.empty().append('<option value="">Select Product</option>');
+
+    		$.each(data, function(index, product) {
+    			productSelect.append(
+    				'<option value="'+ product.id +'" ' +
+    				'data-price="'+ product.price +'" ' +
+    				'data-cost="'+ product.cost_price +'" ' +
+    				'data-stock="'+ product.stock_quantity +'">' +
+    				product.name +
+    				'</option>'
+    				);
+    		});
+
+	    	// If using Select2 or Bootstrap select
+	    	if (productSelect.hasClass("select")) {
+	    		productSelect.trigger("change");
+	    	}
+	    });
+
+    	// Product selection
+    	$('#productSelect').on('change', function() {
+    		let selected = $(this).find(':selected');
+    		let productId = selected.val();
+    		let productName = selected.text();
+    		let price = parseFloat(selected.data('price')) || 0;
+    		let cost = parseFloat(selected.data('cost')) || 0;
+    		let stock = parseInt(selected.data('stock')) || 0;
+
+    		if(productId) {
+    			let qty = 1;
+    			let discount = 0;
+    			let taxPerc = 0;
+
+            	// Do initial calculation
+            	let subtotal = qty * price - discount;
+            	let taxAmount = (subtotal * taxPerc) / 100;
+            	let unitCost = subtotal / (qty || 1);
+            	let totalCost = subtotal + taxAmount;
+
+            	let newRow = `
+            	<tr>
+            	<td>${productName}<input type="hidden" name="product_id[]" value="${productId}"></td>
+            	<td style="width: 60px;"><input type="number" name="quantity[]" class="form-control" value="${qty}" min="1" max="${stock}"></td>
+            	<td><input type="number" name="purchase_price[]" class="form-control" value="${price}" step="0.01"></td>
+            	<td><input type="number" name="discount[]" class="form-control" value="${discount}" step="0.01"></td>
+            	<td style="width: 60px;"><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}" step="0.01"></td>
+            	<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
+            	<td><input type="text" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" readonly></td>
+            	<td><input type="text" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
+            	</tr>`;
+
+            	$('#purchaseTable tbody').append(newRow);
+            }
+        });
+
+    	// Recalculate on input change
+    	$(document).on('input', 'input[name="quantity[]"], input[name="purchase_price[]"], input[name="discount[]"], input[name="tax_percentage[]"]', function() {
+    		let row = $(this).closest('tr');
+    		let qty = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
+    		let price = parseFloat(row.find('input[name="purchase_price[]"]').val()) || 0;
+    		let discount = parseFloat(row.find('input[name="discount[]"]').val()) || 0;
+    		let taxPerc = parseFloat(row.find('input[name="tax_percentage[]"]').val()) || 0;
+
+    		let subtotal = qty * price - discount;
+    		let taxAmount = (subtotal * taxPerc) / 100;
+    		let unitCost = subtotal / (qty || 1);
+    		let totalCost = subtotal + taxAmount;
+
+    		row.find('input[name="tax_amount[]"]').val(taxAmount.toFixed(2));
+    		row.find('input[name="unit_cost[]"]').val(unitCost.toFixed(2));
+    		row.find('input[name="total_cost[]"]').val(totalCost.toFixed(2));
+    	});
+
+    	// Fetch products for EDIT modal
+    	$.getJSON("getData.php", { type: "products" }, function(data) {
+    		let productSelect = $("#editProductSelect");
+    		productSelect.empty().append('<option value="">Select Product</option>');
+
+    		$.each(data, function(index, product) {
+    			productSelect.append(
+    				'<option value="'+ product.id +'" ' +
+    				'data-price="'+ product.price +'" ' +
+    				'data-cost="'+ product.cost_price +'" ' +
+    				'data-stock="'+ product.stock_quantity +'">' +
+    				product.name +
+    				'</option>'
+    				);
+    		});
+
+    		if (productSelect.hasClass("select")) {
+    			productSelect.trigger("change");
+    		}
+    	});
+
+		// Product selection in EDIT modal
+		$('#editProductSelect').on('change', function() {
+			let selected = $(this).find(':selected');
+			let productId = selected.val();
+			let productName = selected.text();
+			let price = parseFloat(selected.data('price')) || 0;
+			let cost = parseFloat(selected.data('cost')) || 0;
+			let stock = parseInt(selected.data('stock')) || 0;
+
+			if(productId) {
+				let qty = 1;
+				let discount = 0;
+				let taxPerc = 0;
+
+				let subtotal = qty * price - discount;
+				let taxAmount = (subtotal * taxPerc) / 100;
+				let unitCost = subtotal / (qty || 1);
+				let totalCost = subtotal + taxAmount;
+
+				let newRow = `
+				<tr>
+				<td>${productName}<input type="hidden" name="product_id[]" value="${productId}"></td>
+				<td><input type="number" name="quantity[]" class="form-control" value="${qty}" min="1" max="${stock}"></td>
+				<td><input type="number" name="purchase_price[]" class="form-control" value="${price}" step="0.01"></td>
+				<td><input type="number" name="discount[]" class="form-control" value="${discount}" step="0.01"></td>
+				<td><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}" step="0.01"></td>
+				<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
+				<td><input type="text" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" readonly></td>
+				<td><input type="text" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
+				</tr>`;
+
+				$('#editPurchaseTable tbody').append(newRow);
+			}
+		});
+
+		// Recalculate inside EDIT modal
+		$(document).on('input', '#editPurchaseTable input[name="quantity[]"], #editPurchaseTable input[name="purchase_price[]"], #editPurchaseTable input[name="discount[]"], #editPurchaseTable input[name="tax_percentage[]"]', function() {
+			let row = $(this).closest('tr');
+			let qty = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
+			let price = parseFloat(row.find('input[name="purchase_price[]"]').val()) || 0;
+			let discount = parseFloat(row.find('input[name="discount[]"]').val()) || 0;
+			let taxPerc = parseFloat(row.find('input[name="tax_percentage[]"]').val()) || 0;
+
+			let subtotal = qty * price - discount;
+			let taxAmount = (subtotal * taxPerc) / 100;
+			let unitCost = subtotal / (qty || 1);
+			let totalCost = subtotal + taxAmount;
+
+			row.find('input[name="tax_amount[]"]').val(taxAmount.toFixed(2));
+			row.find('input[name="unit_cost[]"]').val(unitCost.toFixed(2));
+			row.find('input[name="total_cost[]"]').val(totalCost.toFixed(2));
+		});
+
+    	// Save supplier dynamically
+    	$('#supplierForm').on('submit', function(e) {
+    		e.preventDefault();
+
+    		$.ajax({
+    			url: 'save_supplier.php',
+    			type: 'POST',
+    			data: $(this).serialize(),
+    			dataType: 'json',
+    			success: function(response) {
+    				if (response.status === 'success') {
+	                	// Add new supplier to dropdown
+	                	$('#supplier_id').append(
+	                		`<option value="${response.id}" selected>${response.name}</option>`
+	                		).trigger('change');
+
+	                	// Close modal
+	                	$('#add_customer').modal('hide');
+
+	                	// Reset form
+	                	$('#supplierForm')[0].reset();
+	                } else {
+	                	alert('Error: ' + response.message);
+	                }
+	            }
+	        });
+    	});
+
+    	// Handle + and - clicks for quantity
+    	$(document).on('click', '.qty-plus', function() {
+    		let input = $(this).siblings('input[name="quantity[]"]');
+    		let val = parseInt(input.val()) || 0;
+    		input.val(val + 1).trigger('input');
+    	});
+
+    	$(document).on('click', '.qty-minus', function() {
+    		let input = $(this).siblings('input[name="quantity[]"]');
+    		let val = parseInt(input.val()) || 0;
+    		if (val > 1) {
+    			input.val(val - 1).trigger('input');
+    		}
+    	});
+
+		// Open modal with data
+		$(document).on('click', '.btn-edit-purchase', function() {
+	    	let id = $(this).data('purchase-id'); // fix: use purchase-id
+
+	    	$.getJSON("getData.php", { type: "get_purchase", id: id }, function(response) {
+	    		if (response.status === "success") {
+	    			let purchase = response.purchase;
+	    			let items = response.items;
+
+	            	// Fill form fields
+	            	$("#edit_purchase_id").val(purchase.id);
+	            	$("#edit_supplier_id").val(purchase.supplier_id);
+	            	$("#edit_purchase_date").val(purchase.purchase_date);
+	            	$("#edit_reference_no").val(purchase.reference_no);
+	            	$("#edit_order_tax").val(purchase.order_tax);
+	            	$("#edit_order_discount").val(purchase.discount);
+	            	$("#edit_shipping").val(purchase.shipping);
+	            	$("#edit_status").val(purchase.status);
+	            	$("#edit_description").val(purchase.description);
+
+	            	$("#summary_order_tax").text(`${parseFloat(purchase.order_tax).toFixed(2)}`);
+	            	$("#summary_discount").text(`${parseFloat(purchase.discount).toFixed(2)}`);
+	            	$("#summary_shipping").text(`${parseFloat(purchase.shipping).toFixed(2)}`);
+	            	$("#summary_grand_total").text(`${parseFloat(purchase.grand_total).toFixed(2)}`);
+
+	            	// Fill items table
+	            	let tbody = $("#editPurchaseTable tbody");
+	            	tbody.empty();
+	            	$.each(items, function(i, item) {
+	            		tbody.append(`
+	            			<tr>
+	            			<td>${item.name}<input type="hidden" name="product_id[]" value="${item.product_id}"></td>
+	            			<td>
+	            			<div class="input-group qty-control d-flex align-items-center">
+	            			<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-plus" style="width: 20px; height: 20px; padding: 0;">+</button>
+	            			<input type="text" name="quantity[]" class="form-control text-center mx-1" value="${item.quantity}" min="1" style="width: 50px;">
+	            			<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-minus" style="width: 20px; height: 20px; padding: 0;">-</button>
+	            			</div>
+	            			</td>
+	            			<td><input type="number" name="purchase_price[]" class="form-control" value="${item.purchase_price}"></td>
+	            			<td><input type="number" name="discount[]" class="form-control" value="${item.discount}"></td>
+	            			<td><input type="number" name="tax_percentage[]" class="form-control" value="${item.tax_percentage}"></td>
+	            			<td><input type="number" name="tax_amount[]" class="form-control" value="${item.tax_amount}" readonly></td>
+	            			<td><input type="number" name="unit_cost[]" class="form-control" value="${item.unit_cost}" readonly></td>
+	            			<td><input type="number" name="total_cost[]" class="form-control" value="${item.total_cost}" readonly></td>
+	            			</tr>
+	            			`);
+	            	});
+
+	            	// Show modal
+	            	$("#edit-purchase").modal("show");
+	            } else {
+	            	alert(response.message || "Failed to fetch purchase details.");
+	            }
+	        });
+	    });
+
+		// Save changes
+		$("#editPurchaseForm").on("submit", function(e) {
+			e.preventDefault();
+
+			$.ajax({
+				url: "update_purchase.php",
+				type: "POST",
+				data: $(this).serialize(),
+				dataType: "json",
+				success: function(res) {
+					if (res.status === "success") {
+						alert("Purchase updated successfully!");
+						$("#edit-purchase").modal("hide");
+	                location.reload(); // refresh list
+	            } else {
+	            	alert("Error updating purchase");
+	            }
+	        }
+	    });
+		});
+
+		// For Edit Purchase table
+		$(document).on('input', '#editPurchaseTable input', function() {
+			updateSummary('editPurchaseTable', 'summary_order_tax', 'summary_discount', 'summary_shipping', 'summary_grand_total');
+		});
+
+		// Also trigger when product is added
+		$('#editProductSelect').on('change', function() {
+			updateSummary('editPurchaseTable', 'summary_order_tax', 'summary_discount', 'summary_shipping', 'summary_grand_total');
+		}); 
+
+		// Function to recalc totals
+		function updateSummary(tableId, orderTaxId, discountId, shippingId, grandTotalId) {
+			let subtotal = 0;
+			let totalTax = 0;
+			let totalDiscount = 0;
+
+	    	// Loop all rows in table
+	    	$('#' + tableId + ' tbody tr').each(function() {
+	    		let qty = parseFloat($(this).find('input[name="quantity[]"]').val()) || 0;
+	    		let price = parseFloat($(this).find('input[name="purchase_price[]"]').val()) || 0;
+	    		let discount = parseFloat($(this).find('input[name="discount[]"]').val()) || 0;
+	    		let taxPerc = parseFloat($(this).find('input[name="tax_percentage[]"]').val()) || 0;
+
+	    		let rowSubtotal = (qty * price) - discount;
+	    		let taxAmount = (rowSubtotal * taxPerc) / 100;
+
+	    		subtotal += rowSubtotal;
+	    		totalTax += taxAmount;
+	    		totalDiscount += discount;
+	    	});
+
+	    	// Example: Shipping as a fixed input (or fetch from form)
+	    	let shipping = parseFloat($('#shipping').val()) || 0;
+
+	    	// Calculate grand total
+	    	let grandTotal = subtotal + totalTax + shipping;
+
+	    	// Update UI
+	    	$('#' + orderTaxId).text(totalTax.toFixed(2));
+	    	$('#' + discountId).text(totalDiscount.toFixed(2));
+	    	$('#' + shippingId).text(shipping.toFixed(2));
+	    	$('#' + grandTotalId).text(grandTotal.toFixed(2));
+	    }
+
+	    $(document).on('click', '.btn-delete-purchase', function() {
+	    	let purchaseId = $(this).data('del-purchase-id');
+	    	$("#delete_purchase_id").val(purchaseId);
+	    	$("#delete-purchase").modal("show");
+	    });
+
+	    $('#confirmDeletePurchase').on('click', function() {
+	    	let purchaseId = $("#delete_purchase_id").val();
+	    	if (!purchaseId) {
+	    		alert("Invalid purchase ID");
+	    		return;
+	    	}
+
+	    	$.ajax({
+	    		url: "delete_purchase.php",
+	    		type: "POST",
+	    		data: { purchase_id: purchaseId },
+	    		dataType: "json",
+	    		success: function(res) {
+	    			if (res.status === "success") {
+	    				$("#delete-purchase").modal("hide");
+	    				alert("Purchase deleted successfully!");
+	                	location.reload(); // refresh table/list
+	                } else {
+	                	alert(res.message || "Error deleting purchase.");
+	                }
+	            }
+	        });
+	 });
+
+	});
+</script>
+<style type="text/css">
+	.qty-control {
+		max-width: 120px;
+	}
+	.qty-control .form-control {
+		max-width: 60px;
+		padding: 4px;
+		text-align: center;
+	}
+	.qty-control .btn {
+		padding: 4px 8px;
+	}
+</style>
