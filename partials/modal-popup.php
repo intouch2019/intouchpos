@@ -10793,11 +10793,11 @@ $page = end( $link_array );
 								<i class="ti ti-check"></i>
 							</div>
 							<h3 class="mb-2">Payment Completed</h3>
-							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
+<!--							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-toggle="modal" data-bs-target="#print-receipt">Print Receipt<i class="feather-arrow-right-circle icon-me-5"></i></button>
 								<button type="submit" class="btn btn-md btn-primary">Next Order</button>
-							</div>
+							</div>-->
 						</form>
 					</div>
 				</div>
@@ -11183,7 +11183,7 @@ $page = end( $link_array );
 							<p class="fs-16 mb-3">The current order will be cleared. But not deleted if it's persistent. Would you like to proceed ?</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">No, Cancel</button>
-								<button type="submit" class="btn btn-md btn-primary">Yes, Proceed</button>
+								<button type="submit" onclick="clearCart()" class="btn btn-md btn-primary">Yes, Proceed</button>
 							</div>
 						</form>
 					</div>
@@ -12666,11 +12666,11 @@ $page = end( $link_array );
 								<i class="ti ti-check"></i>
 							</div>
 							<h3 class="mb-2">Payment Completed</h3>
-							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
+<!--							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-toggle="modal" data-bs-target="#print-receipt">Print Receipt<i class="feather-arrow-right-circle icon-me-5"></i></button>
 								<button type="submit" class="btn btn-md btn-primary">Next Order</button>
-							</div>
+							</div>-->
 						</form>
 					</div>
 				</div>
@@ -13056,7 +13056,7 @@ $page = end( $link_array );
 							<p class="fs-16 mb-3">The current order will be cleared. But not deleted if it's persistent. Would you like to proceed ?</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">No, Cancel</button>
-								<button type="submit" class="btn btn-md btn-primary">Yes, Proceed</button>
+								<button type="submit" onclick="clearCart()" class="btn btn-md btn-primary">Yes, Proceed</button>
 							</div>
 						</form>
 					</div>
@@ -14553,11 +14553,11 @@ $page = end( $link_array );
 								<i class="ti ti-check"></i>
 							</div>
 							<h3 class="mb-2">Payment Completed</h3>
-							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
+<!--							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-toggle="modal" data-bs-target="#print-receipt">Print Receipt<i class="feather-arrow-right-circle icon-me-5"></i></button>
 								<button type="submit" class="btn btn-md btn-primary">Next Order</button>
-							</div>
+							</div>-->
 						</form>
 					</div>
 				</div>
@@ -14943,7 +14943,7 @@ $page = end( $link_array );
 							<p class="fs-16 mb-3">The current order will be cleared. But not deleted if it's persistent. Would you like to proceed ?</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">No, Cancel</button>
-								<button type="submit" class="btn btn-md btn-primary">Yes, Proceed</button>
+								<button type="submit" onclick="clearCart()" class="btn btn-md btn-primary">Yes, Proceed</button>
 							</div>
 						</form>
 					</div>
@@ -16906,11 +16906,11 @@ $page = end( $link_array );
 								<i class="ti ti-check"></i>
 							</div>
 							<h3 class="mb-2">Payment Completed</h3>
-							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
+<!--							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-toggle="modal" data-bs-target="#print-receipt">Print Receipt<i class="feather-arrow-right-circle icon-me-5"></i></button>
 								<button type="submit" class="btn btn-md btn-primary">Next Order</button>
-							</div>
+							</div>-->
 						</form>
 					</div>
 				</div>
@@ -17296,7 +17296,7 @@ $page = end( $link_array );
 							<p class="fs-16 mb-3">The current order will be cleared. But not deleted if it's persistent. Would you like to proceed ?</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">No, Cancel</button>
-								<button type="submit" class="btn btn-md btn-primary">Yes, Proceed</button>
+								<button type="submit" onclick="clearCart()" class="btn btn-md btn-primary">Yes, Proceed</button>
 							</div>
 						</form>
 					</div>
@@ -20151,11 +20151,11 @@ $page = end( $link_array );
 								<i class="ti ti-check"></i>
 							</div>
 							<h3 class="mb-2">Payment Completed</h3>
-							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
+<!--							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-toggle="modal" data-bs-target="#print-receipt">Print Receipt<i class="feather-arrow-right-circle icon-me-5"></i></button>
 								<button type="submit" class="btn btn-md btn-primary">Next Order</button>
-							</div>
+							</div>-->
 						</form>
 					</div>
 				</div>
@@ -20541,7 +20541,7 @@ $page = end( $link_array );
 							<p class="fs-16 mb-3">The current order will be cleared. But not deleted if it's persistent. Would you like to proceed ?</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">No, Cancel</button>
-								<button type="submit" class="btn btn-md btn-primary">Yes, Proceed</button>
+								<button type="submit" onclick="clearCart()" class="btn btn-md btn-primary">Yes, Proceed</button>
 							</div>
 						</form>
 					</div>
@@ -31138,8 +31138,7 @@ function setQuickCash(amount) {
 
 // Function to validate and place order
 function validateAndPlaceOrder(paymentMethod) {
-    alert('validateAndPlaceOrder called with: ' + paymentMethod);
-    console.log(paymentMethod);
+
     let isValid = true;
     let errorMessage = '';
     
@@ -31148,7 +31147,6 @@ function validateAndPlaceOrder(paymentMethod) {
         case 'cash':
             const cashReceived = parseFloat(document.getElementById('cash-received').value) || 0;
             
-            alert(cashReceived);
             const total = getCartTotal();
             if (cashReceived < total) {
                 isValid = false;

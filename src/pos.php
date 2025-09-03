@@ -61,16 +61,16 @@ if ($cust_result) {
 					<div class="pos-categories tabs_wrapper p-0 flex-fill">
 						<div class="content-wrap">
 							<div class="tab-wrap">
-								<ul class="tabs owl-carousel pos-category5">
-									<?php foreach ($categories as $index => $category): ?>
-									<li id="category_<?php echo $category['id']; ?>" <?php echo $index === 0 ? 'class="active"' : ''; ?>>
-										<a href="javascript:void(0);" onclick="filterProducts('<?php echo $category['id']; ?>')">
-											<img src="assets/img/products/<?php echo $category['image'] ? $category['image'] : 'pos-product-01.png'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>" onerror="this.src='assets/img/products/pos-product-01.png'">
-										</a>
-										<h6><a href="javascript:void(0);" onclick="filterProducts('<?php echo $category['id']; ?>')"><?php echo htmlspecialchars($category['name']); ?></a></h6>
-									</li>
-									<?php endforeach; ?>
-								</ul>
+								<ul class="tabs owl-carousel pos-category5" id="categoryTabs">
+    <?php foreach ($categories as $index => $category): ?>
+        <li id="category_<?php echo $category['id']; ?>" data-id="<?php echo $category['id']; ?>" <?php echo $index === 0 ? 'class="active"' : ''; ?>>
+            <a href="javascript:void(0);">
+                <img src="assets/img/products/<?php echo $category['image'] ? $category['image'] : 'pos-product-01.png'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>" onerror="this.src='assets/img/products/pos-product-01.png'">
+            </a>
+            <h6><a href="javascript:void(0);"><?php echo htmlspecialchars($category['name']); ?></a></h6>
+        </li>
+    <?php endforeach; ?>
+                                                                </ul>
 							</div>
 							<div class="tab-content-wrap">
 								<div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
@@ -318,8 +318,8 @@ if ($cust_result) {
 							</div>
 						</div>
 						<div class="btn-row d-flex align-items-center justify-content-between gap-3">
-							<a href="javascript:void(0);" class="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-printer me-2"></i>Print Order</a>
-							<a href="javascript:void(0);" class="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0" onclick="showPaymentOptions()"><i  class="ti ti-shopping-cart me-2"></i>Place Order</a>
+<!--							<a href="javascript:void(0);" class="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-printer me-2"></i>Print Order</a>
+							<a href="javascript:void(0);" class="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0" onclick="showPaymentOptions()"><i  class="ti ti-shopping-cart me-2"></i>Place Order</a>-->
 						</div>
 					</aside>
 				</div>
@@ -329,12 +329,13 @@ if ($cust_result) {
 
 			<div class="pos-footer bg-white p-3 border-top">
 				<div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-					<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>
-					<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>
-					<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completed"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>
-					<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
+					<!--<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>-->
+					<!--<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>-->
+					<!--<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completed"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>-->
+					<!--<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
+					<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
 					<a href="javascript:void(0);" class="btn btn-indigo d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#reset"><i class="ti ti-reload me-2"></i>Reset</a>
-					<a href="javascript:void(0);" class="btn btn-danger d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#recents"><i class="ti ti-refresh-dot me-2"></i>Transaction</a>
+					<!--<a href="javascript:void(0);" class="btn btn-danger d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#recents"><i class="ti ti-refresh-dot me-2"></i>Transaction</a>-->
 				</div>
 			</div>
 		</div>
@@ -555,70 +556,145 @@ if ($cust_result) {
                 });
             }
         }
+
+function filterProducts(categoryId) {
+    console.log('Filtering by category:', categoryId);
+    
+    // Get all product items
+    const productItems = document.querySelectorAll('.product-item');
+    console.log('Total products found:', productItems.length);
+    
+    // Remove active class from all category tabs
+    const categoryTabs = document.querySelectorAll('#categoryTabs li');
+    categoryTabs.forEach(tab => tab.classList.remove('active'));
+    
+    // Add active class to selected tab
+    const activeTab = document.querySelector(`#categoryTabs li[data-id="${categoryId}"]`);
+    if (activeTab) {
+        activeTab.classList.add('active');
+        console.log('Set active tab:', categoryId);
+    }
+    
+    // Clear search input when filtering by category
+    const searchInput = document.getElementById('searchProduct');
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    
+    let visibleCount = 0;
+    
+    // Filter products
+    productItems.forEach((item, index) => {
+        const itemCategoryId = item.getAttribute('data-category');
+        console.log(`Product ${index}: category=${itemCategoryId}, looking for=${categoryId}`);
         
-        // Function to filter products by category
-        function filterProducts(categoryId) {
-//            alert(categoryId);
-            // Update active category tab
-            document.querySelectorAll('.tabs li').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            const activeTab = document.getElementById('category_' + categoryId);
-            if (activeTab) {
-                activeTab.classList.add('active');
-            }
-            // Clear search when filtering by category
-            const searchInput = document.getElementById('searchProduct');
-            if (searchInput) {
-                searchInput.value = '';
-            }
-            // AJAX request to fetch filtered products
-            const productsContainer = document.getElementById('productsContainer');
-            productsContainer.innerHTML = '<div class="text-center w-100 py-5"><span class="spinner-border"></span></div>';
-            fetch('src/fetch_products.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: 'categoryId=' + encodeURIComponent(categoryId)
-            })
-            .then(response => response.text())
-            .then(html => {
-                productsContainer.innerHTML = html;
-            })
-            .catch(error => {
-                productsContainer.innerHTML = '<div class="text-danger">Failed to load products.</div>';
-            });
-        }
-        
-        // Function to search products
-        function searchProducts() {
-            const searchTerm = document.getElementById('searchProduct').value.toLowerCase().trim();
-            const productItems = document.querySelectorAll('.product-item');
-            
-            if (searchTerm === '') {
-                // If search is empty, show all products
-                productItems.forEach(item => {
-                    item.style.display = 'block';
-                });
-                // Reset category filter to "All"
-                filterProducts('all');
+        if (categoryId === 'all') {
+            item.style.display = 'block';
+            visibleCount++;
+        } else {
+            // Convert both to strings for comparison
+            if (String(itemCategoryId) === String(categoryId)) {
+                item.style.display = 'block';
+                visibleCount++;
+                console.log(`Showing product ${index} (category match)`);
             } else {
-                // Filter products by search term
-                productItems.forEach(item => {
-                    const productName = item.querySelector('.product-name a').textContent.toLowerCase();
-                    if (productName.includes(searchTerm)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-                
-                // Remove active state from category tabs when searching
-                document.querySelectorAll('.tabs li').forEach(tab => {
-                    tab.classList.remove('active');
-                });
+                item.style.display = 'none';
+                console.log(`Hiding product ${index} (category mismatch)`);
             }
         }
+    });
+    
+    console.log(`Filtered complete. Showing ${visibleCount} products.`);
+}
+
+// Enhanced search function that works with category filtering
+function searchProducts() {
+    const searchTerm = document.getElementById('searchProduct').value.toLowerCase().trim();
+    const productItems = document.querySelectorAll('.product-item');
+    
+    console.log('Searching for:', searchTerm);
+    
+    if (searchTerm === '') {
+        // If search is empty, restore category filter
+        const activeTab = document.querySelector('#categoryTabs li.active');
+        const activeCategoryId = activeTab ? activeTab.getAttribute('data-id') : 'all';
+        console.log('Search cleared, restoring category filter:', activeCategoryId);
+        filterProducts(activeCategoryId);
+        return;
+    }
+    
+    // Remove active state from category tabs when searching
+    const categoryTabs = document.querySelectorAll('#categoryTabs li');
+    categoryTabs.forEach(tab => tab.classList.remove('active'));
+    
+    let foundCount = 0;
+    
+    // Filter products by search term
+    productItems.forEach(item => {
+        const productNameElement = item.querySelector('.product-name a');
+        if (productNameElement) {
+            const productName = productNameElement.textContent.toLowerCase();
+            if (productName.includes(searchTerm)) {
+                item.style.display = 'block';
+                foundCount++;
+            } else {
+                item.style.display = 'none';
+            }
+        }
+    });
+    
+    console.log(`Search complete. Found ${foundCount} matching products.`);
+}
+
+// Initialize category filtering when DOM is ready
+function initializeCategoryFiltering() {
+    console.log('Initializing category filtering...');
+    
+    // Add click event listeners to category tabs
+    const categoryTabs = document.querySelectorAll('#categoryTabs li');
+    console.log('Found category tabs:', categoryTabs.length);
+    
+    categoryTabs.forEach((tab, index) => {
+        const categoryId = tab.getAttribute('data-id');
+        console.log(`Tab ${index}: id=${categoryId}`);
         
+        // Add click handler
+        tab.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Category tab clicked:', categoryId);
+            filterProducts(categoryId);
+        });
+    });
+    
+    // Set initial state - show all products with "All" category active
+    filterProducts('all');
+    
+    console.log('Category filtering initialized successfully');
+}
+
+// Debug function to check product data
+function debugProducts() {
+    const productItems = document.querySelectorAll('.product-item');
+    console.log('=== PRODUCT DEBUG INFO ===');
+    console.log('Total products:', productItems.length);
+    
+    productItems.forEach((item, index) => {
+        const categoryId = item.getAttribute('data-category');
+        const productName = item.querySelector('.product-name a')?.textContent || 'Unknown';
+        console.log(`Product ${index}: "${productName}" - Category: ${categoryId}`);
+    });
+    
+    const categories = document.querySelectorAll('#categoryTabs li');
+    console.log('=== CATEGORY DEBUG INFO ===');
+    console.log('Total categories:', categories.length);
+    
+    categories.forEach((cat, index) => {
+        const catId = cat.getAttribute('data-id');
+        const catName = cat.querySelector('h6 a')?.textContent || 'Unknown';
+        console.log(`Category ${index}: "${catName}" - ID: ${catId}`);
+    });
+}
+
         // Function to increase quantity
         function increaseQuantity(button) {
             const input = button.parentElement.querySelector('.product-qty');
@@ -785,7 +861,7 @@ if ($cust_result) {
             .then(data => {
                 if (data.success) {
                     // Show success message
-                    alert(`Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: ${data.total_amount.toFixed(2)}`);
+//                    alert(`Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: ${data.total_amount.toFixed(2)}`);
                     
                     // Clear cart from database
                     fetch('cart_api.php', {
@@ -981,40 +1057,26 @@ if ($cust_result) {
         
         // Initialize cart display on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadCart(); // Load cart from database
-            
-            // Test: Show all products initially
-            const productItems = document.querySelectorAll('.product-item');
-            console.log('Found products on page load:', productItems.length);
-            productItems.forEach(item => {
-                item.style.display = 'block';
-                console.log('Product category:', item.dataset.category);
-            });
-            
-            // Handle form submission success
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.get('customer_added') === '1') {
-                const newCustomerId = urlParams.get('new_customer_id');
-                if (newCustomerId) {
-                    // Select the newly added customer
-                    const customerSelect = document.getElementById('customerSelect');
-                    if (customerSelect) {
-                        // Find the option with the new customer ID
-                        for (let option of customerSelect.options) {
-                            if (option.value === newCustomerId) {
-                                option.selected = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-                // Clean up URL
-                window.history.replaceState({}, document.title, 'pos.php');
-            }
-            
-            // Add event listeners for payment modals
-            document.getElementById('cash-received').addEventListener('input', calculateCashChange);
-            document.getElementById('split-amount-1').addEventListener('input', calculateSplitAmounts);
+    loadCart(); // Your existing code
+    
+    // Debug function to see what we're working with
+    setTimeout(() => {
+        debugProducts();
+    }, 1000);
+    
+    // Initialize category filtering
+    initializeCategoryFiltering();
+    
+    // Your existing code continues here (customer handling, event listeners, etc.)
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('customer_added') === '1') {
+        // ... your existing customer code
+    }
+    
+    // Your existing event listeners
+    document.getElementById('cash-received').addEventListener('input', calculateCashChange);
+    document.getElementById('split-amount-1').addEventListener('input', calculateSplitAmounts);
+    
             
             // Update payment modal totals when cart changes
             const observer = new MutationObserver(function(mutations) {

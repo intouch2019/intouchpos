@@ -90,12 +90,16 @@ $page = end( $link_array );
 								<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
 							</span>
 							<span class="user-detail">
-								<span class="user-name">Freshmart</span>
+                                                            <!--<span class="user-name">Freshmart</span>-->
+								<span class="user-name">Store 1</span>
 							</span>
 						</span>
 					</a>
 					<div class="dropdown-menu dropdown-menu-right">
 						<a href="javascript:void(0);" class="dropdown-item">
+							<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Store 1
+						</a>
+<!--						<a href="javascript:void(0);" class="dropdown-item">
 							<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Freshmart
 						</a>
 						<a href="javascript:void(0);" class="dropdown-item">
@@ -106,7 +110,7 @@ $page = end( $link_array );
 						</a>
 						<a href="javascript:void(0);" class="dropdown-item">
 							<img src="assets/img/store/store-04.png" alt="Store Logo" class="img-fluid">Grocery Eden
-						</a>
+						</a>-->
 					</div>
 				</li>
 				<!-- /Select Store -->
@@ -422,12 +426,16 @@ $page = end( $link_array );
 							<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
 						</span>
 						<span class="user-detail">
-							<span class="user-name">Freshmart</span>
+                                                    <!--<span class="user-name">Freshmart</span>-->
+                                                    <span class="user-name">Store 1</span>
 						</span>
 					</span>
 				</a>
 				<div class="dropdown-menu dropdown-menu-right">
 					<a href="javascript:void(0);" class="dropdown-item">
+						<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Store 1
+					</a>
+<!--					<a href="javascript:void(0);" class="dropdown-item">
 						<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Freshmart
 					</a>
 					<a href="javascript:void(0);" class="dropdown-item">
@@ -438,7 +446,7 @@ $page = end( $link_array );
 					</a>
 					<a href="javascript:void(0);" class="dropdown-item">
 						<img src="assets/img/store/store-04.png" alt="Store Logo" class="img-fluid">Grocery Eden
-					</a>
+					</a>-->
 				</div>
 			</li>
 			<!-- /Select Store -->
@@ -454,9 +462,9 @@ $page = end( $link_array );
 			<li class="nav-item nav-item-box" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Cash Register">
 				<a href="#" data-bs-toggle="modal" data-bs-target="#cash-register"><i class="ti ti-cash"></i></a>
 			</li>
-			<li class="nav-item nav-item-box" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Print Last Reciept">
+<!--			<li class="nav-item nav-item-box" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Print Last Reciept">
 				<a href="#"><i class="ti ti-printer"></i></a>
-			</li>
+			</li>-->
 			<li class="nav-item nav-item-box" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Today’s Sale">
 				<a href="#" data-bs-toggle="modal" data-bs-target="#today-sale"><i class="ti ti-progress"></i></a>
 			</li>
