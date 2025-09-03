@@ -206,20 +206,28 @@ if ($cust_result) {
 									<h5 class="mb-3">Payment Summary</h5>
 									<table class="table table-responsive table-borderless">
 										<tr>
-											<td>Shipping<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#shipping-cost"><i class="ti ti-edit"></i></a></td>
-											<td class="text-gray-9 text-end" id="shippingCost">$0.00</td>
+											<td>Shipping<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#shipping-cost">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-gray-9 text-end" id="shippingCost">0.00</td>
 										</tr>
 										<tr>
-											<td>Tax<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#order-tax"><i class="ti ti-edit"></i></a></td>
-											<td class="text-gray-9 text-end" id="taxAmount">$0.00</td>
+											<td>Tax<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#order-tax">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-gray-9 text-end" id="taxAmount">0.00</td>
 										</tr>
 										<tr>
-											<td>Coupon<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#coupon-code"><i class="ti ti-edit"></i></a></td>
-											<td class="text-gray-9 text-end" id="couponAmount">$0.00</td>
+											<td>Coupon<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#coupon-code">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-gray-9 text-end" id="couponAmount">0.00</td>
 										</tr>
 										<tr>												
-											<td><span class="text-danger">Discount</span><a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#discount"><i class="ti ti-edit"></i></a></td>
-											<td class="text-danger text-end" id="discountAmount">$0.00</td>
+											<td><span class="text-danger">Discount</span><a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#discount">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-danger text-end" id="discountAmount">0.00</td>
 										</tr>
 										<tr>												
 											<td>
@@ -228,15 +236,15 @@ if ($cust_result) {
 													<label class="form-check-label" for="round">Roundoff</label>
 												</div>
 											</td>
-											<td class="text-gray-9 text-end" id="roundoffAmount">$0.00</td>
+											<td class="text-gray-9 text-end" id="roundoffAmount">0.00</td>
 										</tr>
 										<tr>
 											<td>Sub Total</td>
-											<td class="text-gray-9 text-end" id="cartSubtotal">$0.00</td>
+											<td class="text-gray-9 text-end" id="cartSubtotal">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold border-top border-dashed">Total Payable</td>
-											<td class="text-gray-9 fw-bold text-end border-top border-dashed" id="cartTotal">$0.00</td>
+											<td class="text-gray-9 fw-bold text-end border-top border-dashed" id="cartTotal">0.00</td>
 										</tr>
 									</table>
 								</div>
@@ -399,8 +407,8 @@ if ($cust_result) {
                 if (cartItemsList) cartItemsList.innerHTML = '';
                 
                 // Reset totals
-                document.getElementById('cartTotal').textContent = '$0.00';
-                document.getElementById('cartSubtotal').textContent = '$0.00';
+                document.getElementById('cartTotal').textContent = '0.00';
+                document.getElementById('cartSubtotal').textContent = '0.00';
                 return;
             }
             
@@ -440,18 +448,18 @@ if ($cust_result) {
                                     <a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseCartQuantity(${item.id})"><i class="ti ti-plus"></i></a>
                                 </div>
                             </td>
-                            <td class="fs-13 fw-semibold text-gray-9 text-end">$${itemTotal.toFixed(2)}</td>
+                            <td class="fs-13 fw-semibold text-gray-9 text-end">${itemTotal.toFixed(2)}</td>
                         </tr>
                     `;
                 }
             });
             
             // Update subtotal
-            document.getElementById('cartSubtotal').textContent = '$' + total.toFixed(2);
+            document.getElementById('cartSubtotal').textContent =  total.toFixed(2);
             
             // Calculate and update final total
             const finalTotal = getCartTotal();
-            document.getElementById('cartTotal').textContent = '$' + finalTotal.toFixed(2);
+            document.getElementById('cartTotal').textContent =  finalTotal.toFixed(2);
             
             // Update payment modal totals
             updatePaymentModalTotals();
@@ -550,35 +558,35 @@ if ($cust_result) {
         
         // Function to filter products by category
         function filterProducts(categoryId) {
-            const productItems = document.querySelectorAll('.product-item');
-            let visibleCount = 0;
-            
-            productItems.forEach(item => {
-                const itemCategory = item.dataset.category;
-                
-                if (categoryId === 'all' || itemCategory === categoryId) {
-                    item.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-            
+//            alert(categoryId);
             // Update active category tab
             document.querySelectorAll('.tabs li').forEach(tab => {
                 tab.classList.remove('active');
             });
-            
             const activeTab = document.getElementById('category_' + categoryId);
             if (activeTab) {
                 activeTab.classList.add('active');
             }
-            
             // Clear search when filtering by category
             const searchInput = document.getElementById('searchProduct');
             if (searchInput) {
                 searchInput.value = '';
             }
+            // AJAX request to fetch filtered products
+            const productsContainer = document.getElementById('productsContainer');
+            productsContainer.innerHTML = '<div class="text-center w-100 py-5"><span class="spinner-border"></span></div>';
+            fetch('src/fetch_products.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'categoryId=' + encodeURIComponent(categoryId)
+            })
+            .then(response => response.text())
+            .then(html => {
+                productsContainer.innerHTML = html;
+            })
+            .catch(error => {
+                productsContainer.innerHTML = '<div class="text-danger">Failed to load products.</div>';
+            });
         }
         
         // Function to search products
@@ -661,7 +669,7 @@ if ($cust_result) {
             const total = getCartTotal();
             const itemCount = cart.length;
             
-            document.getElementById('quick-total-amount').textContent = '$' + total.toFixed(2);
+            document.getElementById('quick-total-amount').textContent = total.toFixed(2);
             document.getElementById('quick-item-count').textContent = itemCount + ' item(s)';
             
             // Update customer name
@@ -713,7 +721,7 @@ if ($cust_result) {
                 const total = getCartTotal();
                 const customerName = customerSelect.options[customerSelect.selectedIndex].text;
                 
-                const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment ($${total.toFixed(2)})?`;
+                const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment (${total.toFixed(2)})?`;
                 
                 if (confirm(confirmMessage)) {
                     placeOrder(paymentMethod);
@@ -777,7 +785,7 @@ if ($cust_result) {
             .then(data => {
                 if (data.success) {
                     // Show success message
-                    alert(`Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: $${data.total_amount.toFixed(2)}`);
+                    alert(`Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: ${data.total_amount.toFixed(2)}`);
                     
                     // Clear cart from database
                     fetch('cart_api.php', {
@@ -850,7 +858,7 @@ if ($cust_result) {
             if (roundoffCheckbox && roundoffCheckbox.checked) {
                 const rounded = Math.round(total);
                 const roundoffValue = rounded - total;
-                document.getElementById('roundoffAmount').textContent = '$' + roundoffValue.toFixed(2);
+                document.getElementById('roundoffAmount').textContent = roundoffValue.toFixed(2);
                 total = rounded;
             }
             
@@ -861,7 +869,7 @@ if ($cust_result) {
         function resetPaymentModals() {
             // Reset cash payment modal
             document.getElementById('cash-received').value = '';
-            document.getElementById('cash-change').textContent = '$0.00';
+            document.getElementById('cash-change').textContent = '0.00';
             
             // Reset card payment modal
             document.getElementById('card-number').value = '';
@@ -878,7 +886,7 @@ if ($cust_result) {
         // Function to update payment modal totals
         function updatePaymentModalTotals() {
             const total = getCartTotal();
-            const totalFormatted = '$' + total.toFixed(2);
+            const totalFormatted = total.toFixed(2);
 
             // Update all payment modal totals
             const totalElements = [
@@ -930,7 +938,7 @@ if ($cust_result) {
             const received = parseFloat(document.getElementById('cash-received').value) || 0;
             const change = received - total;
             
-            document.getElementById('cash-change').textContent = '$' + Math.max(0, change).toFixed(2);
+            document.getElementById('cash-change').textContent = Math.max(0, change).toFixed(2);
         }
         
         // Function to calculate split payment amounts
@@ -946,7 +954,7 @@ if ($cust_result) {
         function showOrderSuccessModal(orderData) {
             // Update modal content
             document.getElementById('completed-order-number').textContent = orderData.order_number;
-            document.getElementById('completed-total-amount').textContent = '$' + orderData.total_amount.toFixed(2);
+            document.getElementById('completed-total-amount').textContent = orderData.total_amount.toFixed(2);
             document.getElementById('completed-payment-method').textContent = orderData.payment_method.replace('_', ' ').toUpperCase();
             
             // Show the modal

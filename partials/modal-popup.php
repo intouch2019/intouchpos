@@ -1910,7 +1910,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -8575,7 +8575,7 @@ $page = end( $link_array );
 										<div class="mb-2 amount position-relative">                                   
 											<label class="form-label">Amount<span class="text-danger ms-1">*</span></label>
 											<input type="text" class="form-control" value="1800">    
-											<i class="ti ti-currency-dollar"></i> 
+<!--											<i class="ti ti-currency-dollar"></i> -->
 										</div>                                 
 									</div>					
 								</div>
@@ -8633,7 +8633,7 @@ $page = end( $link_array );
 										<div class="mb-2 amount position-relative">                                   
 											<label class="form-label">Amount<span class="text-danger ms-1">*</span></label>
 											<input type="text" class="form-control" value="1800">    
-											<i class="ti ti-currency-dollar"></i> 
+<!--											<i class="ti ti-currency-dollar"></i> -->
 										</div>                                 
 									</div>					
 								</div>								
@@ -11082,7 +11082,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -12123,7 +12123,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -12134,7 +12134,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -12145,7 +12145,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -12258,7 +12258,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -12269,7 +12269,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -12280,7 +12280,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -12955,7 +12955,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -13996,7 +13996,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -14007,7 +14007,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -14018,7 +14018,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -14160,7 +14160,7 @@ $page = end( $link_array );
 									<label class="form-label">Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" name="amount" value="1800" readonly>
 									</div>
@@ -14842,7 +14842,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -15862,7 +15862,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -15873,7 +15873,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -15884,7 +15884,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -15997,7 +15997,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16008,7 +16008,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16019,7 +16019,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -16132,7 +16132,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16143,7 +16143,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16154,7 +16154,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -16267,7 +16267,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16278,7 +16278,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16289,7 +16289,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -16402,7 +16402,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16413,7 +16413,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -16424,7 +16424,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -17195,7 +17195,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18344,7 +18344,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18355,9 +18355,9 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
-										<input type="text" class="form-control" value="1800">
+										<input type="text" class="form-control" value="0">
 									</div>
 								</div>
 							</div>
@@ -18366,7 +18366,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -18479,7 +18479,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18490,7 +18490,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18501,7 +18501,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -18614,7 +18614,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18625,7 +18625,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18636,7 +18636,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -18749,7 +18749,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18760,7 +18760,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18771,7 +18771,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -18884,7 +18884,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18895,7 +18895,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -18906,7 +18906,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -20440,7 +20440,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -21894,7 +21894,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+											<!--<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="number" class="form-control" id="cash-received" placeholder="0.00" step="0.01" min="0" oninput="calculateCashChange()">
 									</div>
@@ -21905,9 +21905,9 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+											<!--<i class="ti ti-currency-dollar"></i>-->
 										</span>
-										<input type="text" class="form-control" value="1800">
+										<input type="text" class="form-control" id="cash-received" value="0.00">
 									</div>
 								</div>
 							</div>
@@ -21916,7 +21916,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+											<!--<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -22011,6 +22011,7 @@ $page = end( $link_array );
 	</div>
 	<!-- /Payment Cash  -->
 
+        
 	<!-- Payment Card  -->
 	<div class="modal fade modal-default" id="payment-card">
 		<div class="modal-dialog modal-dialog-centered modal-lg">
@@ -22029,7 +22030,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+											<!--<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22040,7 +22041,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22051,7 +22052,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -22164,7 +22165,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+											<!--<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22175,7 +22176,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22186,7 +22187,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -22299,7 +22300,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22310,7 +22311,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22321,7 +22322,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -22434,7 +22435,7 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22445,7 +22446,7 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
@@ -22456,7 +22457,7 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -30880,7 +30881,7 @@ $page = end( $link_array );
 									<label class="form-label">Product Price <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-											<i class="ti ti-currency-dollar"></i>
+<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="1800">
 									</div>
