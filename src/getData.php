@@ -21,16 +21,37 @@ switch ($type) {
 	break;
 
 	case 'products':
-	$query = "SELECT id, name, price, cost_price, stock_quantity FROM products WHERE is_active = 1 ORDER BY name ASC";
-	$result = mysqli_query($link, $query);
-	$products = [];
-	if ($result) {
-		while ($row = mysqli_fetch_assoc($result)) {
-			$products[] = $row;
-		}
-	}
-	echo json_encode($products);
-	break;
+    $products = [];
+    $limit = 10;
+    $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+    if ($search !== '') {
+        // Search filter
+        $stmt = $link->prepare("SELECT id, name, price, cost_price, stock_quantity 
+                                FROM products 
+                                WHERE is_active = 1 AND name LIKE ? 
+                                ORDER BY name ASC 
+                                LIMIT ?");
+        $searchParam = "%$search%";
+        $stmt->bind_param("si", $searchParam, $limit);
+    } else {
+        // Default first 10 products
+        $stmt = $link->prepare("SELECT id, name, price, cost_price, stock_quantity 
+                                FROM products 
+                                WHERE is_active = 1 
+                                ORDER BY name ASC 
+                                LIMIT ?");
+        $stmt->bind_param("i", $limit);
+    }
+
+    if ($stmt->execute()) {
+        $result = $stmt->get_result();
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+    }
+    echo json_encode($products);
+    break;
 
 	case 'get_purchase':
     $purchase_id = isset($_GET['id']) ? intval($_GET['id']) : 0;

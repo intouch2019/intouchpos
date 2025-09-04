@@ -3,7 +3,7 @@ require_once __DIR__ . '/../partials/config.php';
 
 // Fetch all purchases to display in the table
 $purchases = [];
-$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id ORDER BY p.purchase_date DESC";
+$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id where p.purchase_status = 0 ORDER BY p.purchase_date DESC";
 $result_purchases = mysqli_query($link, $sql_purchases);
 if ($result_purchases) {
 	while ($row = mysqli_fetch_assoc($result_purchases)) {
@@ -220,353 +220,396 @@ require_once '../partials/main.php'; ?>
 		populateSuppliers("#supplier_id");
 		populateSuppliers("#edit_supplier_id");
 
-    	// Fetch products
-    	$.getJSON("getData.php", { type: "products" }, function(data) {
-    		let productSelect = $("#productSelect");
-    		productSelect.empty().append('<option value="">Select Product</option>');
-
-    		$.each(data, function(index, product) {
-    			productSelect.append(
-    				'<option value="'+ product.id +'" ' +
-    				'data-price="'+ product.price +'" ' +
-    				'data-cost="'+ product.cost_price +'" ' +
-    				'data-stock="'+ product.stock_quantity +'">' +
-    				product.name +
-    				'</option>'
-    				);
-    		});
-
-	    	// If using Select2 or Bootstrap select
-	    	if (productSelect.hasClass("select")) {
-	    		productSelect.trigger("change");
-	    	}
-	    });
-
-    	// Product selection
-    	$('#productSelect').on('change', function() {
-    		let selected = $(this).find(':selected');
-    		let productId = selected.val();
-    		let productName = selected.text();
-    		let price = parseFloat(selected.data('price')) || 0;
-    		let cost = parseFloat(selected.data('cost')) || 0;
-    		let stock = parseInt(selected.data('stock')) || 0;
-
-    		if(productId) {
-    			let qty = 1;
-    			let discount = 0;
-    			let taxPerc = 0;
-
-            	// Do initial calculation
-            	let subtotal = qty * price - discount;
-            	let taxAmount = (subtotal * taxPerc) / 100;
-            	let unitCost = subtotal / (qty || 1);
-            	let totalCost = subtotal + taxAmount;
-
-            	let newRow = `
-            	<tr>
-            	<td>${productName}<input type="hidden" name="product_id[]" value="${productId}"></td>
-            	<td style="width: 60px;"><input type="number" name="quantity[]" class="form-control" value="${qty}" min="1" max="${stock}"></td>
-            	<td><input type="number" name="purchase_price[]" class="form-control" value="${price}" step="0.01"></td>
-            	<td><input type="number" name="discount[]" class="form-control" value="${discount}" step="0.01"></td>
-            	<td style="width: 60px;"><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}" step="0.01"></td>
-            	<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
-            	<td><input type="text" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" readonly></td>
-            	<td><input type="text" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
-            	</tr>`;
-
-            	$('#purchaseTable tbody').append(newRow);
-            }
-        });
-
-    	// Recalculate on input change
-    	$(document).on('input', 'input[name="quantity[]"], input[name="purchase_price[]"], input[name="discount[]"], input[name="tax_percentage[]"]', function() {
-    		let row = $(this).closest('tr');
-    		let qty = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
-    		let price = parseFloat(row.find('input[name="purchase_price[]"]').val()) || 0;
-    		let discount = parseFloat(row.find('input[name="discount[]"]').val()) || 0;
-    		let taxPerc = parseFloat(row.find('input[name="tax_percentage[]"]').val()) || 0;
-
-    		let subtotal = qty * price - discount;
-    		let taxAmount = (subtotal * taxPerc) / 100;
-    		let unitCost = subtotal / (qty || 1);
-    		let totalCost = subtotal + taxAmount;
-
-    		row.find('input[name="tax_amount[]"]').val(taxAmount.toFixed(2));
-    		row.find('input[name="unit_cost[]"]').val(unitCost.toFixed(2));
-    		row.find('input[name="total_cost[]"]').val(totalCost.toFixed(2));
-    	});
-
-    	// Fetch products for EDIT modal
-    	$.getJSON("getData.php", { type: "products" }, function(data) {
-    		let productSelect = $("#editProductSelect");
-    		productSelect.empty().append('<option value="">Select Product</option>');
-
-    		$.each(data, function(index, product) {
-    			productSelect.append(
-    				'<option value="'+ product.id +'" ' +
-    				'data-price="'+ product.price +'" ' +
-    				'data-cost="'+ product.cost_price +'" ' +
-    				'data-stock="'+ product.stock_quantity +'">' +
-    				product.name +
-    				'</option>'
-    				);
-    		});
-
-    		if (productSelect.hasClass("select")) {
-    			productSelect.trigger("change");
-    		}
-    	});
-
-		// Product selection in EDIT modal
-		$('#editProductSelect').on('change', function() {
-			let selected = $(this).find(':selected');
-			let productId = selected.val();
-			let productName = selected.text();
-			let price = parseFloat(selected.data('price')) || 0;
-			let cost = parseFloat(selected.data('cost')) || 0;
-			let stock = parseInt(selected.data('stock')) || 0;
-
-			if(productId) {
-				let qty = 1;
-				let discount = 0;
-				let taxPerc = 0;
-
-				let subtotal = qty * price - discount;
-				let taxAmount = (subtotal * taxPerc) / 100;
-				let unitCost = subtotal / (qty || 1);
-				let totalCost = subtotal + taxAmount;
-
-				let newRow = `
-				<tr>
-				<td>${productName}<input type="hidden" name="product_id[]" value="${productId}"></td>
-				<td><input type="number" name="quantity[]" class="form-control" value="${qty}" min="1" max="${stock}"></td>
-				<td><input type="number" name="purchase_price[]" class="form-control" value="${price}" step="0.01"></td>
-				<td><input type="number" name="discount[]" class="form-control" value="${discount}" step="0.01"></td>
-				<td><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}" step="0.01"></td>
-				<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
-				<td><input type="text" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" readonly></td>
-				<td><input type="text" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
-				</tr>`;
-
-				$('#editPurchaseTable tbody').append(newRow);
+		$('#productSelect').select2({
+			placeholder: "Search Product",
+			width: '100%',
+			dropdownParent: $('#add-purchase'),
+			ajax: {
+				url: 'getData.php?type=products',
+				dataType: 'json',
+				delay: 250,
+		    	// IMPORTANT: send the user’s search term as `search`
+		    	data: function (params) {
+		    		return {
+				        search: params.term || '', // what user typed
+				        page: params.page || 1
+				    };
+				},
+				processResults: function (data) {
+					return {
+						results: $.map(data, function (item) {
+							return {
+								id: item.id,
+								text: item.name,
+								price: item.price,
+								cost: item.cost_price,
+								stock: item.stock_quantity
+							};
+						})
+					};
+				},
+				cache: true
 			}
 		});
 
-		// Recalculate inside EDIT modal
-		$(document).on('input', '#editPurchaseTable input[name="quantity[]"], #editPurchaseTable input[name="purchase_price[]"], #editPurchaseTable input[name="discount[]"], #editPurchaseTable input[name="tax_percentage[]"]', function() {
-			let row = $(this).closest('tr');
-			let qty = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
-			let price = parseFloat(row.find('input[name="purchase_price[]"]').val()) || 0;
-			let discount = parseFloat(row.find('input[name="discount[]"]').val()) || 0;
-			let taxPerc = parseFloat(row.find('input[name="tax_percentage[]"]').val()) || 0;
-
-			let subtotal = qty * price - discount;
-			let taxAmount = (subtotal * taxPerc) / 100;
-			let unitCost = subtotal / (qty || 1);
-			let totalCost = subtotal + taxAmount;
-
-			row.find('input[name="tax_amount[]"]').val(taxAmount.toFixed(2));
-			row.find('input[name="unit_cost[]"]').val(unitCost.toFixed(2));
-			row.find('input[name="total_cost[]"]').val(totalCost.toFixed(2));
+		$('#editProductSelect').select2({
+			placeholder: "Search Product",
+			width: '100%',
+			dropdownParent: $('#edit-purchase'),
+			ajax: {
+				url: 'getData.php?type=products',
+				dataType: 'json',
+				delay: 250,
+				data: function (params) {
+					return {
+						search: params.term || '',
+						page: params.page || 1
+					};
+				},
+				processResults: function (data) {
+					return {
+						results: $.map(data, function (item) {
+							return {
+								id: item.id,
+								text: item.name,
+								price: item.price,
+								cost: item.cost_price,
+								stock: item.stock_quantity
+							};
+						})
+					};
+				},
+				cache: true
+			}
 		});
 
-    	// Save supplier dynamically
-    	$('#supplierForm').on('submit', function(e) {
-    		e.preventDefault();
 
-    		$.ajax({
-    			url: 'save_supplier.php',
-    			type: 'POST',
-    			data: $(this).serialize(),
-    			dataType: 'json',
-    			success: function(response) {
-    				if (response.status === 'success') {
-	                	// Add new supplier to dropdown
-	                	$('#supplier_id').append(
-	                		`<option value="${response.id}" selected>${response.name}</option>`
-	                		).trigger('change');
-
-	                	// Close modal
-	                	$('#add_customer').modal('hide');
-
-	                	// Reset form
-	                	$('#supplierForm')[0].reset();
-	                } else {
-	                	alert('Error: ' + response.message);
-	                }
-	            }
-	        });
-    	});
-
-    	// Handle + and - clicks for quantity
-    	$(document).on('click', '.qty-plus', function() {
-    		let input = $(this).siblings('input[name="quantity[]"]');
-    		let val = parseInt(input.val()) || 0;
-    		input.val(val + 1).trigger('input');
-    	});
-
-    	$(document).on('click', '.qty-minus', function() {
-    		let input = $(this).siblings('input[name="quantity[]"]');
-    		let val = parseInt(input.val()) || 0;
-    		if (val > 1) {
-    			input.val(val - 1).trigger('input');
-    		}
-    	});
-
-		// Open modal with data
-		$(document).on('click', '.btn-edit-purchase', function() {
-	    	let id = $(this).data('purchase-id'); // fix: use purchase-id
-
-	    	$.getJSON("getData.php", { type: "get_purchase", id: id }, function(response) {
-	    		if (response.status === "success") {
-	    			let purchase = response.purchase;
-	    			let items = response.items;
-
-	            	// Fill form fields
-	            	$("#edit_purchase_id").val(purchase.id);
-	            	$("#edit_supplier_id").val(purchase.supplier_id);
-	            	$("#edit_purchase_date").val(purchase.purchase_date);
-	            	$("#edit_reference_no").val(purchase.reference_no);
-	            	$("#edit_order_tax").val(purchase.order_tax);
-	            	$("#edit_order_discount").val(purchase.discount);
-	            	$("#edit_shipping").val(purchase.shipping);
-	            	$("#edit_status").val(purchase.status);
-	            	$("#edit_description").val(purchase.description);
-
-	            	$("#summary_order_tax").text(`${parseFloat(purchase.order_tax).toFixed(2)}`);
-	            	$("#summary_discount").text(`${parseFloat(purchase.discount).toFixed(2)}`);
-	            	$("#summary_shipping").text(`${parseFloat(purchase.shipping).toFixed(2)}`);
-	            	$("#summary_grand_total").text(`${parseFloat(purchase.grand_total).toFixed(2)}`);
-
-	            	// Fill items table
-	            	let tbody = $("#editPurchaseTable tbody");
-	            	tbody.empty();
-	            	$.each(items, function(i, item) {
-	            		tbody.append(`
-	            			<tr>
-	            			<td>${item.name}<input type="hidden" name="product_id[]" value="${item.product_id}"></td>
-	            			<td>
-	            			<div class="input-group qty-control d-flex align-items-center">
-	            			<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-plus" style="width: 20px; height: 20px; padding: 0;">+</button>
-	            			<input type="text" name="quantity[]" class="form-control text-center mx-1" value="${item.quantity}" min="1" style="width: 50px;">
-	            			<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-minus" style="width: 20px; height: 20px; padding: 0;">-</button>
-	            			</div>
-	            			</td>
-	            			<td><input type="number" name="purchase_price[]" class="form-control" value="${item.purchase_price}"></td>
-	            			<td><input type="number" name="discount[]" class="form-control" value="${item.discount}"></td>
-	            			<td><input type="number" name="tax_percentage[]" class="form-control" value="${item.tax_percentage}"></td>
-	            			<td><input type="number" name="tax_amount[]" class="form-control" value="${item.tax_amount}" readonly></td>
-	            			<td><input type="number" name="unit_cost[]" class="form-control" value="${item.unit_cost}" readonly></td>
-	            			<td><input type="number" name="total_cost[]" class="form-control" value="${item.total_cost}" readonly></td>
-	            			</tr>
-	            			`);
-	            	});
-
-	            	// Show modal
-	            	$("#edit-purchase").modal("show");
-	            } else {
-	            	alert(response.message || "Failed to fetch purchase details.");
-	            }
-	        });
+	    // Remove row when trash icon clicked
+	    $(document).on('click', '.remove-row', function() {
+	     	$(this).closest('tr').remove();
 	    });
 
-		// Save changes
-		$("#editPurchaseForm").on("submit", function(e) {
-			e.preventDefault();
 
-			$.ajax({
-				url: "update_purchase.php",
-				type: "POST",
-				data: $(this).serialize(),
-				dataType: "json",
-				success: function(res) {
-					if (res.status === "success") {
-						alert("Purchase updated successfully!");
-						$("#edit-purchase").modal("hide");
+		// ---------- ADD PURCHASE PRODUCT ----------
+		$('#productSelect').on('select2:select', function (e) {
+			let data = e.params.data;
+			let productId = data.id;
+			let productName = data.text;
+			let price = parseFloat(data.price) || 0;
+			let stock = parseInt(data.stock) || 0;
+
+			if (!productId) return;
+
+			let existingRow = $('#purchaseTable tbody tr').filter(function () {
+				return $(this).find('input[name="product_id[]"]').val() == productId;
+			});
+
+			if (existingRow.length > 0) {
+        	// ✅ Already exists → increase qty
+        	let qtyInput = existingRow.find('input[name="quantity[]"]');
+        	let newQty = (parseInt(qtyInput.val()) || 0) + 1;
+        	qtyInput.val(newQty).trigger('input');
+        } else {
+        	// ➕ New product
+        	let qty = 1, discount = 0, taxPerc = 0;
+        	let subtotal = qty * price - discount;
+        	let taxAmount = (subtotal * taxPerc) / 100;
+        	let unitCost = subtotal / qty;
+        	let totalCost = subtotal + taxAmount;
+
+        	let newRow = `
+        	<tr>
+        	<td>${productName}<input type="hidden" name="product_id[]" value="${productId}"></td>
+        	<td>
+        	<div class="input-group qty-control d-flex align-items-center">
+        	<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-plus">+</button>
+        	<input type="text" name="quantity[]" class="form-control text-center mx-1" value="${qty}" min="1" max="${stock}" style="width:40px;">
+        	<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-minus">-</button>
+        	</div>
+        	</td>
+        	<td><input name="purchase_price[]" class="form-control" value="${price}" readonly></td>
+        	<td><input type="number" name="discount[]" class="form-control" value="${discount}"></td>
+        	<td><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}"></td>
+        	<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
+        	<td><input type="text" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" style="width: 125%;" readonly></td>
+        	<td><input type="text" style="width: 125%;" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
+        	<td><button type="button" class="btn btn-sm btn-danger remove-row"><i class="fas fa-trash"></i></button></td>
+        	</tr>`;
+        	$('#purchaseTable tbody').append(newRow);
+        }
+
+    	// Reset dropdown
+    	$('#productSelect').val(null).trigger('change');
+    });
+
+
+	// ---------- EDIT PURCHASE PRODUCT ----------
+	$('#editProductSelect').on('select2:select', function (e) {
+		let data = e.params.data;
+		let productId = data.id;
+		let productName = data.text;
+		let price = parseFloat(data.price) || 0;
+		let stock = parseInt(data.stock) || 0;
+
+		if (!productId) return;
+
+		let existingRow = $('#editPurchaseTable tbody tr').filter(function () {
+			return $(this).find('input[name="product_id[]"]').val() == productId;
+		});
+
+		if (existingRow.length > 0) {
+        	// ✅ Already exists → increase qty
+        	let qtyInput = existingRow.find('input[name="quantity[]"]');
+        	let newQty = (parseInt(qtyInput.val()) || 0) + 1;
+        	qtyInput.val(newQty).trigger('input');
+        } else {
+        	// ➕ New product
+        	let qty = 1, discount = 0, taxPerc = 0;
+        	let subtotal = qty * price - discount;
+        	let taxAmount = (subtotal * taxPerc) / 100;
+        	let unitCost = subtotal / qty;
+        	let totalCost = subtotal + taxAmount;
+
+        	let newRow = `
+        	<tr>
+        	<td>${productName}<input type="hidden" name="product_id[]" value="${productId}"></td>
+        	<td>
+        	<div class="input-group qty-control d-flex align-items-center">
+        	<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-plus">+</button>
+        	<input type="text" name="quantity[]" class="form-control text-center mx-1" value="${qty}" min="1" max="${stock}" style="width:40px;">
+        	<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-minus">-</button>
+        	</div>
+        	</td>
+        	<td><input name="purchase_price[]" class="form-control" value="${price}" readonly></td>
+        	<td><input type="number" name="discount[]" class="form-control" value="${discount}"></td>
+        	<td><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}"></td>
+        	<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
+        	<td><input type="text" style="width: 125%;" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" readonly></td>
+        	<td><input type="text" style="width: 125%;" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
+        	</tr>`;
+        	$('#editPurchaseTable tbody').append(newRow);
+        }
+
+        $('#editProductSelect').val(null).trigger('change');
+    });
+
+
+	// ---------- COMMON CONTROLS ----------
+	$(document).on('click', '.qty-plus', function () {
+		let input = $(this).siblings('input[name="quantity[]"]');
+		let max = parseInt(input.attr('max')) || 9999;
+		let current = parseInt(input.val()) || 0;
+		if (current < max) input.val(current + 1).trigger('input');
+	});
+
+	$(document).on('click', '.qty-minus', function () {
+		let input = $(this).siblings('input[name="quantity[]"]');
+		let min = parseInt(input.attr('min')) || 1;
+		let current = parseInt(input.val()) || 0;
+		if (current > min) input.val(current - 1).trigger('input');
+	});
+
+	// Recalculation works same for both tables
+	$(document).on('input', 'input[name="quantity[]"], input[name="purchase_price[]"], input[name="discount[]"], input[name="tax_percentage[]"]', function () {
+		let row = $(this).closest('tr');
+		let qty = parseFloat(row.find('input[name="quantity[]"]').val()) || 0;
+		let price = parseFloat(row.find('input[name="purchase_price[]"]').val()) || 0;
+		let discount = parseFloat(row.find('input[name="discount[]"]').val()) || 0;
+		let taxPerc = parseFloat(row.find('input[name="tax_percentage[]"]').val()) || 0;
+
+		let subtotal = qty * price - discount;
+		let taxAmount = (subtotal * taxPerc) / 100;
+		let unitCost = subtotal / (qty || 1);
+		let totalCost = subtotal + taxAmount;
+
+		row.find('input[name="tax_amount[]"]').val(taxAmount.toFixed(2));
+		row.find('input[name="unit_cost[]"]').val(unitCost.toFixed(2));
+		row.find('input[name="total_cost[]"]').val(totalCost.toFixed(2));
+	});
+
+    // Save supplier dynamically
+    $('#supplierForm').on('submit', function(e) {
+    	e.preventDefault();
+
+    	$.ajax({
+    		url: 'save_supplier.php',
+    		type: 'POST',
+    		data: $(this).serialize(),
+    		dataType: 'json',
+    		success: function(response) {
+    			if (response.status === 'success') {
+	                // Add new supplier to dropdown
+	                $('#supplier_id').append(
+	                	`<option value="${response.id}" selected>${response.name}</option>`
+	                	).trigger('change');
+
+	                // Close modal
+	                $('#add_customer').modal('hide');
+
+	                // Reset form
+	                $('#supplierForm')[0].reset();
+	            } else {
+	            	alert('Error: ' + response.message);
+	            }
+	        }
+	    });
+    });
+
+	// Open modal with data
+	$(document).on('click', '.btn-edit-purchase', function() {
+	    let id = $(this).data('purchase-id'); // fix: use purchase-id
+
+	    $.getJSON("getData.php", { type: "get_purchase", id: id }, function(response) {
+	    	if (response.status === "success") {
+	    		let purchase = response.purchase;
+	    		let items = response.items;
+
+	            // Fill form fields
+	            $("#edit_purchase_id").val(purchase.id);
+	            $("#edit_supplier_id").val(purchase.supplier_id);
+	            $("#edit_purchase_date").val(purchase.purchase_date);
+	            $("#edit_reference_no").val(purchase.reference_no);
+	            $("#edit_order_tax").val(purchase.order_tax);
+	            $("#edit_order_discount").val(purchase.discount);
+	            $("#edit_shipping").val(purchase.shipping);
+	            $("#edit_status").val(purchase.status);
+	            $("#edit_description").val(purchase.description);
+
+	            $("#summary_order_tax").text(`${parseFloat(purchase.order_tax).toFixed(2)}`);
+	            $("#summary_discount").text(`${parseFloat(purchase.discount).toFixed(2)}`);
+	            $("#summary_shipping").text(`${parseFloat(purchase.shipping).toFixed(2)}`);
+	            $("#summary_grand_total").text(`${parseFloat(purchase.grand_total).toFixed(2)}`);
+
+	            // Fill items table
+	            let tbody = $("#editPurchaseTable tbody");
+	            tbody.empty();
+	            $.each(items, function(i, item) {
+	            	tbody.append(`
+	            		<tr>
+	            		<td>${item.name}<input type="hidden" name="product_id[]" value="${item.product_id}"></td>
+	            		<td>
+	            		<div class="input-group qty-control d-flex align-items-center">
+	            		<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-plus" style="width: 20px; height: 20px; padding: 0;">+</button>
+	            		<input type="text" name="quantity[]" class="form-control text-center mx-1" value="${item.quantity}" min="1" style="width: 40px;">
+	            		<button type="button" class="btn btn-outline-secondary btn-sm rounded-circle qty-minus" style="width: 20px; height: 20px; padding: 0;">-</button>
+	            		</div>
+	            		</td>
+	            		<td><input type="number" name="purchase_price[]" class="form-control" value="${item.purchase_price}" readonly></td>
+	            		<td><input type="number" name="discount[]" class="form-control" value="${item.discount}"></td>
+	            		<td><input type="number" name="tax_percentage[]" class="form-control" value="${item.tax_percentage}"></td>
+	            		<td><input type="number" name="tax_amount[]" class="form-control" value="${item.tax_amount}" readonly></td>
+	            		<td><input type="number" name="unit_cost[]" class="form-control" value="${item.unit_cost}" style="width: 125%;" readonly></td>
+	            		<td><input type="number" name="total_cost[]" class="form-control" value="${item.total_cost}" style="width: 125%;" readonly></td>
+	            		</tr>
+	            		`);
+	            });
+
+	            // Show modal
+	            $("#edit-purchase").modal("show");
+	        } else {
+	        	alert(response.message || "Failed to fetch purchase details.");
+	        }
+	    });
+	});
+
+	// Save changes
+	$("#editPurchaseForm").on("submit", function(e) {
+		e.preventDefault();
+
+		$.ajax({
+			url: "purchase_update.php",
+			type: "POST",
+			data: $(this).serialize(),
+			dataType: "json",
+			success: function(res) {
+				if (res.status === "success") {
+					alert("Purchase updated successfully!");
+					$("#edit-purchase").modal("hide");
 	                location.reload(); // refresh list
 	            } else {
 	            	alert("Error updating purchase");
 	            }
 	        }
 	    });
-		});
+	});
 
-		// For Edit Purchase table
-		$(document).on('input', '#editPurchaseTable input', function() {
-			updateSummary('editPurchaseTable', 'summary_order_tax', 'summary_discount', 'summary_shipping', 'summary_grand_total');
-		});
+	// For Edit Purchase table
+	$(document).on('input', '#editPurchaseTable input', function() {
+		updateSummary('editPurchaseTable', 'summary_order_tax', 'summary_discount', 'summary_shipping', 'summary_grand_total');
+	});
 
-		// Also trigger when product is added
-		$('#editProductSelect').on('change', function() {
-			updateSummary('editPurchaseTable', 'summary_order_tax', 'summary_discount', 'summary_shipping', 'summary_grand_total');
-		}); 
+	// Also trigger when product is added
+	$('#editProductSelect').on('change', function() {
+		updateSummary('editPurchaseTable', 'summary_order_tax', 'summary_discount', 'summary_shipping', 'summary_grand_total');
+	}); 
 
-		// Function to recalc totals
-		function updateSummary(tableId, orderTaxId, discountId, shippingId, grandTotalId) {
-			let subtotal = 0;
-			let totalTax = 0;
-			let totalDiscount = 0;
+	// Function to recalc totals
+	function updateSummary(tableId, orderTaxId, discountId, shippingId, grandTotalId) {
+		let subtotal = 0;
+		let totalTax = 0;
+		let totalDiscount = 0;
 
-	    	// Loop all rows in table
-	    	$('#' + tableId + ' tbody tr').each(function() {
-	    		let qty = parseFloat($(this).find('input[name="quantity[]"]').val()) || 0;
-	    		let price = parseFloat($(this).find('input[name="purchase_price[]"]').val()) || 0;
-	    		let discount = parseFloat($(this).find('input[name="discount[]"]').val()) || 0;
-	    		let taxPerc = parseFloat($(this).find('input[name="tax_percentage[]"]').val()) || 0;
+	    // Loop all rows in table
+	    $('#' + tableId + ' tbody tr').each(function() {
+	    	let qty = parseFloat($(this).find('input[name="quantity[]"]').val()) || 0;
+	    	let price = parseFloat($(this).find('input[name="purchase_price[]"]').val()) || 0;
+	    	let discount = parseFloat($(this).find('input[name="discount[]"]').val()) || 0;
+	    	let taxPerc = parseFloat($(this).find('input[name="tax_percentage[]"]').val()) || 0;
 
-	    		let rowSubtotal = (qty * price) - discount;
-	    		let taxAmount = (rowSubtotal * taxPerc) / 100;
+	    	let rowSubtotal = (qty * price) - discount;
+	    	let taxAmount = (rowSubtotal * taxPerc) / 100;
 
-	    		subtotal += rowSubtotal;
-	    		totalTax += taxAmount;
-	    		totalDiscount += discount;
-	    	});
-
-	    	// Example: Shipping as a fixed input (or fetch from form)
-	    	let shipping = parseFloat($('#shipping').val()) || 0;
-
-	    	// Calculate grand total
-	    	let grandTotal = subtotal + totalTax + shipping;
-
-	    	// Update UI
-	    	$('#' + orderTaxId).text(totalTax.toFixed(2));
-	    	$('#' + discountId).text(totalDiscount.toFixed(2));
-	    	$('#' + shippingId).text(shipping.toFixed(2));
-	    	$('#' + grandTotalId).text(grandTotal.toFixed(2));
-	    }
-
-	    $(document).on('click', '.btn-delete-purchase', function() {
-	    	let purchaseId = $(this).data('del-purchase-id');
-	    	$("#delete_purchase_id").val(purchaseId);
-	    	$("#delete-purchase").modal("show");
+	    	subtotal += rowSubtotal;
+	    	totalTax += taxAmount;
+	    	totalDiscount += discount;
 	    });
 
-	    $('#confirmDeletePurchase').on('click', function() {
-	    	let purchaseId = $("#delete_purchase_id").val();
-	    	if (!purchaseId) {
-	    		alert("Invalid purchase ID");
-	    		return;
-	    	}
+	    // Example: Shipping as a fixed input (or fetch from form)
+	    let shipping = parseFloat($('#shipping').val()) || 0;
 
-	    	$.ajax({
-	    		url: "delete_purchase.php",
-	    		type: "POST",
-	    		data: { purchase_id: purchaseId },
-	    		dataType: "json",
-	    		success: function(res) {
-	    			if (res.status === "success") {
-	    				$("#delete-purchase").modal("hide");
-	    				alert("Purchase deleted successfully!");
+	    // Calculate grand total
+	    let grandTotal = subtotal + totalTax + shipping;
+
+	    // Update UI
+	    $('#' + orderTaxId).text(totalTax.toFixed(2));
+	    $('#' + discountId).text(totalDiscount.toFixed(2));
+	    $('#' + shippingId).text(shipping.toFixed(2));
+	    $('#' + grandTotalId).text(grandTotal.toFixed(2));
+	}
+
+	$(document).on('click', '.btn-delete-purchase', function() {
+		let purchaseId = $(this).data('del-purchase-id');
+		$("#delete_purchase_id").val(purchaseId);
+		$("#delete-purchase").modal("show");
+	});
+
+	$('#confirmDeletePurchase').on('click', function() {
+		let purchaseId = $("#delete_purchase_id").val();
+		if (!purchaseId) {
+			alert("Invalid purchase ID");
+			return;
+		}
+
+		$.ajax({
+			url: "purchase_delete.php",
+			type: "POST",
+			data: { purchase_id: purchaseId },
+			dataType: "json",
+			success: function(res) {
+				if (res.status === "success") {
+					$("#delete-purchase").modal("hide");
+					alert("Purchase deleted successfully!");
 	                	location.reload(); // refresh table/list
 	                } else {
 	                	alert(res.message || "Error deleting purchase.");
 	                }
 	            }
 	        });
-	 });
-
 	});
+
+});
 </script>
+
 <style type="text/css">
 	.qty-control {
 		max-width: 120px;
