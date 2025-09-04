@@ -12444,31 +12444,31 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Cash in Hand</td>
-								<td class="text-gray-9 fw-medium text-end">$45689</td>
+								<td class="text-gray-9 fw-medium text-end">45689</td>
 							</tr>
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$566867.97</td>
+								<td class="text-gray-9 fw-medium text-end">566867.97</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -12496,55 +12496,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Credit Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Cheque Payment:</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Points Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Gift Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Scan & Pay</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Pay Later</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense:</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -12572,19 +12572,19 @@ $page = end( $link_array );
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-success bg-success-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Sale</p>
-								<h3 class="text-success">$89954</h3>
+								<h3 class="text-success">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-danger bg-danger-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Expense</p>
-								<h3 class="text-danger">$89954</h3>
+								<h3 class="text-danger">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-info bg-info-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Profit	</p>
-								<h3 class="text-info">$2145</h3>
+								<h3 class="text-info">2145</h3>
 							</div>
 						</div>
 					</div>
@@ -12592,55 +12592,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Product Revenue</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Product Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Stock Adjustment</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Purchase Shipping Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sell Discount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sell Return</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Closing Stock</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sales</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -12719,32 +12719,32 @@ $page = end( $link_array );
 						<tbody>
 							<tr>
 								<td>1. Red Nike Laser</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td>2. Iphone 14</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>2</td>
-								<td class="text-end">$100</td>
+								<td class="text-end">100</td>
 							</tr>
 							<tr>
 								<td>3. Apple Series 8</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td colspan="4">
 									<table class="table-borderless w-100 table-fit">
 										<tr>
 											<td class="fw-bold">Sub Total :</td>
-											<td class="text-end">$700.00</td>
+											<td class="text-end">700.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Discount :</td>
-											<td class="text-end">-$50.00</td>
+											<td class="text-end">-50.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Shipping :</td>
@@ -12752,19 +12752,19 @@ $page = end( $link_array );
 										</tr>
 										<tr>
 											<td class="fw-bold">Tax (5%) :</td>
-											<td class="text-end">$5.00</td>
+											<td class="text-end">5.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Bill :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Due :</td>
-											<td class="text-end">$0.00</td>
+											<td class="text-end">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Payable :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 									</table>
 								</td>
@@ -12818,7 +12818,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$2000</p>
+									<p class="text-teal fw-bold">2000</p>
 								</div>
 								<div class="product-list bg-white align-items-center justify-content-between">
 									<div class="d-flex align-items-center product-info" data-bs-toggle="modal" data-bs-target="#products">
@@ -12830,7 +12830,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$3000</p>
+									<p class="text-teal fw-bold">3000</p>
 								</div>
 							</div>
 						</div>	
@@ -13146,7 +13146,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13172,7 +13172,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13198,7 +13198,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13224,7 +13224,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13250,7 +13250,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13276,7 +13276,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13302,7 +13302,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13373,7 +13373,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13399,7 +13399,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13425,7 +13425,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13451,7 +13451,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13477,7 +13477,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13503,7 +13503,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13529,7 +13529,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13600,7 +13600,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13626,7 +13626,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13652,7 +13652,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13678,7 +13678,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13704,7 +13704,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13730,7 +13730,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13756,7 +13756,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -13817,7 +13817,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -13841,7 +13841,7 @@ $page = end( $link_array );
 												<div class="row g-3">
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 													</div>
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -13867,7 +13867,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Anastasia</p>
@@ -13890,7 +13890,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Lucia</p>
@@ -13915,7 +13915,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $1000</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 1000</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Hugo</p>
@@ -13938,7 +13938,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $9100</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 9100</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Antonio</p>
@@ -13966,7 +13966,7 @@ $page = end( $link_array );
 						<span aria-hidden="true">×</span>
 					</button>
 					<div class="success-wrap scan-wrap text-center">
-						<h5><span class="text-gray-6">Amount to Pay :</span> $150</h5>
+						<h5><span class="text-gray-6">Amount to Pay :</span> 150</h5>
 						<div class="scan-img">
 							<img src="assets/img/icons/scan-img.svg" alt="img">
 						</div>
@@ -14331,31 +14331,31 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Cash in Hand</td>
-								<td class="text-gray-9 fw-medium text-end">$45689</td>
+								<td class="text-gray-9 fw-medium text-end">45689</td>
 							</tr>
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$566867.97</td>
+								<td class="text-gray-9 fw-medium text-end">566867.97</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -14383,55 +14383,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Credit Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Cheque Payment:</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Points Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Gift Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Scan & Pay</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Pay Later</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense:</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -14459,19 +14459,19 @@ $page = end( $link_array );
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-success bg-success-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Sale</p>
-								<h3 class="text-success">$89954</h3>
+								<h3 class="text-success">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-danger bg-danger-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Expense</p>
-								<h3 class="text-danger">$89954</h3>
+								<h3 class="text-danger">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-info bg-info-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Profit	</p>
-								<h3 class="text-info">$2145</h3>
+								<h3 class="text-info">2145</h3>
 							</div>
 						</div>
 					</div>
@@ -14479,55 +14479,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Product Revenue</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Product Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Stock Adjustment</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Purchase Shipping Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sell Discount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sell Return</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Closing Stock</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sales</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -14606,32 +14606,32 @@ $page = end( $link_array );
 						<tbody>
 							<tr>
 								<td>1. Red Nike Laser</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td>2. Iphone 14</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>2</td>
-								<td class="text-end">$100</td>
+								<td class="text-end">100</td>
 							</tr>
 							<tr>
 								<td>3. Apple Series 8</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td colspan="4">
 									<table class="table-borderless w-100 table-fit">
 										<tr>
 											<td class="fw-bold">Sub Total :</td>
-											<td class="text-end">$700.00</td>
+											<td class="text-end">700.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Discount :</td>
-											<td class="text-end">-$50.00</td>
+											<td class="text-end">-50.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Shipping :</td>
@@ -14639,19 +14639,19 @@ $page = end( $link_array );
 										</tr>
 										<tr>
 											<td class="fw-bold">Tax (5%) :</td>
-											<td class="text-end">$5.00</td>
+											<td class="text-end">5.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Bill :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Due :</td>
-											<td class="text-end">$0.00</td>
+											<td class="text-end">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Payable :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 									</table>
 								</td>
@@ -14705,7 +14705,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$2000</p>
+									<p class="text-teal fw-bold">2000</p>
 								</div>
 								<div class="product-list bg-white align-items-center justify-content-between">
 									<div class="d-flex align-items-center product-info" data-bs-toggle="modal" data-bs-target="#products">
@@ -14717,7 +14717,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$3000</p>
+									<p class="text-teal fw-bold">3000</p>
 								</div>
 							</div>
 						</div>	
@@ -15033,7 +15033,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15059,7 +15059,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15085,7 +15085,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15111,7 +15111,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15137,7 +15137,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15163,7 +15163,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15189,7 +15189,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15260,7 +15260,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15286,7 +15286,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15312,7 +15312,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15338,7 +15338,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15364,7 +15364,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15390,7 +15390,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15416,7 +15416,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15487,7 +15487,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15513,7 +15513,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15539,7 +15539,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15565,7 +15565,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15591,7 +15591,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15617,7 +15617,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15643,7 +15643,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -15704,7 +15704,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -15728,7 +15728,7 @@ $page = end( $link_array );
 												<div class="row g-3">
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 													</div>
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -15754,7 +15754,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Anastasia</p>
@@ -15777,7 +15777,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Lucia</p>
@@ -15802,7 +15802,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $1000</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 1000</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Hugo</p>
@@ -15825,7 +15825,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $9100</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 9100</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Antonio</p>
@@ -16684,31 +16684,31 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Cash in Hand</td>
-								<td class="text-gray-9 fw-medium text-end">$45689</td>
+								<td class="text-gray-9 fw-medium text-end">45689</td>
 							</tr>
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$566867.97</td>
+								<td class="text-gray-9 fw-medium text-end">566867.97</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -16736,55 +16736,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Credit Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Cheque Payment:</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Points Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Gift Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Scan & Pay</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Pay Later</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense:</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -16812,19 +16812,19 @@ $page = end( $link_array );
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-success bg-success-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Sale</p>
-								<h3 class="text-success">$89954</h3>
+								<h3 class="text-success">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-danger bg-danger-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Expense</p>
-								<h3 class="text-danger">$89954</h3>
+								<h3 class="text-danger">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-info bg-info-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Profit	</p>
-								<h3 class="text-info">$2145</h3>
+								<h3 class="text-info">2145</h3>
 							</div>
 						</div>
 					</div>
@@ -16832,55 +16832,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Product Revenue</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Product Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Stock Adjustment</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Purchase Shipping Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sell Discount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sell Return</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Closing Stock</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sales</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -16959,32 +16959,32 @@ $page = end( $link_array );
 						<tbody>
 							<tr>
 								<td>1. Red Nike Laser</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td>2. Iphone 14</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>2</td>
-								<td class="text-end">$100</td>
+								<td class="text-end">100</td>
 							</tr>
 							<tr>
 								<td>3. Apple Series 8</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td colspan="4">
 									<table class="table-borderless w-100 table-fit">
 										<tr>
 											<td class="fw-bold">Sub Total :</td>
-											<td class="text-end">$700.00</td>
+											<td class="text-end">700.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Discount :</td>
-											<td class="text-end">-$50.00</td>
+											<td class="text-end">-50.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Shipping :</td>
@@ -16992,19 +16992,19 @@ $page = end( $link_array );
 										</tr>
 										<tr>
 											<td class="fw-bold">Tax (5%) :</td>
-											<td class="text-end">$5.00</td>
+											<td class="text-end">5.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Bill :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Due :</td>
-											<td class="text-end">$0.00</td>
+											<td class="text-end">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Payable :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 									</table>
 								</td>
@@ -17058,7 +17058,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$2000</p>
+									<p class="text-teal fw-bold">2000</p>
 								</div>
 								<div class="product-list bg-white align-items-center justify-content-between">
 									<div class="d-flex align-items-center product-info" data-bs-toggle="modal" data-bs-target="#products">
@@ -17070,7 +17070,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$3000</p>
+									<p class="text-teal fw-bold">3000</p>
 								</div>
 							</div>
 						</div>	
@@ -17386,7 +17386,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17412,7 +17412,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17438,7 +17438,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17464,7 +17464,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17490,7 +17490,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17516,7 +17516,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17542,7 +17542,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17613,7 +17613,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17639,7 +17639,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17665,7 +17665,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17691,7 +17691,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17717,7 +17717,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17743,7 +17743,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17769,7 +17769,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17840,7 +17840,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17866,7 +17866,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17892,7 +17892,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17918,7 +17918,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17944,7 +17944,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17970,7 +17970,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -17996,7 +17996,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -18057,7 +18057,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -18081,7 +18081,7 @@ $page = end( $link_array );
 												<div class="row g-3">
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 													</div>
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -18107,7 +18107,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Anastasia</p>
@@ -18130,7 +18130,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Lucia</p>
@@ -18155,7 +18155,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $1000</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 1000</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Hugo</p>
@@ -18178,7 +18178,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $9100</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 9100</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Antonio</p>
@@ -19070,31 +19070,31 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Cash in Hand</td>
-								<td class="text-gray-9 fw-medium text-end">$45689</td>
+								<td class="text-gray-9 fw-medium text-end">45689</td>
 							</tr>
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$566867.97</td>
+								<td class="text-gray-9 fw-medium text-end">566867.97</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -19122,55 +19122,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Credit Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Cheque Payment:</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Points Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Gift Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Scan & Pay</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Pay Later</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense:</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -19198,19 +19198,19 @@ $page = end( $link_array );
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-success bg-success-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Sale</p>
-								<h3 class="text-success">$89954</h3>
+								<h3 class="text-success">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-danger bg-danger-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Expense</p>
-								<h3 class="text-danger">$89954</h3>
+								<h3 class="text-danger">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-info bg-info-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Profit	</p>
-								<h3 class="text-info">$2145</h3>
+								<h3 class="text-info">2145</h3>
 							</div>
 						</div>
 					</div>
@@ -19218,55 +19218,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Product Revenue</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Product Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Stock Adjustment</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Purchase Shipping Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sell Discount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sell Return</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Closing Stock</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sales</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -19302,11 +19302,11 @@ $page = end( $link_array );
 										<tr>
 											<th>Product</th>
 											<th>Qty</th>
-											<th>Purchase Price($)</th>
-											<th>Discount($)</th>
+											<th>Purchase Price()</th>
+											<th>Discount()</th>
 											<th>Tax(%)</th>
-											<th>Tax Amount($)</th>
-											<th>Unit Cost($)</th>
+											<th>Tax Amount()</th>
+											<th>Unit Cost()</th>
 											<th>Total Cost(%)</th>
 										</tr>
 									</thead>
@@ -19383,19 +19383,19 @@ $page = end( $link_array );
 										<ul class="border-1 rounded-2">
 											<li class="border-bottom">
 												<h4 class="border-end">Order Tax</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-bottom">
 												<h4 class="border-end">Discount</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-bottom">
 												<h4 class="border-end">Shipping</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-bottom">
 												<h4 class="border-end">Grand Total</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 										</ul>
 									</div>
@@ -19536,11 +19536,11 @@ $page = end( $link_array );
 										<thead>
 											<tr>
 												<th>Product</th>
-												<th>Purchase Price($)</th>
-												<th>Discount($)</th>
+												<th>Purchase Price()</th>
+												<th>Discount()</th>
 												<th>Tax(%)</th>
-												<th>Tax Amount($)</th>
-												<th>Unit Cost($)</th>
+												<th>Tax Amount()</th>
+												<th>Unit Cost()</th>
 												<th>Total Cost(%)</th>
 											</tr>
 										</thead>
@@ -19612,23 +19612,23 @@ $page = end( $link_array );
 											<ul class="rounded-3">
 												<li>
 													<h4>Order Tax</h4>
-													<h5>$ 0.00</h5>
+													<h5> 0.00</h5>
 												</li>
 												<li>
 													<h4>Discount</h4>
-													<h5>$ 0.00</h5>
+													<h5> 0.00</h5>
 												</li>
 												<li>
 													<h4>Grand Total</h4>
-													<h5>$ 5200.00</h5>
+													<h5> 5200.00</h5>
 												</li>
 												<li>
 													<h4>Paid</h4>
-													<h5>$ 5200.00</h5>
+													<h5> 5200.00</h5>
 												</li>
 												<li>
 													<h4>Due</h4>
-													<h5>$ 0.00</h5>
+													<h5> 0.00</h5>
 												</li>
 											</ul>
 										</div>
@@ -19672,11 +19672,11 @@ $page = end( $link_array );
 												<tr>
 													<th>Product</th>
 													<th>Qty</th>
-													<th>Purchase Price($)</th>
-													<th>Discount($)</th>
+													<th>Purchase Price()</th>
+													<th>Discount()</th>
 													<th>Tax(%)</th>
-													<th>Tax Amount($)</th>
-													<th>Unit Cost($)</th>
+													<th>Tax Amount()</th>
+													<th>Unit Cost()</th>
 													<th>Total Cost(%)</th>
 												</tr>
 											</thead>
@@ -19819,19 +19819,19 @@ $page = end( $link_array );
 												<ul class="border-1 rounded-1">
 													<li class="border-bottom">
 														<h4 class="border-end">Order Tax</h4>
-														<h5>$ 0.00</h5>
+														<h5> 0.00</h5>
 													</li>
 													<li class="border-bottom">
 														<h4 class="border-end">Discount</h4>
-														<h5>$ 0.00</h5>
+														<h5> 0.00</h5>
 													</li>
 													<li class="border-bottom">
 														<h4 class="border-end">Shipping</h4>
-														<h5>$ 0.00</h5>
+														<h5> 0.00</h5>
 													</li>
 													<li class="border-bottom">
 														<h4 class="border-end">Grand Total</h4>
-														<h5>$5200.00</h5>
+														<h5>5200.00</h5>
 													</li>
 												</ul>
 											</div>
@@ -19927,7 +19927,7 @@ $page = end( $link_array );
 											<tr>
 												<td>19 Jan 2023</td>
 												<td>INV/SL0101</td>
-												<td>$1500</td>
+												<td>1500</td>
 												<td>Cash</td>
 												<td>
 													<div class="edit-delete-action d-flex align-items-center">
@@ -20204,32 +20204,32 @@ $page = end( $link_array );
 						<tbody>
 							<tr>
 								<td>1. Red Nike Laser</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td>2. Iphone 14</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>2</td>
-								<td class="text-end">$100</td>
+								<td class="text-end">100</td>
 							</tr>
 							<tr>
 								<td>3. Apple Series 8</td>
-								<td>$50</td>
+								<td>50</td>
 								<td>3</td>
-								<td class="text-end">$150</td>
+								<td class="text-end">150</td>
 							</tr>
 							<tr>
 								<td colspan="4">
 									<table class="table-borderless w-100 table-fit">
 										<tr>
 											<td class="fw-bold">Sub Total :</td>
-											<td class="text-end">$700.00</td>
+											<td class="text-end">700.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Discount :</td>
-											<td class="text-end">-$50.00</td>
+											<td class="text-end">-50.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Shipping :</td>
@@ -20237,19 +20237,19 @@ $page = end( $link_array );
 										</tr>
 										<tr>
 											<td class="fw-bold">Tax (5%) :</td>
-											<td class="text-end">$5.00</td>
+											<td class="text-end">5.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Bill :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Due :</td>
-											<td class="text-end">$0.00</td>
+											<td class="text-end">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Payable :</td>
-											<td class="text-end">$655.00</td>
+											<td class="text-end">655.00</td>
 										</tr>
 									</table>
 								</td>
@@ -20303,7 +20303,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$2000</p>
+									<p class="text-teal fw-bold">2000</p>
 								</div>
 								<div class="product-list bg-white align-items-center justify-content-between">
 									<div class="d-flex align-items-center product-info" data-bs-toggle="modal" data-bs-target="#products">
@@ -20315,7 +20315,7 @@ $page = end( $link_array );
 											<p>Quantity : 04</p>
 										</div>
 									</div>
-									<p class="text-teal fw-bold">$3000</p>
+									<p class="text-teal fw-bold">3000</p>
 								</div>
 							</div>
 						</div>	
@@ -20631,7 +20631,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20657,7 +20657,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20683,7 +20683,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20709,7 +20709,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20735,7 +20735,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20761,7 +20761,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20787,7 +20787,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20858,7 +20858,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20884,7 +20884,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20910,7 +20910,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20936,7 +20936,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20962,7 +20962,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -20988,7 +20988,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21014,7 +21014,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21085,7 +21085,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0101</td>
 														<td>24 Dec 2024</td>
-														<td>$1000</td>
+														<td>1000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21111,7 +21111,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0102</td>
 														<td>10 Dec 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21137,7 +21137,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0103</td>
 														<td>27 Nov 2024</td>
-														<td>$1500</td>
+														<td>1500</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21163,7 +21163,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0104</td>
 														<td>18 Nov 2024</td>
-														<td>$2000</td>
+														<td>2000</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21189,7 +21189,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0105</td>
 														<td>06 Nov 2024</td>
-														<td>$800</td>
+														<td>800</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21215,7 +21215,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0106</td>
 														<td>25 Oct 2024</td>
-														<td>$750</td>
+														<td>750</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21241,7 +21241,7 @@ $page = end( $link_array );
 														</td>
 														<td>INV/SL0107</td>
 														<td>14 Oct 2024</td>
-														<td>$1300</td>
+														<td>1300</td>
 														<td class="action-table-data">
 															<div class="edit-delete-action">
 																<a class="me-2 edit-icon p-2" href="javascript:void(0);"><i data-feather="eye" class="feather-eye"></i></a>
@@ -21302,7 +21302,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -21326,7 +21326,7 @@ $page = end( $link_array );
 												<div class="row g-3">
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+														<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 													</div>
 													<div class="col-md-6">
 														<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Botsford</p>
@@ -21352,7 +21352,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Anastasia</p>
@@ -21375,7 +21375,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $900</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 900</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Lucia</p>
@@ -21400,7 +21400,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $1000</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 1000</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Hugo</p>
@@ -21423,7 +21423,7 @@ $page = end( $link_array );
 											<div class="row g-3">
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> admin</p>
-													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> $9100</p>
+													<p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> 9100</p>
 												</div>
 												<div class="col-md-6">
 													<p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span>  Antonio</p>
@@ -21451,7 +21451,7 @@ $page = end( $link_array );
 						<span aria-hidden="true">×</span>
 					</button>
 					<div class="success-wrap scan-wrap text-center">
-						<h5><span class="text-gray-6">Amount to Pay :</span> $150</h5>
+						<h5><span class="text-gray-6">Amount to Pay :</span> 150</h5>
 						<div class="scan-img">
 							<img src="assets/img/icons/scan-img.svg" alt="img">
 						</div>
@@ -21604,9 +21604,9 @@ $page = end( $link_array );
 							</div>
 							<h3 class="mb-2">Congratulations, Sale Completed</h3>
 							<div class="p-2 d-flex align-items-center justify-content-center gap-2 flex-wrap mb-3">
-								<p class="fs-13 fw-medium pe-2 border-end mb-0">Bill Amount : <span class="text-gray-9">$150</span></p>
-								<p class="fs-13 fw-medium pe-2 border-end mb-0">Total Paid : <span class="text-gray-9">$200</span></p>
-								<p class="fs-13 fw-medium mb-0">Change : <span class="text-gray-9">$50</span></p>
+								<p class="fs-13 fw-medium pe-2 border-end mb-0">Bill Amount : <span class="text-gray-9">150</span></p>
+								<p class="fs-13 fw-medium pe-2 border-end mb-0">Total Paid : <span class="text-gray-9">200</span></p>
+								<p class="fs-13 fw-medium mb-0">Change : <span class="text-gray-9">50</span></p>
 							</div>
 						</div>
 						<div class="bg-success-transparent p-2 mb-3 br-5 border-start border-success d-flex align-items-center">
@@ -21643,7 +21643,7 @@ $page = end( $link_array );
 							</div>
 							<h3 class="mb-2">Congratulations, Sale Completed</h3>
 							<div class="p-2 text-center mb-3">
-								<p class="fs-13 fw-medium">Bill Amount : <span class="text-gray-9">$150</span></p>
+								<p class="fs-13 fw-medium">Bill Amount : <span class="text-gray-9">150</span></p>
 							</div>
 						</div>
 						<div class="bg-success-transparent p-2 mb-3 br-5 border-start border-success d-flex align-items-center">
@@ -21717,7 +21717,7 @@ $page = end( $link_array );
 							<span class="avatar avatar-sm bg-danger rounded-circle fs-16 me-2">
 								<i class="ti ti-gift"></i>
 							</span>
-							<p class="fs-16 text-gray-9">Available gift card balance : $45.56</p>
+							<p class="fs-16 text-gray-9">Available gift card balance : 45.56</p>
 						</div>
 						<div>
 							<input type="text" class="form-control" placeholder="Enter Bill Amount">
@@ -21755,7 +21755,7 @@ $page = end( $link_array );
 							<span class="avatar avatar-sm bg-success rounded-circle fs-16 me-2">
 								<i class="ti ti-gift"></i>
 							</span>
-							<p class="fs-16 text-gray-9">Available gift card balance : $45.56</p>
+							<p class="fs-16 text-gray-9">Available gift card balance : 45.56</p>
 						</div>
 						<div>
 							<input type="text" class="form-control" placeholder="Enter Bill Amount">
@@ -21790,7 +21790,7 @@ $page = end( $link_array );
 							<div class="card-body d-flex align-items-center justify-content-between">
 								<div>
 									<p class="fs-13 mb-1">Tablet 1.02 inch</p>
-									<h6 class="fs-13 fw-semibold">$3000</h6>
+									<h6 class="fs-13 fw-semibold">3000</h6>
 								</div>
 								<div class="qty-item m-0">
 									<a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus"><i class="ti ti-minus"></i></a>
@@ -22621,31 +22621,31 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Cash in Hand</td>
-								<td class="text-gray-9 fw-medium text-end">$45689</td>
+								<td class="text-gray-9 fw-medium text-end">45689</td>
 							</tr>
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$566867.97</td>
+								<td class="text-gray-9 fw-medium text-end">566867.97</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -22673,55 +22673,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Total Sale Amount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Cash Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Credit Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end"1959</td>
 							</tr>
 							<tr>
 								<td>Cheque Payment:</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Points Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Gift Card Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Scan & Pay</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Pay Later</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end"565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense:</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -22749,19 +22749,19 @@ $page = end( $link_array );
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-success bg-success-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Sale</p>
-								<h3 class="text-success">$89954</h3>
+								<h3 class="text-success">89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-danger bg-danger-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Expense</p>
-								<h3 class="text-danger">$89954</h3>
+								<h3 class="text-danger"89954</h3>
 							</div>
 						</div>
 						<div class="col-lg-4 col-md-6 d-flex">
 							<div class="border border-info bg-info-transparent br-8 p-3 flex-fill">
 								<p class="fs-16 text-gray-9 mb-1">Total Profit	</p>
-								<h3 class="text-info">$2145</h3>
+								<h3 class="text-info">2145</h3>
 							</div>
 						</div>
 					</div>
@@ -22769,55 +22769,55 @@ $page = end( $link_array );
 						<table class="table table-striped border">
 							<tr>
 								<td>Product Revenue</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Product Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$1959</td>
+								<td class="text-gray-9 fw-medium text-end">1959</td>
 							</tr>
 							<tr>
 								<td>Total Stock Adjustment</td>
-								<td class="text-gray-9 fw-medium text-end">$0</td>
+								<td class="text-gray-9 fw-medium text-end">0</td>
 							</tr>
 							<tr>
 								<td>Deposit Payment</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Purchase Shipping Cost</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end"3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sell Discount</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sell Return</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Closing Stock</td>
-								<td class="text-gray-9 fw-medium text-end">$3355.84</td>
+								<td class="text-gray-9 fw-medium text-end">3355.84</td>
 							</tr>
 							<tr>
 								<td>Total Sales</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Sale Return</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end"565597.88</td>
 							</tr>
 							<tr>
 								<td>Total Expense</td>
-								<td class="text-gray-9 fw-medium text-end">$565597.88</td>
+								<td class="text-gray-9 fw-medium text-end">565597.88</td>
 							</tr>
 							<tr>
 								<td class="text-gray-9 fw-bold bg-secondary-transparent">Total Cash</td>
-								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">$587130.97</td>
+								<td class="text-gray-9 fw-bold text-end bg-secondary-transparent">587130.97</td>
 							</tr>
 						</table>
 					</div>
@@ -24040,9 +24040,9 @@ $page = end( $link_array );
 										<th>Supplier</th>
 										<th>Reference</th>
 										<th>Status</th>
-										<th>Total ($)</th>
-										<th>Paid ($)</th>
-										<th>Due ($)</th>
+										<th>Total ()</th>
+										<th>Paid ()</th>
+										<th>Due ()</th>
 										<th>Payment Status</th>
 									</tr>
 								</thead>
@@ -24210,9 +24210,9 @@ $page = end( $link_array );
 											<th>Supplier</th>
 											<th>Reference</th>
 											<th>Status</th>
-											<th>Total ($)</th>
-											<th>Paid ($)</th>
-											<th>Due ($)</th>
+											<th>Total ()</th>
+											<th>Paid ()</th>
+											<th>Due ()</th>
 											<th>Payment Status</th>
 										</tr>
 									</thead>
@@ -24227,9 +24227,9 @@ $page = end( $link_array );
 											<td>Electro Mart</td>
 											<td>PT001</td>
 											<td><span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span></td>
-											<td>$1000</td>
-											<td>$1000</td>
-											<td>$600</td>
+											<td>1000</td>
+											<td>1000</td>
+											<td>600</td>
 											<td><span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span></td>
 										</tr>
 					
@@ -24243,19 +24243,19 @@ $page = end( $link_array );
 									<ul class="border-1 rounded-1">
 										<li class="border-0 border-bottom">
 											<h4 class="border-0 text-gray-9">Order Tax</h4>
-											<h5 class="text-gray-9">$ 0.00</h5>
+											<h5 class="text-gray-9"> 0.00</h5>
 										</li>
 										<li class="border-0 border-bottom">
 											<h4 class="border-0 text-gray-9">Discount</h4>
-											<h5 class="text-gray-9">$ 0.00</h5>
+											<h5 class="text-gray-9"> 0.00</h5>
 										</li>
 										<li class="border-0 border-bottom">
 											<h4 class="border-0 text-gray-9">Shipping</h4>
-											<h5 class="text-gray-9">$ 0.00</h5>
+											<h5 class="text-gray-9" 0.00</h5>
 										</li>
 										<li class="total border-0 border-bottom">
 											<h4 class="border-0 text-gray-9">Grand Total</h4>
-											<h5 class="text-gray-9">$ 0.00</h5>
+											<h5 class="text-gray-9"> 0.00</h5>
 										</li>
 									</ul>
 								</div>
@@ -24400,7 +24400,7 @@ $page = end( $link_array );
 										<td class="text-end">30 Days</td>
 										<td class="text-end">12 Sep 2024</td>
 										<td class="text-end">12 Oct 2024</td>
-										<td class="text-end">$200</td>
+										<td class="text-end">200</td>
 									</tr>
 								</tbody>
 							</table>
@@ -24413,22 +24413,22 @@ $page = end( $link_array );
 								<p class="mb-0">Credit Card - 123***********789</p>
 								<div class="d-flex justify-content-between align-items-center mb-2 pe-3">
 									<p class="mb-0">Amount</p>
-									<p class="text-dark fw-medium mb-2">$200.00</p>
+									<p class="text-dark fw-medium mb-2">200.00</p>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="d-flex justify-content-between align-items-center pe-3">
 								<p class="text-dark fw-medium mb-0">Sub Total</p>
-								<p class="mb-2">$200.00</p>
+								<p class="mb-2">200.00</p>
 							</div>
 							<div class="d-flex justify-content-between align-items-center pe-3">
 								<p class="text-dark fw-medium mb-0">Tax </p>
-								<p class="mb-2">$0.00</p>
+								<p class="mb-2">0.00</p>
 							</div>
 							<div class="d-flex justify-content-between align-items-center pe-3">
 								<p class="text-dark fw-medium mb-0">Total</p>
-								<p class="text-dark fw-medium mb-2">$200.00</p>
+								<p class="text-dark fw-medium mb-2">200.00</p>
 							</div>
 						</div>
 					</div>
@@ -24606,11 +24606,11 @@ $page = end( $link_array );
 												<tr>
 													<th>Product</th>
 													<th>Qty</th>
-													<th>Purchase Price($)</th>
-													<th>Discount($)</th>
+													<th>Purchase Price()</th>
+													<th>Discount()</th>
 													<th>Tax(%)</th>
-													<th>Tax Amount($)</th>
-													<th>Unit Cost($)</th>
+													<th>Tax Amount()</th>
+													<th>Unit Cost()</th>
 													<th>Total Cost(%)</th>
 												</tr>
 											</thead>
@@ -24765,11 +24765,11 @@ $page = end( $link_array );
 										<tr>
 											<th>Product</th>
 											<th>Qty</th>
-											<th>Purchase Price($)</th>
-											<th>Discount($)</th>
+											<th>Purchase Price()</th>
+											<th>Discount()</th>
 											<th>Tax(%)</th>
-											<th>Tax Amount($)</th>
-											<th>Unit Cost($)</th>
+											<th>Tax Amount()</th>
+											<th>Unit Cost()</th>
 											<th>Total Cost(%)</th>
 										</tr>
 									</thead>
@@ -24859,19 +24859,19 @@ $page = end( $link_array );
 										<ul class="rounded-1 border-1">
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Order Tax</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Discount</h4>
-												<h5>$ 0.00</h5>
+												<h5 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Shipping</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Grand Total</h4>
-												<h5>$5200.00</h5>
+												<h5>5200.00</h5>
 											</li>
 										</ul>
 									</div>
@@ -25295,12 +25295,12 @@ $page = end( $link_array );
 									<thead>
 										<tr>
 											<th>Product Name</th>
-											<th>Net Unit Price($)	</th>
+											<th>Net Unit Price()	</th>
 											<th>Stock</th>
 											<th>QTY	</th>
-											<th>Discount($)	</th>
+											<th>Discount()	</th>
 											<th>Tax %</th>
-											<th>Subtotal ($)</th>
+											<th>Subtotal ()</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -25323,19 +25323,19 @@ $page = end( $link_array );
 										<ul class="rounded-1 border-1">
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Order Tax</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Discount</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Shipping</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Grand Total</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 										</ul>
 									</div>
@@ -25458,12 +25458,12 @@ $page = end( $link_array );
 									<thead>
 										<tr>
 											<th>Product Name</th>
-											<th>Net Unit Price($)	</th>
+											<th>Net Unit Price()	</th>
 											<th>Stock</th>
 											<th>QTY	</th>
-											<th>Discount($)	</th>
+											<th>Discount()	</th>
 											<th>Tax %</th>
-											<th>Subtotal ($)</th>
+											<th>Subtotal ()</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -25509,19 +25509,19 @@ $page = end( $link_array );
 										<ul class="rounded-1 border-1">
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Order Tax</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Discount</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Shipping</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 											<li class="border-0 border-bottom">
 												<h4 class="border-end">Grand Total</h4>
-												<h5>$ 0.00</h5>
+												<h5> 0.00</h5>
 											</li>
 										</ul>
 									</div>
@@ -27343,7 +27343,7 @@ $page = end( $link_array );
 					<div>
 						<p>
 							Hi <span class="text-orange">{Customer Name}</span>, thank you for shopping with us at <span class="text-orange">{Store Name}</span>! 
-							Your order # <span class="text-orange">{Order ID}</span> has been confirmed. Total: <span class="text-orange">${Amount}</span>. For queries, call <span class="text-orange">{Phone Number}</span>
+							Your order # <span class="text-orange">{Order ID}</span> has been confirmed. Total: <span class="text-orange">{Amount}</span>. For queries, call <span class="text-orange">{Phone Number}</span>
 						</p>
 					</div>
 				</div>
@@ -28650,7 +28650,7 @@ $page = end( $link_array );
 										<td>30 Days</td>
 										<td>12 Sep 2024</td>
 										<td>12 Oct 2024</td>
-										<td>$200</td>
+										<td>200</td>
 									</tr>
 								</tbody>
 							</table>
@@ -28663,22 +28663,22 @@ $page = end( $link_array );
 								<p class="mb-0">Credit Card - 123***********789</p>
 								<div class="d-flex justify-content-between align-items-center mb-2 pe-3">
 									<p class="mb-0">Amount</p>
-									<p class="text-dark fw-medium mb-2">$200.00</p>
+									<p class="text-dark fw-medium mb-2">200.00</p>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="d-flex justify-content-between align-items-center pe-3">
 								<p class="text-dark fw-medium mb-0">Sub Total</p>
-								<p class="mb-2">$200.00</p>
+								<p class="mb-2">200.00</p>
 							</div>
 							<div class="d-flex justify-content-between align-items-center pe-3">
 								<p class="text-dark fw-medium mb-0">Tax </p>
-								<p class="mb-2">$0.00</p>
+								<p class="mb-2">0.00</p>
 							</div>
 							<div class="d-flex justify-content-between align-items-center pe-3">
 								<p class="text-dark fw-medium mb-0">Total</p>
-								<p class="text-dark fw-medium mb-2">$200.00</p>
+								<p class="text-dark fw-medium mb-2">200.00</p>
 							</div>
 						</div>
 					</div>
