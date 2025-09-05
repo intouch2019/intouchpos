@@ -6,32 +6,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Sanitize main purchase fields
     $supplier_id   = intval($_POST['return_supplier_id']);
-    $purchase_date = date('Y-m-d', strtotime($_POST['purchase_date'])); 
-    $reference_no  = mysqli_real_escape_string($link, $_POST['reference_no']);
-    $order_tax     = floatval($_POST['order_tax'] ?? 0);
-    $discount      = floatval($_POST['order_discount'] ?? 0);
-    $shipping      = mysqli_real_escape_string($link, $_POST['shipping'] ?? '');
+    $return_date = date('Y-m-d', strtotime($_POST['purchase_date'])); 
+    $purchase_id  = $_POST['purchase_reference'];
+    $order_tax     = floatval($_POST['order_tax'] ?? 0.00);
+    $discount      = floatval($_POST['order_discount'] ?? 0.00);
+    $shipping      = floatval($_POST['shipping'] ?? 0.00);
     $status        = mysqli_real_escape_string($link, $_POST['status']);
     $description   = mysqli_real_escape_string($link, $_POST['description'] ?? '');
-    $purchase_status = 1;
+
     // Calculate grand total from items
     $grand_total = 0;
     foreach ($_POST['total_cost'] as $tc) {
         $grand_total += floatval($tc);
     }
 
+    // Get purchase reference number
+    $query_prno = "SELECT reference_no FROM purchase WHERE id = $purchase_id";
+    $result_prno = mysqli_query($link, $query_prno);
+    $purchase_no = '';
+
+    if ($result_prno && mysqli_num_rows($result_prno) > 0) {
+        $row = mysqli_fetch_assoc($result_prno);
+        $purchase_no = $row['reference_no'];
+    }
+
     // Insert purchase
-    $query = "INSERT INTO purchase (supplier_id, purchase_date, reference_no, order_tax, discount, shipping, grand_total, status, description, purchase_status) 
-    VALUES ('$supplier_id', '$purchase_date', '$reference_no', '$order_tax', '$discount', '$shipping', '$grand_total', '$status', '$description', '$purchase_status')";
+    $query = "INSERT INTO purchase_returns (supplier_id, purchase_id, purchase_no, return_date, order_tax, discount, shipping, status, description, total_return_amount) 
+    VALUES ('$supplier_id', '$purchase_id', '$purchase_no', '$return_date', '$order_tax', '$discount', '$shipping', '$status', '$description', '$grand_total')";
 
     if (mysqli_query($link, $query)) {
-        $purchase_id = mysqli_insert_id($link);
+        $return_id = mysqli_insert_id($link);
 
         // Insert purchase items
         $product_ids      = $_POST['product_id'];
-        $quantities       = $_POST['quantity'];
+        $prod_qty         = $_POST['prod_qty'];
+        $return_qty       = $_POST['return_qty'];
         $purchase_prices  = $_POST['purchase_price'];
-        $discounts        = $_POST['discount'];
         $tax_percentages  = $_POST['tax_percentage'];
         $tax_amounts      = $_POST['tax_amount'];
         $unit_costs       = $_POST['unit_cost'];
@@ -39,20 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         for ($i = 0; $i < count($product_ids); $i++) {
             $pid        = intval($product_ids[$i]);
-            $qty        = intval($quantities[$i]);
+            $p_qty      = intval($prod_qty[$i]);
+            $r_qty      = intval($return_qty[$i]);
             $pprice     = floatval($purchase_prices[$i]);
-            $disc       = floatval($discounts[$i]);
             $taxPerc    = floatval($tax_percentages[$i]);
             $taxAmt     = floatval($tax_amounts[$i]);
             $unitCost   = floatval($unit_costs[$i]);
             $totalCost  = floatval($total_costs[$i]);
 
-            $itemQuery = "INSERT INTO purchase_items (purchase_id, product_id, quantity, purchase_price, discount, tax_percentage, tax_amount, unit_cost, total_cost) 
-            VALUES ('$purchase_id', '$pid', '$qty', '$pprice', '$disc', '$taxPerc', '$taxAmt', '$unitCost', '$totalCost')";
+            $itemQuery = "INSERT INTO purchase_return_items (purchase_return_id, product_id, purchased_qty, return_qty, purchase_price, tax_percentage, tax_amount, unit_cost, total_return) 
+            VALUES ('$return_id', '$pid', '$p_qty', '$r_qty', '$pprice', '$taxPerc', '$taxAmt', '$unitCost', '$totalCost')";
             mysqli_query($link, $itemQuery);
 
             // ✅ Update stock quantity in products table
-            $updateStock = "UPDATE products SET stock_quantity = stock_quantity - $qty WHERE id = $pid";
+            $updateStock = "UPDATE products SET stock_quantity = stock_quantity - $r_qty WHERE id = $pid";
             mysqli_query($link, $updateStock);
         }
 

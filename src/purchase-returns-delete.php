@@ -5,10 +5,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['purchase_id']);
 
     // Fetch items first to update stock
-    $itemsQuery = mysqli_query($link, "SELECT product_id, quantity FROM purchase_items WHERE purchase_id = $id");
+    $itemsQuery = mysqli_query($link, "SELECT product_id, return_qty FROM purchase_return_items WHERE purchase_return_id = $id");
     while ($item = mysqli_fetch_assoc($itemsQuery)) {
         $pid = intval($item['product_id']);
-        $qty = intval($item['quantity']);
+        $qty = intval($item['return_qty']);
 
         // Restore stock (subtract purchased quantity)
         $updateStock = "UPDATE products SET stock_quantity = stock_quantity + $qty WHERE id = $pid";
@@ -16,10 +16,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Delete purchase items
-    mysqli_query($link, "DELETE FROM purchase_items WHERE purchase_id = $id");
+    mysqli_query($link, "DELETE FROM purchase_return_items WHERE purchase_return_id = $id");
 
     // Delete purchase
-    $deletePurchase = mysqli_query($link, "DELETE FROM purchase WHERE id = $id");
+    $deletePurchase = mysqli_query($link, "DELETE FROM purchase_returns WHERE id = $id");
 
     if ($deletePurchase) {
         echo json_encode(["status" => "success"]);

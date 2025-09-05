@@ -23443,7 +23443,6 @@ $page = end( $link_array );
 	</div>
 	<!-- /Import Product -->
 <?php }?>
-
 <?php if ($page === 'purchase-list.php'){?>
 	<!-- Add Purchase -->
 	<div class="modal fade" id="add-purchase">
@@ -23489,8 +23488,8 @@ $page = end( $link_array );
 							</div>
 							<div class="col-lg-4 col-sm-12">
 								<div class="mb-3">
-									<label class="form-label">Reference<span class="text-danger ms-1">*</span></label>
-									<input type="text" name="reference_no" class="form-control">
+									<label class="form-label">Purchase No.<span class="text-danger ms-1">*</span></label>
+									<input type="text" name="reference_no" class="form-control" readonly>
 								</div>
 							</div>
 						</div>
@@ -23499,7 +23498,7 @@ $page = end( $link_array );
 								<div class="mb-3">
 									<label class="form-label">Product<span class="text-danger ms-1">*</span></label>
 									<select id="productSelect" class="form-control" style="width:100%;">
-									    <option value="">Search Product</option>
+									  	<option value="">Search Product</option>
 									</select>
 								</div>
 							</div>
@@ -23517,7 +23516,7 @@ $page = end( $link_array );
 										            <th>Tax Amount</th>
 										            <th>Unit Cost</th>
 										            <th>Total Cost</th>
-                                                                                            <th>Action</th>
+										            <th>Action</th>
 										        </tr>
 										    </thead>
 										    <tbody></tbody>
@@ -23649,8 +23648,8 @@ $page = end( $link_array );
 	                        <!-- Reference -->
 	                        <div class="col-lg-4 col-sm-12">
 	                            <div class="mb-3">
-	                                <label class="form-label">Reference<span class="text-danger ms-1">*</span></label>
-	                                <input type="text" class="form-control" name="reference_no" id="edit_reference_no">
+	                                <label class="form-label">Purchase No.<span class="text-danger ms-1">*</span></label>
+	                                <input type="text" class="form-control" name="reference_no" id="edit_reference_no" readonly>
 	                            </div>
 	                        </div>
 	                    </div>
@@ -23661,8 +23660,8 @@ $page = end( $link_array );
 	                            <div class="mb-3">
 	                                <label class="form-label">Product<span class="text-danger ms-1">*</span></label>
 	                                <select id="editProductSelect" class="form-control" style="width:100%;">
-						                <option value="">Search Product</option>
-						            </select>
+										<option value="">Search Product</option>
+									</select>
 	                            </div>
 	                        </div>
 
@@ -23912,22 +23911,22 @@ $page = end( $link_array );
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-lg-4 col-sm-6 col-12">
-									<label class="form-label">Supplier<span class="text-danger ms-1">*</span></label>
-									<div class="row">
-										<div class="col-lg-10 col-sm-10 col-10">
-											<select class="form-control" name="return_supplier_id" id="return_supplier_id" required>
-                                                                                            <option value="" disabled>Select Supplier</option>
-											</select>
-										</div>
-                                                                            <div class="col-lg-2 col-sm-2 col-2 ps-0">
+								<label class="form-label">Supplier<span class="text-danger ms-1">*</span></label>
+								<div class="row">
+									<div class="col-lg-10 col-sm-10 col-10">
+										<select class="form-control" name="return_supplier_id" id="return_supplier_id" required>
+											<option value="" disabled>Select Supplier</option>
+										</select>
+									</div>
+									<div class="col-lg-2 col-sm-2 col-2 ps-0">
 										<div class="add-icon tab">
 											<a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#add_customer">
 												<i data-feather="plus-circle" class="feather-plus-circles"></i>
 											</a>
-											</div>
 										</div>
 									</div>
 								</div>
+							</div>
 							<div class="col-lg-4 col-sm-6 col-12">
 								<div class="mb-3">
 									<label class="form-label">Date<span class="text-danger ms-1">*</span></label>
@@ -23939,45 +23938,48 @@ $page = end( $link_array );
 							</div>
 							<div class="col-lg-4 col-sm-6 col-12">
 								<div class="mb-3">
-									<label class="form-label">Reference<span class="text-danger ms-1">*</span></label>
-									<input type="text" name="reference_no" class="form-control">
+									<!-- <label class="form-label">Reference<span class="text-danger ms-1">*</span></label> -->
+									<!-- <input type="text" name="reference_no" class="form-control"> -->
+									<label class="form-label">Purchase No.<span class="text-danger ms-1">*</span></label>
+									<select class="form-control" name="purchase_reference" id="purchase_reference" required>
+									    <option value="">Select Purchase No</option>
+									</select>
 								</div>
 							</div>
-												<div class="col-lg-12">
+							<div class="col-lg-12">
 								<div class="mb-3">
 									<label class="form-label">Product<span class="text-danger ms-1">*</span></label>
 									<select id="productReturnSelect" class="form-control" style="width:100%;">
 									    <option value="">Search Product</option>
 									</select>
-										</div>
-									</div>
 								</div>
+							</div>
+						</div>
 						<div class="modal-body-table mt-3">
-						<div class="table-responsive no-pagination" style="width: 102.5%;margin-left: -14px;margin-top: -9px;margin-bottom: -9px;">
+							<div class="table-responsive no-pagination" style="width: 102.5%;margin-left: -14px;margin-top: -9px;margin-bottom: -9px;">
 								<table id="purchaseReturnTable" class="table datanew bg-light-9 p-3">
-								<thead>
-									<tr>
-										<th>Product</th>
-	                                                <th>Qty</th>
+									<thead>
+	                                    <tr>
+	                                                <th>Product</th>
+	                                                <th>Return Qty</th>
 	                                                <th>Purchase Price</th>
-	                                                <th>Discount</th>
 	                                                <th>Tax(%)</th>
 	                                                <th>Tax Amount</th>
 	                                                <th>Unit Cost</th>
-	                                                <th>Total Cost</th>
+	                                                <th>Total Return Amount</th>
 	                                                <th>Action</th>
-									</tr>
-								</thead>
-								<tbody></tbody>
-							</table>
-						</div>
+	                                    </tr>
+	                                </thead>
+	                                <tbody></tbody>
+								</table>
+							</div>
 						</div>	
 						<div class="row">
 							<div class="col-lg-3 col-sm-6 col-12">
 								<div class="mb-3">
 									<label class="form-label">Order Tax</label>
 									<div class="input-groupicon select-code">
-											<input type="text" name="order_tax" value="0" class="form-control p-2">
+										<input type="text" name="order_tax" value="0" class="form-control p-2">
 									</div>
 								</div>
 							</div>
@@ -23993,26 +23995,26 @@ $page = end( $link_array );
 								<div class="mb-3">
 									<label class="form-label">Shipping</label>
 									<div class="input-groupicon select-code">
-											<input type="text" name="shipping" value="0" class="form-control p-2">
-								</div>
+										<input type="text" name="shipping" value="0" class="form-control p-2">
+									</div>
 								</div>
 							</div>
 							<div class="col-lg-3 col-sm-6 col-12">
 								<div class="mb-3">
 									<label class="form-label">Status<span class="text-danger ms-1">*</span></label>
 									<select class="select" name="status">
-										<option>Select</option>
-										<option>Pending</option>
-										<option>Received</option>
+										<option value="">Select</option>
+										<option value="Pending">Pending</option>
+										<option value="Returned">Returned</option>
 									</select>
 								</div>
 							</div>
 							<div class="col-lg-12 mt-3">
-								<div class="mb-3 summer-description-box">
-									<label class="form-label">Description</label>
+							<div class="mb-3 summer-description-box">
+								<label class="form-label">Description</label>
 								<textarea name="description" class="form-control" rows="3"></textarea>
-								</div>
-							</div>								
+							</div>
+						</div>								
 						</div>
 					</div>
 					<div class="modal-footer">
@@ -24067,7 +24069,7 @@ $page = end( $link_array );
 					</button>
 				</div>
 				<form id="editPurchaseReturnForm" method="POST">
-					<input type="hidden" name="purchase_id" id="edit_return_purchase_id">
+					<input type="hidden" name="purchase_return_id" id="edit_return_purchase_id">
 					<div class="modal-body">
 						<div class="row">
 							<div class="col-lg-4 col-sm-6 col-12">
@@ -24075,119 +24077,125 @@ $page = end( $link_array );
 									<label class="form-label">Supplier<span class="text-danger ms-1">*</span></label>
 									<div class="row">
 										<div class="col-lg-10 col-sm-10 col-10">
-											<select class="form-control select" name="supplier_id" id="return_edit_supplier_id" required>
+											<input type="text" class="form-control" id="return_edit_supplier" readonly>
+											<input type="hidden" class="form-control" id="return_edit_supplier_id" readonly>
+											<!-- <select class="form-control" name="supplier_id" id="return_edit_supplier_id" required>
 	                                            <option value="" disabled>Select Supplier</option>
-											</select>
+	                                        </select> -->
 										</div>
-										</div>
-									</div>
-								</div>
-							<div class="col-lg-4 col-sm-6 col-12">
-								<div class="mb-3">
-									<label class="form-label">Date<span class="text-danger ms-1">*</span></label>
-									<div class="input-groupicon calender-input">
-										<i data-feather="calendar" class="info-img"></i>
-	                                    <input type="text" class="datetimepicker form-control p-2" name="purchase_date" id="return_edit_purchase_date" placeholder="dd/mm/yyyy">
 									</div>
 								</div>
 							</div>
 							<div class="col-lg-4 col-sm-6 col-12">
 								<div class="mb-3">
-								<label class="form-label">Reference<span class="text-danger ms-1">*</span></label>
-	                                <input type="text" class="form-control" name="reference_no" id="return_edit_reference_no">
+									<label class="form-label">Date<span class="text-danger ms-1">*</span></label>
+									<div class="input-groupicon calender-input">
+	                                    <i data-feather="calendar" class="info-img"></i>
+	                                    <input type="text" class="datetimepicker form-control p-2" name="return_date" id="return_edit_purchase_date" placeholder="dd/mm/yyyy">
+	                                </div>
+								</div>
+							</div>
+							<div class="col-lg-4 col-sm-6 col-12">
+								<div class="mb-3">
+								<label class="form-label">Purchase No<span class="text-danger">*</span></label>
+								<input type="text" class="form-control" id="return_edit_reference_no" readonly>
+								<input type="hidden" class="form-control" id="return_edit_reference_id" readonly>
+					              	<!-- <select id="return_edit_reference_no" name="purchase_id" class="form-select">
+					                	<option value="">Select Purchase No</option>
+					              	</select> -->
 							</div>
 						</div>
 							<div class="col-lg-12 col-sm-6 col-12">
 								<div class="mb-3">
 									<label class="form-label">Product<span class="text-danger ms-1">*</span></label>
-	                                <select id="editProductReturnSelect" class="form-control" style="width:100%;">
-										<option value="">Search Product</option>
-									</select>
-										</div>
-									</div>
+								    <select id="editProductReturnSelect" class="form-control" style="width:100%;">
+								      <option value="">Search Product</option>
+								    </select>
 								</div>
+							</div>
+						</div>
 						<div class="modal-body-table mt-3 mb-1">
 							<div class="table-responsive" style="width: 102.5%;margin-left: -14px;margin-top: -9px;margin-bottom: -9px;">
 	                                    <table id="editPurchaseReturnTable" class="table datanew rounded-1">
-									<thead>
-										<tr>
+	                                        <thead>
+	                                            <tr>
 	                                                <th>Product</th>
-	                                                <th>Qty</th>
-	                                                <th>Purchase Price</th>
-	                                                <th>Discount</th>
-	                                                <th>Tax(%)</th>
-	                                                <th>Tax Amount</th>
-	                                                <th>Unit Cost</th>
-	                                                <th>Total Cost</th>
-										</tr>
-									</thead>
-										                                        <tbody></tbody>
-								</table>
-							</div>
+										          	<th>Return Qty</th>
+										          	<th>Purchase Price</th>
+										          	<th>Tax(%)</th>
+										          	<th>Tax Amount</th>
+										          	<th>Unit Cost</th>
+										          	<th>Total Return Amount</th>
+										          	<th>Action</th>
+	                                            </tr>
+	                                        </thead>
+	                                        <tbody></tbody>
+	                                    </table>
+	                                </div>
 						</div>
-                                            <!-- Order Summary -->
+						<!-- Order Summary -->
 						<div class="row">
 							<div class="col-lg-12 float-md-right">
 								<div class="total-order m-2 mb-3 ms-auto">
 									<ul class="border-1 rounded-1">
-										<li class="border-0 border-bottom">
+						                <li class="border-0 border-bottom">
 						                    <h4 class="border-0">Order Tax</h4>
 						                    <h5 id="return_edit_summary_order_tax"></h5>
-										</li>
-										<li class="border-0 border-bottom">
+						                </li>
+						                <li class="border-0 border-bottom">
 						                    <h4 class="border-0">Discount</h4>
 						                    <h5 id="return_edit_summary_discount"></h5>
-										</li>
-										<li class="border-0 border-bottom">
+						                </li>
+						                <li class="border-0 border-bottom">
 						                    <h4 class="border-0">Shipping</h4>
 						                    <h5 id="return_edit_summary_shipping"></h5>
-										</li>
+						                </li>
 						                <li class="total border-0">
 						                    <h4 class="border-0">Grand Total</h4>
 						                    <h5 id="return_edit_summary_grand_total"></h5>
-										</li>
-									</ul>
-								</div>
-							</div>
+						                </li>
+						            </ul>
+						        </div>
+						    </div>
 						</div>
 						<div class="row">
 	                            <div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
+	                                <div class="mb-3">
 	                                    <label class="form-label">Order Tax</label>
 	                                    <input type="text" name="order_tax" class="form-control" id="return_edit_order_tax">
-									</div>
-								</div>
+	                                </div>
+	                            </div>
 	                            <div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
+	                                <div class="mb-3">
 	                                    <label class="form-label">Discount</label>
 	                                    <input type="text" name="order_discount" class="form-control" id="return_edit_order_discount">
-									</div>
-								</div>
+	                                </div>
+	                            </div>
 	                            <div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
+	                                <div class="mb-3">
 	                                    <label class="form-label">Shipping</label>
 	                                    <input type="text" name="shipping" class="form-control" id="return_edit_shipping">
-									</div>
-								</div>
+	                                </div>
+	                            </div>
 	                            <div class="col-lg-3 col-md-6 col-sm-12">
-								<div class="mb-3">
-									<label class="form-label">Status<span class="text-danger ms-1">*</span></label>
+	                                <div class="mb-3">
+	                                    <label class="form-label">Status<span class="text-danger ms-1">*</span></label>
 	                                    <select class="form-control" name="status" id="return_edit_status">
 	                                        <option value="">Select</option>
-	                                        <option value="Received">Received</option>
-	                                        <option value="Pending">Pending</option>                                                
-									</select>
-								</div>
-							</div>
+	                                        <option value="Returned">Returned</option>
+	                                        <option value="Pending">Pending</option>
+	                                    </select>
+	                                </div>
+	                            </div>
 	                        </div>
 	                        <!-- Description -->
 	                    <div class="col-lg-12 mt-3">
 	                        <div class="mb-3 summer-description-box">
-									<label class="form-label">Description</label>
+	                            <label class="form-label">Description</label>
 	                            <textarea class="form-control" name="description" id="return_edit_description" rows="3"></textarea>
-								</div>
-							</div>
-						</div>
+	                        </div>
+	                    </div>
+					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn me-2 btn-secondary" data-bs-dismiss="modal">Cancel</button>
 						<button type="submit" class="btn btn-primary">Save Changes</button>
@@ -24207,7 +24215,7 @@ $page = end( $link_array );
 							<div class="icon-success bg-danger-transparent text-danger mb-2">
 								<i class="ti ti-trash"></i>
 							</div>
-							<input type="hidden" id="delete_purchase_return_id">                                            
+							<input type="hidden" id="delete_purchase_return_id">
 							<h3 class="mb-2">Delete Purchase</h3>
 							<p class="fs-16 mb-3">Are you sure you want to delete purchase?</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">

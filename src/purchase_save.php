@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $shipping      = mysqli_real_escape_string($link, $_POST['shipping'] ?? '');
     $status        = mysqli_real_escape_string($link, $_POST['status']);
     $description   = mysqli_real_escape_string($link, $_POST['description'] ?? '');
-    $purchase_status = 0;
     // Calculate grand total from items
     $grand_total = 0;
     foreach ($_POST['total_cost'] as $tc) {
@@ -21,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Insert purchase
-    $query = "INSERT INTO purchase (supplier_id, purchase_date, reference_no, order_tax, discount, shipping, grand_total, status, description, purchase_status) 
-    VALUES ('$supplier_id', '$purchase_date', '$reference_no', '$order_tax', '$discount', '$shipping', '$grand_total', '$status', '$description', '$purchase_status')";
+    $query = "INSERT INTO purchase (supplier_id, purchase_date, reference_no, order_tax, discount, shipping, grand_total, status, description) 
+    VALUES ('$supplier_id', '$purchase_date', '$reference_no', '$order_tax', '$discount', '$shipping', '$grand_total', '$status', '$description')";
 
     if (mysqli_query($link, $query)) {
         $purchase_id = mysqli_insert_id($link);

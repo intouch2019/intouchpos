@@ -3,7 +3,7 @@ require_once __DIR__ . '/../partials/config.php';
 
 // Fetch all purchases to display in the table
 $purchases = [];
-$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id where p.purchase_status = 0 ORDER BY p.purchase_date DESC";
+$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id ORDER BY p.purchase_date DESC";
 $result_purchases = mysqli_query($link, $sql_purchases);
 if ($result_purchases) {
 	while ($row = mysqli_fetch_assoc($result_purchases)) {
@@ -98,8 +98,8 @@ Start Page Content
 										<span class="checkmarks"></span>
 									</label>
 								</th>
+								<th>Purchase No</th>
 								<th>Supplier Name</th>
-								<th>Reference</th>
 								<th>Date</th>
 								<th>Status</th>
 								<th>Total</th>
@@ -118,8 +118,8 @@ Start Page Content
 											<span class="checkmarks"></span>
 										</label>
 									</td>
-									<td><?php echo htmlspecialchars($purchase['supplier_name']); ?></td>
 									<td><?php echo htmlspecialchars($purchase['reference_no']); ?></td>
+									<td><?php echo htmlspecialchars($purchase['supplier_name']); ?></td>
 									<td><?php echo date("d M Y", strtotime($purchase['purchase_date'])); ?></td>
 									<td>
 										<?php if ($purchase['status'] == 'Received'): ?>
@@ -299,6 +299,14 @@ require_once '../partials/main.php'; ?>
 			let stock = parseInt(data.stock) || 0;
 
 			if (!productId) return;
+
+			// 🚫 If no stock left for return
+		    if (stock <= 0) {
+		        alert("❌ Stock not available.");
+		        // Reset dropdown
+		        $('#productSelect').val(null).trigger('change');
+		        return;
+		    }
 
 			let existingRow = $('#purchaseTable tbody tr').filter(function () {
 				return $(this).find('input[name="product_id[]"]').val() == productId;
@@ -607,6 +615,19 @@ require_once '../partials/main.php'; ?>
 	        });
 	});
 
+});
+
+$(document).ready(function () {
+    function generatePurchaseNo() {
+        let today = new Date();
+        let datePart = today.getFullYear().toString().slice(-2) + 
+                       ("0" + (today.getMonth() + 1)).slice(-2) + 
+                       ("0" + today.getDate()).slice(-2);
+        let randomPart = Math.floor(1000 + Math.random() * 9000);
+        return "PO-" + datePart + "-" + randomPart;
+    }
+
+    $('input[name="reference_no"]').val(generatePurchaseNo());
 });
 </script>
 
