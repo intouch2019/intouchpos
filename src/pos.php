@@ -10,7 +10,7 @@ $current_user = getCurrentUser();
 // Get categories
 $categories = [];
 // Add "All" category first
-$categories[] = ['id' => 'all', 'name' => 'All', 'image' => 'pos-product-01.png'];
+$categories[] = ['id' => 'all', 'name' => 'All', 'image' => 'assets/img/products/images(1).jpg'];
 
 $cat_sql = "SELECT id, name, image FROM categories WHERE is_active = 1 ORDER BY name";
 $cat_result = mysqli_query($link, $cat_sql);
@@ -324,49 +324,49 @@ $schemes_json = json_encode($schemes);
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" data-bs-toggle="modal" data-bs-target="#payment-points">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('points')">
 											<img src="assets/img/icons/points.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Points</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" data-bs-toggle="modal" data-bs-target="#payment-deposit">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('deposit')">
 											<img src="assets/img/icons/deposit.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Deposit</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" data-bs-toggle="modal" data-bs-target="#payment-cheque">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('cheque')">
 											<img src="assets/img/icons/cheque.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Cheque</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" data-bs-toggle="modal" data-bs-target="#gift-payment">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('gift_card')">
 											<img src="assets/img/icons/giftcard.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Gift Card</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" data-bs-toggle="modal" data-bs-target="#scan-payment">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('scan')">
 											<img src="assets/img/icons/scan-icon.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Scan</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('mobile_money')">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('pay_later')">
 											<img src="assets/img/icons/paylater.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Pay Later</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('mobile_money')">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('external')">
 											<img src="assets/img/icons/external.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">External</p>
 										</a>
 									</div>
 									<div class="col-sm-6 col-md-4 d-flex">
-										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" data-bs-toggle="modal" data-bs-target="#split-payment">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('split')">
 											<img src="assets/img/icons/split-bill.svg" class="me-2" alt="img">
 											<p class="fs-14 fw-medium">Split Bill</p>
 										</a>
@@ -851,7 +851,6 @@ function debugProducts() {
             const customerSelect = document.getElementById('customerSelect');
             if (!customerSelect || !customerSelect.value) {
                 alert('Please select a customer before placing order.');
-                // Focus on customer dropdown
                 if (customerSelect) {
                     customerSelect.focus();
                 }
@@ -871,7 +870,7 @@ function debugProducts() {
             const total = getCartTotal();
             const itemCount = cart.length;
             
-            document.getElementById('quick-total-amount').textContent = total.toFixed(2);
+            document.getElementById('quick-total-amount').textContent = '$' + total.toFixed(2);
             document.getElementById('quick-item-count').textContent = itemCount + ' item(s)';
             
             // Update customer name
@@ -883,8 +882,98 @@ function debugProducts() {
             }
         }
         
+        // Function to handle quick payment selection
+        function selectQuickPayment(paymentMethod) {
+            // Close the quick payment modal
+            const quickModal = bootstrap.Modal.getInstance(document.getElementById('quick-payment-modal'));
+            if (quickModal) {
+                quickModal.hide();
+            }
+            
+            // Call the main payment method selection
+            selectPaymentMethod(paymentMethod);
+        }
+        
         // Global variable to store selected payment method
         let selectedPaymentMethod = null;
+        
+        // Function to validate and place order from payment modals
+        function validateAndPlaceOrder(paymentMethod) {
+            let isValid = true;
+            let errorMessage = '';
+            
+            // Validate based on payment method
+            if (paymentMethod === 'cash') {
+                const received = parseFloat(document.getElementById('cash-received').value) || 0;
+                const total = getCartTotal();
+                if (received < total) {
+                    isValid = false;
+                    errorMessage = 'Cash received amount must be greater than or equal to total amount.';
+                }
+            } else if (paymentMethod === 'card') {
+                // No validation required for card payment
+            } else if (paymentMethod === 'points') {
+                const pointsToUse = parseFloat(document.getElementById('points-to-use').value) || 0;
+                if (pointsToUse <= 0) {
+                    isValid = false;
+                    errorMessage = 'Please enter valid points amount.';
+                }
+            } else if (paymentMethod === 'deposit') {
+                const depositAmount = parseFloat(document.getElementById('deposit-amount').value) || 0;
+                if (depositAmount <= 0) {
+                    isValid = false;
+                    errorMessage = 'Please enter valid deposit amount.';
+                }
+            } else if (paymentMethod === 'cheque') {
+                const chequeNumber = document.getElementById('cheque-number').value.trim();
+                const bankName = document.getElementById('bank-name').value.trim();
+                
+                if (!chequeNumber || !bankName) {
+                    isValid = false;
+                    errorMessage = 'Please fill in cheque number and bank name.';
+                }
+            } else if (paymentMethod === 'gift_card') {
+                const giftCardNumber = document.getElementById('gift-card-number').value.trim();
+                
+                if (!giftCardNumber) {
+                    isValid = false;
+                    errorMessage = 'Please enter gift card number.';
+                }
+            } else if (paymentMethod === 'scan') {
+                const scanCode = document.getElementById('scan-code').value.trim();
+                
+                if (!scanCode) {
+                    isValid = false;
+                    errorMessage = 'Please scan or enter payment code.';
+                }
+            } else if (paymentMethod === 'split') {
+                const amount1 = parseFloat(document.getElementById('split-amount-1').value) || 0;
+                const amount2 = parseFloat(document.getElementById('split-amount-2').value) || 0;
+                const total = getCartTotal();
+                
+                if (Math.abs((amount1 + amount2) - total) > 0.01) {
+                    isValid = false;
+                    errorMessage = 'Split payment amounts must equal the total amount.';
+                }
+            }
+            
+            if (!isValid) {
+                alert(errorMessage);
+                return;
+            }
+            
+            // Close the payment modal
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(modal => {
+                const modalInstance = bootstrap.Modal.getInstance(modal);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            });
+            
+            // Place the order
+            placeOrder(paymentMethod);
+        }
         
         // Function to select payment method directly
         function selectPaymentMethod(paymentMethod) {
@@ -918,12 +1007,36 @@ function debugProducts() {
                 updatePaymentModalTotals();
                 const modal = new bootstrap.Modal(document.getElementById('payment-card'));
                 modal.show();
+            } else if (paymentMethod === 'points') {
+                updatePaymentModalTotals();
+                const modal = new bootstrap.Modal(document.getElementById('payment-points'));
+                modal.show();
+            } else if (paymentMethod === 'deposit') {
+                updatePaymentModalTotals();
+                const modal = new bootstrap.Modal(document.getElementById('payment-deposit'));
+                modal.show();
+            } else if (paymentMethod === 'cheque') {
+                updatePaymentModalTotals();
+                const modal = new bootstrap.Modal(document.getElementById('payment-cheque'));
+                modal.show();
+            } else if (paymentMethod === 'gift_card') {
+                updatePaymentModalTotals();
+                const modal = new bootstrap.Modal(document.getElementById('gift-payment'));
+                modal.show();
+            } else if (paymentMethod === 'scan') {
+                updatePaymentModalTotals();
+                const modal = new bootstrap.Modal(document.getElementById('scan-payment'));
+                modal.show();
+            } else if (paymentMethod === 'split') {
+                updatePaymentModalTotals();
+                const modal = new bootstrap.Modal(document.getElementById('split-payment'));
+                modal.show();
             } else {
-                // For other simple methods, confirm and place order directly
+                // For other simple methods like pay_later and external, confirm and place order directly
                 const total = getCartTotal();
                 const customerName = customerSelect.options[customerSelect.selectedIndex].text;
                 
-                const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment (${total.toFixed(2)})?`;
+                const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment ($${total.toFixed(2)})?`;
                 
                 if (confirm(confirmMessage)) {
                     placeOrder(paymentMethod);
@@ -1096,7 +1209,7 @@ function debugProducts() {
         // Function to update payment modal totals
         function updatePaymentModalTotals() {
             const total = getCartTotal();
-            const totalFormatted = total.toFixed(2);
+            const totalFormatted = '$' + total.toFixed(2);
 
             // Update all payment modal totals
             const totalElements = [
@@ -1164,7 +1277,7 @@ function debugProducts() {
         function showOrderSuccessModal(orderData) {
             // Update modal content
             document.getElementById('completed-order-number').textContent = orderData.order_number;
-            document.getElementById('completed-total-amount').textContent = orderData.total_amount.toFixed(2);
+            document.getElementById('completed-total-amount').textContent = '$' + orderData.total_amount.toFixed(2);
             document.getElementById('completed-payment-method').textContent = orderData.payment_method.replace('_', ' ').toUpperCase();
             
             // Show the modal

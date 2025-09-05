@@ -43,11 +43,6 @@
                             </button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-outline-primary w-100" onclick="selectQuickPayment('deposit')">
-                                <i class="ti ti-wallet me-2"></i>Deposit
-                            </button>
-                        </div>
-                        <div class="col-6">
                             <button type="button" class="btn btn-outline-primary w-100" onclick="selectQuickPayment('cheque')">
                                 <i class="ti ti-file-text me-2"></i>Cheque
                             </button>
@@ -55,6 +50,11 @@
                         <div class="col-6">
                             <button type="button" class="btn btn-outline-primary w-100" onclick="selectQuickPayment('gift_card')">
                                 <i class="ti ti-gift me-2"></i>Gift Card
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-primary w-100" onclick="selectQuickPayment('pay_later')">
+                                <i class="ti ti-clock me-2"></i>Pay Later
                             </button>
                         </div>
                     </div>
@@ -607,6 +607,8 @@ function printReceipt() {
     // You can implement receipt printing functionality here
     alert('Receipt printing functionality would be implemented here');
 }
+
+
 
 // Function to validate and place order
 
