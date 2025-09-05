@@ -42,6 +42,19 @@ if ($cust_result) {
     }
 }
 
+// Get active discount schemes
+$schemes = [];
+$scheme_sql = "SELECT name, value, type, min_purchase, valid_from, valid_to, description 
+               FROM schemes 
+               WHERE is_active = 1 
+               AND NOW() BETWEEN valid_from AND valid_to";
+$scheme_result = mysqli_query($link, $scheme_sql);
+if ($scheme_result) {
+    while ($row = mysqli_fetch_assoc($scheme_result)) {
+        $schemes[] = $row;
+    }
+}
+$schemes_json = json_encode($schemes);
 
 ?>
 
@@ -62,14 +75,14 @@ if ($cust_result) {
 						<div class="content-wrap">
 							<div class="tab-wrap">
 								<ul class="tabs owl-carousel pos-category5" id="categoryTabs">
-    <?php foreach ($categories as $index => $category): ?>
-        <li id="category_<?php echo $category['id']; ?>" data-id="<?php echo $category['id']; ?>" <?php echo $index === 0 ? 'class="active"' : ''; ?>>
-            <a href="javascript:void(0);">
-                <img src="assets/img/products/<?php echo $category['image'] ? $category['image'] : 'pos-product-01.png'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>" onerror="this.src='assets/img/products/pos-product-01.png'">
-            </a>
-            <h6><a href="javascript:void(0);"><?php echo htmlspecialchars($category['name']); ?></a></h6>
-        </li>
-    <?php endforeach; ?>
+                                                                    <?php foreach ($categories as $index => $category): ?>
+                                                                        <li id="category_<?php echo $category['id']; ?>" data-id="<?php echo $category['id']; ?>" <?php echo $index === 0 ? 'class="active"' : ''; ?>>
+                                                                            <a href="javascript:void(0);">
+                                                                                <img src="assets/img/products/<?php echo $category['image'] ? $category['image'] : 'images(1).jpg'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>" onerror="this.src='assets/img/products/images(1).jpg'">
+                                                                            </a>
+                                                                            <h6><a href="javascript:void(0);"><?php echo htmlspecialchars($category['name']); ?></a></h6>
+                                                                        </li>
+                                                                    <?php endforeach; ?>
                                                                 </ul>
 							</div>
 							<div class="tab-content-wrap">
@@ -106,13 +119,14 @@ if ($cust_result) {
 										<div class="tab_content active" data-tab="all">
 											<div class="row g-3" id="productsContainer">
 												<?php foreach ($products as $product): ?>
-												<div class="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3 product-item" data-category="<?php echo $product['category_id']; ?>" style="display: block;">
-													<div class="product-info card mb-0">
-														<a href="javascript:void(0);" class="pro-img" onclick="addToCart(<?php echo $product['id']; ?>, '<?php echo htmlspecialchars($product['name']); ?>', <?php echo $product['price']; ?>)">
+												<div class="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3 product-item" data-category="<?php echo $product['category_id']; ?>" data-sku="<?php echo htmlspecialchars($product['sku']); ?>" style="display: block;">
+													<div class="product-info card mb-0<?php echo ($product['stock_quantity'] <= 0) ? ' out-of-stock' : ''; ?>">
+														<a href="javascript:void(0);" class="pro-img"<?php echo ($product['stock_quantity'] > 0) ? ' onclick="addToCart(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' : ''; ?>>
 															<img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='assets/img/products/images(1).png'">
 															<span><i class="ti ti-circle-check-filled"></i></span>
 														</a>
 														<h6 class="product-name"><a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a></h6>
+														<p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
 														<div class="d-flex align-items-center justify-content-between price">
 															<p class="text-gray-9 mb-0"><?php echo number_format($product['price'], 2); ?></p>
 															<div class="qty-item m-0">
@@ -156,18 +170,57 @@ if ($cust_result) {
 								<div class="customer-info block-section">
 									<h5 class="mb-2">Customer Information <span class="text-danger">*</span></h5>
 									<div class="d-flex align-items-center gap-2">
-										<div class="flex-grow-1">
-											<select class="select" id="customerSelect" required>
-												<option value="">Select Customer</option>
-												<option value="walkin">Walk in Customer</option>
-												<?php foreach ($customers as $customer): ?>
-												<option value="<?php echo $customer['id']; ?>"><?php echo htmlspecialchars($customer['name']); ?> - <?php echo htmlspecialchars($customer['phone']); ?></option>
-												<?php endforeach; ?>
-											</select>
-										</div>
-										<a href="#" class="btn btn-teal btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#create"><i class="ti ti-user-plus"></i></a>
-										<a href="#" class="btn btn-info btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#barcode"><i class="ti ti-scan"></i></a>
-									</div>
+                                                                            <div class="flex-grow-1">
+                                                                                <select class="select" id="customerSelect" required onchange="updateCustomerInfo()">
+                                                                                    <option value="">Select Customer</option>
+                                                                                    <option value="walkin">Walk in Customer</option>
+                                                                                    <?php foreach ($customers as $customer): ?>
+<!--                                                                                    <option value="<?php echo $customer['id']; ?>" 
+                                                                                            data-name="<?php // echo htmlspecialchars($customer['name']); ?>"
+                                                                                            data-phone="<?php // echo htmlspecialchars($customer['phone']); ?>"
+                                                                                            data-bonus="<?php // echo isset($customer['bonus_points']) ? $customer['bonus_points'] : 0; ?>"
+                                                                                            data-loyalty="<?php // echo isset($customer['loyalty_amount']) ? number_format($customer['loyalty_amount'], 2) : '0.00'; ?>">
+                                                                                        <?php // echo htmlspecialchars($customer['name']); ?> - <?php // echo htmlspecialchars($customer['phone']); ?>
+                                                                                    </option>-->
+                                                                                    <option value="<?php echo $customer['id']; ?>" 
+                                                                                            data-name="<?php echo htmlspecialchars($customer['name']); ?>"
+                                                                                            data-phone="<?php echo htmlspecialchars($customer['phone']); ?>"
+                                                                                            data-bonus=" 100 "
+                                                                                            data-loyalty="10.0">
+                                                                                        <?php echo htmlspecialchars($customer['name']); ?> - <?php echo htmlspecialchars($customer['phone']); ?>
+                                                                                    </option>
+                                                                                    <?php endforeach; ?>
+                                                                                </select>
+                                                                            </div>
+                                                                            <a href="#" class="btn btn-teal btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#create">
+                                                                                <i class="ti ti-user-plus"></i>
+                                                                            </a>
+                                                                            <a href="#" class="btn btn-info btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#barcode">
+                                                                                <i class="ti ti-scan"></i>
+                                                                            </a>
+                                                                        </div>
+                                                                        <!-- Dynamic Customer Info Display -->
+                                                                        <div class="customer-item border border-orange bg-orange-100 d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3" 
+                                                                             id="customerDetails" style="display: none;">
+                                                                            <div>
+                                                                                <h6 class="fs-16 fw-bold mb-1" id="customerName"></h6>
+                                                                                <div class="d-inline-flex align-items-center gap-2 customer-bonus">
+                                                                                    <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
+                                                                                        Bonus: <span class="badge bg-cyan fs-13 fw-bold p-1" id="customerBonus">0</span>
+                                                                                    </p>
+                                                                                    <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
+                                                                                        Loyalty: <span class="badge bg-teal fs-13 fw-bold p-1" id="customerLoyalty">$0.00</span>
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="d-flex gap-2">
+                                                                                <a href="javascript:void(0);" class="btn btn-orange btn-sm" >Apply</a>
+                                                                                <!--<a href="javascript:void(0);" class="btn btn-orange btn-sm" onclick="applyCustomer()">Apply</a>-->
+                                                                                <a href="javascript:void(0);" class="close-icon" onclick="clearCustomer()">
+                                                                                    <i class="ti ti-x"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
 								</div>
 								<div class="product-added block-section">
 									<div class="head-text d-flex align-items-center justify-content-between mb-3">
@@ -199,8 +252,12 @@ if ($cust_result) {
 													</tbody>
 												</table>
 											</div>
-										</div>	
-									</div>
+								</div>
+								</div>
+								<!-- Dynamic Discount Item -->
+								<div id="discount-item-container">
+									<!-- Discount item will be injected here by JavaScript -->
+								</div>
 								</div>
 								<div class="order-total bg-total bg-white p-0">
 									<h5 class="mb-3">Payment Summary</h5>
@@ -318,8 +375,8 @@ if ($cust_result) {
 							</div>
 						</div>
 						<div class="btn-row d-flex align-items-center justify-content-between gap-3">
-<!--							<a href="javascript:void(0);" class="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-printer me-2"></i>Print Order</a>
-							<a href="javascript:void(0);" class="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0" onclick="showPaymentOptions()"><i  class="ti ti-shopping-cart me-2"></i>Place Order</a>-->
+							<a href="javascript:void(0);" class="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-printer me-2"></i>Print Order</a>
+							<a href="javascript:void(0);" class="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0" onclick="showPaymentOptions()"><i  class="ti ti-shopping-cart me-2"></i>Place Order</a>
 						</div>
 					</aside>
 				</div>
@@ -329,13 +386,13 @@ if ($cust_result) {
 
 			<div class="pos-footer bg-white p-3 border-top">
 				<div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-					<!--<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>-->
-					<!--<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>-->
-					<!--<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completed"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>-->
-					<!--<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
-					<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
+					<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>
+					<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>
+					<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completedd"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>
+					<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
+					<!--<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
 					<a href="javascript:void(0);" class="btn btn-indigo d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#reset"><i class="ti ti-reload me-2"></i>Reset</a>
-					<!--<a href="javascript:void(0);" class="btn btn-danger d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#recents"><i class="ti ti-refresh-dot me-2"></i>Transaction</a>-->
+					<a href="javascript:void(0);" class="btn btn-danger d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#recents"><i class="ti ti-refresh-dot me-2"></i>Transaction</a>
 				</div>
 			</div>
 		</div>
@@ -343,6 +400,7 @@ if ($cust_result) {
     
         <?php require_once __DIR__ . '/../partials/footer.php'; ?>
         <?php require_once __DIR__ . '/../partials/modal-popup.php'; ?>
+        <?php require_once __DIR__ . '/../partials/modal-popup-new.php'; ?>
         <?php require_once __DIR__ . '/../partials/pos-modals.php'; ?>
 
 
@@ -410,6 +468,11 @@ if ($cust_result) {
                 // Reset totals
                 document.getElementById('cartTotal').textContent = '0.00';
                 document.getElementById('cartSubtotal').textContent = '0.00';
+                
+                // Clear discount when cart is empty
+                document.getElementById('discountAmount').textContent = '0.00';
+                document.getElementById('discount-item-container').innerHTML = '';
+                
                 return;
             }
             
@@ -458,6 +521,9 @@ if ($cust_result) {
             // Update subtotal
             document.getElementById('cartSubtotal').textContent =  total.toFixed(2);
             
+            // Apply or remove discount based on subtotal
+            applyDiscount();
+
             // Calculate and update final total
             const finalTotal = getCartTotal();
             document.getElementById('cartTotal').textContent =  finalTotal.toFixed(2);
@@ -532,6 +598,62 @@ if ($cust_result) {
             });
         }
         
+        // Get schemes from PHP
+        const schemes = <?php echo $schemes_json; ?>;
+
+        // Function to apply discount based on cart total
+        function applyDiscount() {
+            const subtotal = getCartSubtotal();
+            const discountContainer = document.getElementById('discount-item-container');
+            const discountAmountEl = document.getElementById('discountAmount');
+            let appliedDiscount = false;
+
+            // Find and apply the first valid scheme
+            for (const scheme of schemes) {
+                if (subtotal >= scheme.min_purchase) {
+                    let discountValue = 0;
+                    let discountText = '';
+
+                    if (scheme.type === 'percentage') {
+                        discountValue = subtotal * (scheme.value / 100);
+                        discountText = `${scheme.description}`;
+                    } else { // Assuming 'flat'
+                        discountValue = scheme.value;
+                        discountText = `${scheme.description}`;
+                    }
+
+                    discountAmountEl.textContent = `-${discountValue.toFixed(2)}`;
+
+                    // Show the discount item in the cart
+                    discountContainer.innerHTML = `
+                        <div class="discount-item d-flex align-items-center justify-content-between bg-purple-transparent mt-3 flex-nowrap gap-2">
+                            <div class="d-flex align-items-center flex-grow-1 overflow-hidden">
+                                <span class="bg-purple discount-icon br-5 flex-shrink-0 me-2">
+                                    <img src="assets/img/icons/discount-icon.svg" alt="img">
+                                </span>
+                                <div>
+                                    <h6 class="fs-14 fw-bold text-purple mb-1">${discountText}</h6>
+                                    <p class="mb-0">${scheme.name}</p>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0);" class="close-icon" onclick="removeDiscount()"><i class="ti ti-trash"></i></a>
+                        </div>
+                    `;
+                    appliedDiscount = true;
+                    break; // Apply only the first matching scheme
+                }
+            }
+
+            if (!appliedDiscount) {
+                discountAmountEl.textContent = '0.00';
+                discountContainer.innerHTML = '';
+            }
+
+            // Recalculate total after discount change
+            const finalTotal = getCartTotal();
+            document.getElementById('cartTotal').textContent = finalTotal.toFixed(2);
+        }
+
         // Function to clear cart
         function clearCart() {
             if (confirm('Are you sure you want to clear the cart?')) {
@@ -632,9 +754,13 @@ function searchProducts() {
     // Filter products by search term
     productItems.forEach(item => {
         const productNameElement = item.querySelector('.product-name a');
+        const productSku = item.getAttribute('data-sku') || '';
+        
         if (productNameElement) {
             const productName = productNameElement.textContent.toLowerCase();
-            if (productName.includes(searchTerm)) {
+            const skuLower = productSku.toLowerCase();
+            
+            if (productName.includes(searchTerm) || skuLower.includes(searchTerm)) {
                 item.style.display = 'block';
                 foundCount++;
             } else {
@@ -932,6 +1058,14 @@ function debugProducts() {
             // Apply roundoff if enabled
             const roundoffCheckbox = document.getElementById('round');
             if (roundoffCheckbox && roundoffCheckbox.checked) {
+                // The discount is already negative, so we add it
+                let totalBeforeRoundoff = subtotal + shipping + tax - coupon + discount;
+                const rounded = Math.round(totalBeforeRoundoff);
+                const roundoffValue = rounded - totalBeforeRoundoff;
+                document.getElementById('roundoffAmount').textContent = roundoffValue.toFixed(2);
+                total = rounded;
+            } else {
+                document.getElementById('roundoffAmount').textContent = '0.00';
                 const rounded = Math.round(total);
                 const roundoffValue = rounded - total;
                 document.getElementById('roundoffAmount').textContent = roundoffValue.toFixed(2);
@@ -1055,6 +1189,187 @@ function debugProducts() {
             });
         }
         
+        // Function to prepare hold order modal
+        function prepareHoldModal() {
+            if (cart.length === 0) {
+                alert('Cart is empty. Please add items before holding order.');
+                return false;
+            }
+            
+            // Check if customer is selected
+            const customerSelect = document.getElementById('customerSelect');
+            if (!customerSelect || !customerSelect.value) {
+                alert('Please select a customer before holding order.');
+                if (customerSelect) {
+                    customerSelect.focus();
+                }
+                return false;
+            }
+            
+            // Generate hold reference
+            const holdRef = 'HOLD-' + Date.now();
+            
+            // Update hold modal with order details
+            const customerName = customerSelect.options[customerSelect.selectedIndex].text;
+            const total = getCartTotal();
+            const itemCount = cart.length;
+            
+            document.getElementById('hold-customer-name').textContent = customerName;
+            document.getElementById('hold-total-amount').textContent = total.toFixed(2);
+            document.getElementById('hold-item-count').textContent = itemCount + ' item(s)';
+            document.getElementById('hold-reference').textContent = holdRef;
+            document.getElementById('hold-notes').value = '';
+            
+            // Store reference for later use
+            window.currentHoldReference = holdRef;
+            
+            return true;
+        }
+        
+        // Function to confirm hold order
+        function confirmHoldOrder() {
+            const customerSelect = document.getElementById('customerSelect');
+            const holdRef = window.currentHoldReference;
+            
+            // Prepare hold data
+            const holdData = {
+                cart_items: cart,
+                customer_id: customerSelect.value,
+                subtotal: getCartSubtotal(),
+                total_amount: getCartTotal(),
+                hold_reference: holdRef,
+                notes: document.getElementById('hold-notes').value || 'Order on hold'
+            };
+            
+            // Submit hold order to backend
+            fetch('hold_order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(holdData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Close modal
+                    const holdModal = bootstrap.Modal.getInstance(document.getElementById('hold-order'));
+                    holdModal.hide();
+                    
+                    alert(`Order held successfully!\nReference: ${holdRef}\nYou can retrieve this order from pending orders.`);
+                    
+                    // Clear cart from database
+                    fetch('cart_api.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: 'action=clear'
+                    });
+                    
+                    // Clear local cart
+                    cart = [];
+                    updateCartDisplay();
+                    
+                    // Clear hold notes
+                    document.getElementById('hold-notes').value = '';
+                    
+                    // Keep customer selected for next order
+                    
+                } else {
+                    alert('Error holding order: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error holding order. Please try again.');
+            });
+        }
+        
+        // Function to load orders by status
+        function loadOrders(status) {
+            const containerId = status + '-orders';
+            const container = document.getElementById(containerId);
+            
+            if (!container) return;
+            
+            container.innerHTML = '<div class="text-center p-3"><p>Loading orders...</p></div>';
+            
+            fetch(`orders_api.php?status=${status}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayOrders(data.orders, containerId);
+                } else {
+                    container.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading orders</p></div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                container.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading orders</p></div>';
+            });
+        }
+        
+        // Function to display orders
+        function displayOrders(orders, containerId) {
+            const container = document.getElementById(containerId);
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="text-center p-3"><p>No orders found</p></div>';
+                return;
+            }
+            
+            let html = '';
+            orders.forEach(order => {
+                const date = new Date(order.created_at).toLocaleString();
+                const notes = order.notes ? `<div class="bg-info-transparent p-1 rounded text-center my-3"><p class="text-info fw-medium">${order.notes}</p></div>` : '';
+                
+                html += `
+                    <div class="card bg-light mb-3">
+                        <div class="card-body">
+                            <span class="badge bg-dark fs-12 mb-2">Order ID : ${order.order_number || '#' + order.id}</span>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> ${order.cashier_name || 'N/A'}</p>
+                                    <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> ${parseFloat(order.total_amount).toFixed(2)}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span> ${order.customer_name || 'Walk-in'}</p>
+                                    <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Date :</span> ${date}</p>
+                                </div>
+                            </div>
+                            ${notes}
+                            <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
+                                <a href="javascript:void(0);" class="btn btn-md btn-orange" onclick="openOrder(${order.id})">Open Order</a>
+                                <a href="javascript:void(0);" class="btn btn-md btn-teal" onclick="viewOrderProducts(${order.id})">View Products</a>
+                                <a href="javascript:void(0);" class="btn btn-md btn-indigo" onclick="printOrder(${order.id})">Print</a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Function to open order (restore to cart)
+        function openOrder(orderId) {
+            // Implementation for opening/restoring order to cart
+            console.log('Opening order:', orderId);
+        }
+        
+        // Function to view order products
+        function viewOrderProducts(orderId) {
+            // Implementation for viewing order products
+            console.log('Viewing products for order:', orderId);
+        }
+        
+        // Function to print order
+        function printOrder(orderId) {
+            // Implementation for printing order
+            console.log('Printing order:', orderId);
+        }
+        
         // Initialize cart display on page load
         document.addEventListener('DOMContentLoaded', function() {
     loadCart(); // Your existing code
@@ -1067,10 +1382,34 @@ function debugProducts() {
     // Initialize category filtering
     initializeCategoryFiltering();
     
+    // Add event listener for hold modal
+    const holdModal = document.getElementById('hold-order');
+    if (holdModal) {
+        holdModal.addEventListener('show.bs.modal', function(event) {
+            if (!prepareHoldModal()) {
+                event.preventDefault();
+                return false;
+            }
+        });
+    }
+    
     // Your existing code continues here (customer handling, event listeners, etc.)
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('customer_added') === '1') {
         // ... your existing customer code
+    }
+    
+    // Add event listeners for order tabs
+    document.getElementById('onhold-tab').addEventListener('click', () => loadOrders('hold'));
+    document.getElementById('unpaid-tab').addEventListener('click', () => loadOrders('unpaid'));
+    document.getElementById('paid-tab').addEventListener('click', () => loadOrders('paid'));
+    
+    // Load orders when modal is shown
+    const ordersModal = document.getElementById('orders');
+    if (ordersModal) {
+        ordersModal.addEventListener('show.bs.modal', function() {
+            loadOrders('hold'); // Load hold orders by default
+        });
     }
     
     // Your existing event listeners
@@ -1093,6 +1432,69 @@ function debugProducts() {
                 observer.observe(cartContainer, { childList: true, subtree: true });
             }
         });
+        
+        function updateCustomerInfo() {
+    const select = document.getElementById('customerSelect');
+    const customerDetails = document.getElementById('customerDetails');
+    const customerName = document.getElementById('customerName');
+    const customerBonus = document.getElementById('customerBonus');
+    const customerLoyalty = document.getElementById('customerLoyalty');
+
+    const selectedOption = select.options[select.selectedIndex];
+    const selectedValue = select.value;
+
+    // Hide details if no customer or walk-in selected
+    if (selectedValue === '' || selectedValue === 'walkin') {
+        customerDetails.style.display = 'none';
+        return;
+    }
+
+    // Get data from selected option's data attributes
+    const name = selectedOption.getAttribute('data-name');
+    const bonus = selectedOption.getAttribute('data-bonus');
+    const loyalty = selectedOption.getAttribute('data-loyalty');
+
+    // Update customer information display
+    if (name) {
+        customerName.textContent = name;
+        customerBonus.textContent = bonus || '0';
+        customerLoyalty.textContent = '$' + (loyalty || '0.00');
+        
+        // Show customer details
+        customerDetails.style.display = 'flex';
+    }
+}
+
+function applyCustomer() {
+    const select = document.getElementById('customerSelect');
+    const selectedValue = select.value;
+    
+    if (selectedValue && selectedValue !== '' && selectedValue !== 'walkin') {
+        const customerName = document.getElementById('customerName').textContent;
+        
+        // Add your logic here to apply customer to order/form
+        alert('Customer ' + customerName + ' applied successfully!');
+        
+        // Example: Update a hidden form field
+        // document.getElementById('selected_customer_id').value = selectedValue;
+    }
+}
+
+function clearCustomer() {
+    document.getElementById('customerSelect').value = '';
+    document.getElementById('customerDetails').style.display = 'none';
+    
+    // Clear any form fields if needed
+    // document.getElementById('selected_customer_id').value = '';
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const customerDetails = document.getElementById('customerDetails');
+    if (customerDetails) {
+        customerDetails.style.display = 'none';
+    }
+});
     </script>
 
 <?php

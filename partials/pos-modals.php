@@ -380,6 +380,54 @@
     </div>
 </div>
 
+<!-- Hold Order Modal -->
+<div class="modal fade" id="hold-order" tabindex="-1" aria-labelledby="holdOrderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="holdOrderLabel">
+                    <i class="ti ti-player-pause me-2"></i>Hold Order
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="order-summary mb-3">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Customer:</span>
+                        <span id="hold-customer-name" class="fw-bold">Walk in Customer</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Items:</span>
+                        <span id="hold-item-count">0 item(s)</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Total Amount:</span>
+                        <span id="hold-total-amount" class="fw-bold text-primary fs-18">$0.00</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Hold Reference:</span>
+                        <span id="hold-reference" class="fw-bold text-success">HOLD-000000</span>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hold Notes (Optional)</label>
+                    <textarea class="form-control" id="hold-notes" rows="3" placeholder="Add notes for this hold order..."></textarea>
+                </div>
+                <div class="alert alert-info">
+                    <i class="ti ti-info-circle me-2"></i>
+                    The current order will be set on hold. You can retrieve this order from the pending orders section.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-orange" onclick="confirmHoldOrder()">
+                    <i class="ti ti-check me-2"></i>Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Additional POS Modals -->
 
 <!-- Create Customer Modal -->

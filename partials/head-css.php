@@ -222,4 +222,9 @@ $page = end( $link_array );
 
     <!-- Main CSS -->
     <link rel="stylesheet" href="assets/css/style.css">
+
+<?php  if ( $page === 'pos.php' || $page === 'pos-2.php' || $page === 'pos-3.php' || $page === 'pos-4.php' || $page === 'pos-5.php' ){?>
+    <!-- POS Custom CSS -->
+    <link rel="stylesheet" href="assets/css/pos-custom.css">
+<?php }?>
 	
