@@ -20196,20 +20196,20 @@ $page = end( $link_array );
 						</a>
 					</div>
 					<div class="text-center info text-center">
-						<h6>Dreamguys Technologies Pvt Ltd.,</h6>
-						<p class="mb-0">Phone Number: +1 5656665656</p>
-						<p class="mb-0">Email: <a href="mailto:example@gmail.com">example@gmail.com</a></p>
+						<h6 id="receipt-company-name">InTouch POS</h6>
+						<p class="mb-0">Phone Number: <span id="receipt-company-phone">+1 234 567 8900</span></p>
+						<p class="mb-0">Email: <a href="mailto:info@intouchpos.com" id="receipt-company-email">info@intouchpos.com</a></p>
 					</div>
 					<div class="tax-invoice">
 						<h6 class="text-center">Tax Invoice</h6>
 						<div class="row">
 							<div class="col-sm-12 col-md-6">
-								<div class="invoice-user-name"><span>Name: </span>John Doe</div>
-								<div class="invoice-user-name"><span>Invoice No: </span>CS132453</div>
+								<div class="invoice-user-name"><span>Name: </span><span id="receipt-customer-name"></span></div>
+								<div class="invoice-user-name"><span>Invoice No: </span><span id="receipt-invoice-no"></span></div>
 							</div>
 							<div class="col-sm-12 col-md-6">
-								<div class="invoice-user-name"><span>Customer Id: </span>#LL93784</div>
-								<div class="invoice-user-name"><span>Date: </span>01.07.2022</div>
+								<div class="invoice-user-name"><span>Customer Id: </span><span id="receipt-customer-id"></span></div>
+								<div class="invoice-user-name"><span>Date: </span><span id="receipt-date"></span></div>
 							</div>
 						</div>
 					</div>
@@ -20222,60 +20222,45 @@ $page = end( $link_array );
 								<th class="text-end">Total</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td>1. Red Nike Laser</td>
-								<td>50</td>
-								<td>3</td>
-								<td class="text-end">150</td>
-							</tr>
-							<tr>
-								<td>2. Iphone 14</td>
-								<td>50</td>
-								<td>2</td>
-								<td class="text-end">100</td>
-							</tr>
-							<tr>
-								<td>3. Apple Series 8</td>
-								<td>50</td>
-								<td>3</td>
-								<td class="text-end">150</td>
-							</tr>
+						<tbody id="receipt-items">
+							<!-- Dynamic items will be inserted here -->
+						</tbody>
+						<tfoot>
 							<tr>
 								<td colspan="4">
 									<table class="table-borderless w-100 table-fit">
 										<tr>
 											<td class="fw-bold">Sub Total :</td>
-											<td class="text-end">700.00</td>
+											<td class="text-end" id="receipt-subtotal">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Discount :</td>
-											<td class="text-end">-50.00</td>
+											<td class="text-end" id="receipt-discount">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Shipping :</td>
-											<td class="text-end">0.00</td>
+											<td class="text-end" id="receipt-shipping">0.00</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Tax (5%) :</td>
-											<td class="text-end">5.00</td>
+											<td class="fw-bold">Tax <span id="receipt-tax-percentage">(5%)</span> :</td>
+											<td class="text-end" id="receipt-tax">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Bill :</td>
-											<td class="text-end">655.00</td>
+											<td class="text-end" id="receipt-total-bill">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Due :</td>
-											<td class="text-end">0.00</td>
+											<td class="text-end" id="receipt-due">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Payable :</td>
-											<td class="text-end">655.00</td>
+											<td class="text-end" id="receipt-total-payable">0.00</td>
 										</tr>
 									</table>
 								</td>
 							</tr>
-						</tbody>
+						</tfoot>
 					</table>
 					<div class="text-center invoice-bar">
 						<div class="border-bottom border-dashed">
@@ -20284,9 +20269,28 @@ $page = end( $link_array );
 						<a href="javascript:void(0);">
 							<img src="assets/img/barcode/barcode-03.jpg" alt="Barcode">
 						</a>
-						<p class="text-dark fw-bold">Sale 31</p>
+						<p class="text-dark fw-bold" id="receipt-sale-number"></p>
 						<p>Thank You For Shopping With Us. Please Come Again</p>
-						<a href="javascript:void(0);" class="btn btn-md btn-primary">Print Receipt</a>
+						<a href="javascript:void(0);" class="btn btn-md btn-primary" onclick="printReceipt()">Print Receipt</a>
+						<script>
+							// Auto-load receipt data when modal opens
+							document.getElementById('print-receipt').addEventListener('shown.bs.modal', function() {
+								if (typeof showPrintReceiptFromCart === 'function') {
+									showPrintReceiptFromCart();
+								} else {
+									// Fallback with sample data
+									document.getElementById('receipt-customer-name').textContent = 'Walk in Customer';
+									document.getElementById('receipt-invoice-no').textContent = 'INV' + Date.now();
+									document.getElementById('receipt-customer-id').textContent = '#WALKIN';
+									document.getElementById('receipt-date').textContent = new Date().toLocaleDateString();
+									document.getElementById('receipt-subtotal').textContent = '25.00';
+									document.getElementById('receipt-tax').textContent = '0.00';
+									document.getElementById('receipt-total-bill').textContent = '25.00';
+									document.getElementById('receipt-total-payable').textContent = '25.00';
+									document.getElementById('receipt-items').innerHTML = '<tr><td>1. Sample Product</td><td>25.00</td><td>1</td><td class="text-end">25.00</td></tr>';
+								}
+							});
+						</script>
 					</div>
 				</div>
 			</div>
@@ -20294,58 +20298,56 @@ $page = end( $link_array );
 	</div>
 	<!-- /Print Receipt -->
 
-	<!-- Products -->
-	<div class="modal fade modal-default pos-modal" id="products" aria-labelledby="products">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header d-flex align-items-center justify-content-between">
-					<div class="d-flex align-items-center">
-						<h5 class="me-4">Products</h5>
-					</div>
-					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">×</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<div class="card bg-light mb-3">
-						<div class="card-body">
-							<div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mb-3">
-								<span class="badge bg-dark fs-12">Order ID : #45698</span>
-								<p class="fs-16">Number of Products : 02</p>
-							</div>								
-							<div class="product-wrap h-auto">
-								<div class="product-list bg-white align-items-center justify-content-between">
-									<div class="d-flex align-items-center product-info" data-bs-toggle="modal" data-bs-target="#products">
-										<a href="javascript:void(0);" class="pro-img">
-											<img src="assets/img/products/pos-product-16.png" alt="Products">
-										</a>
-										<div class="info">
-											<h6><a href="javascript:void(0);">Red Nike Laser</a></h6>
-											<p>Quantity : 04</p>
-										</div>
-									</div>
-									<p class="text-teal fw-bold">2000</p>
-								</div>
-								<div class="product-list bg-white align-items-center justify-content-between">
-									<div class="d-flex align-items-center product-info" data-bs-toggle="modal" data-bs-target="#products">
-										<a href="javascript:void(0);" class="pro-img">
-											<img src="assets/img/products/pos-product-17.png" alt="Products">
-										</a>
-										<div class="info">
-											<h6><a href="javascript:void(0);">Iphone 11S</a></h6>
-											<p>Quantity : 04</p>
-										</div>
-									</div>
-									<p class="text-teal fw-bold">3000</p>
-								</div>
-							</div>
-						</div>	
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- /Products -->
+	<!-- Products Modal -->
+<div class="modal fade modal-default pos-modal" id="products" aria-labelledby="products">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <h5 class="me-4">Products</h5>
+                </div>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="card bg-light mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap mb-3">
+                            <span class="badge bg-dark fs-12">
+                                Order ID : #<?php echo $order_id; ?>
+                            </span>
+                            <p class="fs-16">Number of Products : <?php echo count($products); ?></p>
+                        </div>								
+                        <div class="product-wrap h-auto">
+                            <?php foreach ($products as $product) { ?>
+                                <div class="product-list bg-white align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center product-info">
+                                        <a href="javascript:void(0);" class="pro-img">
+                                            <img src="<?php echo $product['image']; ?>" alt="<?php echo $product['name']; ?>">
+                                        </a>
+                                        <div class="info">
+                                            <h6>
+                                                <a href="javascript:void(0);">
+                                                    <?php echo htmlspecialchars($product['name']); ?>
+                                                </a>
+                                            </h6>
+                                            <p>Quantity : <?php echo $product['quantity']; ?></p>
+                                        </div>
+                                    </div>
+                                    <p class="text-teal fw-bold">
+                                        <?php echo number_format($product['price']); ?>
+                                    </p>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>	
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /Products Modal -->
 
 	<div class="modal fade" id="create" tabindex="-1" aria-labelledby="create"  aria-hidden="true">
 		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -21354,7 +21356,8 @@ $page = end( $link_array );
 											<p>Loading orders...</p>
 									</div>
 								</div>
-							</div>ay-9">Date :</span> 23 Dec 2024 13:39:11</p>
+							</div>
+                                                            <!--ay-9">Date :</span> 23 Dec 2024 13:39:11</p>-->
 												</div>
 											</div>
 										</div>	
@@ -31085,4 +31088,40 @@ function placeOrder(paymentMethod) {
     console.log('Order placed with payment method:', paymentMethod);
     alert('Order placed successfully!');
 }
+
+function showProducts(orderId) {
+    $.ajax({
+        url: 'getOrderDetails.php',
+        type: 'GET',
+        data: { order_id: orderId },
+        success: function(response) {
+            const data = JSON.parse(response);
+
+            $('#products .badge').text('Order ID : #' + data.order_id);
+            $('#products .fs-16').text('Number of Products : ' + data.products.length);
+
+            let productHtml = '';
+            data.products.forEach(p => {
+                productHtml += `
+                    <div class="product-list bg-white align-items-center justify-content-between">
+                        <div class="d-flex align-items-center product-info">
+                            <a href="javascript:void(0);" class="pro-img">
+                                <img src="${p.image}" alt="${p.name}">
+                            </a>
+                            <div class="info">
+                                <h6><a href="javascript:void(0);">${p.name}</a></h6>
+                                <p>Quantity : ${p.quantity}</p>
+                            </div>
+                        </div>
+                        <p class="text-teal fw-bold">${p.price}</p>
+                    </div>
+                `;
+            });
+
+            $('#products .product-wrap').html(productHtml);
+            $('#products').modal('show');
+        }
+    });
+}
+
 </script>

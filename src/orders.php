@@ -210,8 +210,14 @@ if ($result) {
     </td>
     <td class="d-flex">
         <div class="edit-delete-action d-flex align-items-center">
-            <a class="me-2 edit-icon d-flex align-items-center border rounded p-2" href="invoice-details.php">
-                <i data-feather="eye" class="feather-eye"></i>
+            <a class="me-2 edit-icon p-2 border d-flex align-items-center rounded" href="invoice-details.php">
+                <i data-feather="eye" class="action-eye"></i>
+            </a>
+            <a class="me-2 p-2 d-flex align-items-center border rounded" href="javascript:void(0);" onclick="viewOrderProducts(<?= $order['id']; ?>)" data-bs-toggle="modal" data-bs-target="#order-products">
+                <i data-feather="package" class="feather-package"></i>
+            </a>
+            <a class="p-2 d-flex align-items-center border rounded" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete">
+                <i data-feather="trash-2" class="feather-trash-2"></i>
             </a>
         </div>
     </td>
@@ -608,6 +614,74 @@ if ($result) {
     <!-- ========================
         End Page Content
     ========================= -->
+
+    <!-- Order Products Modal -->
+    <div class="modal fade" id="order-products" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Order Products</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="order-products-content">
+                        <div class="text-center p-3">
+                            <p>Loading products...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Order Products Modal -->
+
+    <script>
+    function viewOrderProducts(orderId) {
+        const content = document.getElementById('order-products-content');
+        content.innerHTML = '<div class="text-center p-3"><p>Loading products...</p></div>';
+        
+        fetch(`get_order_items.php?order_id=${orderId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayOrderProducts(data.items);
+            } else {
+                content.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading products</p></div>';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            content.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading products</p></div>';
+        });
+    }
+    
+    function displayOrderProducts(items) {
+        const content = document.getElementById('order-products-content');
+        
+        if (items.length === 0) {
+            content.innerHTML = '<div class="text-center p-3"><p>No products found</p></div>';
+            return;
+        }
+        
+        let html = '<div class="table-responsive"><table class="table"><thead><tr><th>Product</th><th>Quantity</th><th>Price</th><th>Total</th></tr></thead><tbody>';
+        
+        items.forEach(item => {
+            html += `
+                <tr>
+                    <td>${item.product_name}</td>
+                    <td>${item.quantity}</td>
+                    <td>$${parseFloat(item.price).toFixed(2)}</td>
+                    <td>$${parseFloat(item.total).toFixed(2)}</td>
+                </tr>
+            `;
+        });
+        
+        html += '</tbody></table></div>';
+        content.innerHTML = html;
+    }
+    </script>
 
 <?php
 $content = ob_get_clean();

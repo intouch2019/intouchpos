@@ -56,6 +56,71 @@ if ($scheme_result) {
 }
 $schemes_json = json_encode($schemes);
 
+// Initialize receipt variables for modal
+$company_name = "InTouch POS";
+$company_phone = "+1 234 567 8900";
+$company_email = "info@intouchpos.com";
+$customer_name = "";
+$customer_id = "";
+$invoice_no = "";
+$order_date = date('d.m.Y');
+$order_items = [];
+$subtotal = 0;
+$discount = 0;
+$shipping = 0;
+$tax = 0;
+$tax_percentage = 5;
+$total_bill = 0;
+$due_amount = 0;
+$total_payable = 0;
+$sale_number = "";
+
+// At the top of your page
+if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET['order_id'])) {
+
+    $orderId = (int) $_GET['order_id'];
+    $products = [];
+
+    // Query order items joined with products
+    $sql = "
+        SELECT 
+            oi.quantity,
+            oi.unit_price,
+            p.name AS product_name,
+            p.image AS product_image
+        FROM order_items oi
+        JOIN products p ON p.id = oi.product_id
+        WHERE oi.order_id = $orderId
+    ";
+    $result = mysqli_query($link, $sql);
+
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $products[] = [
+                'name'     => $row['product_name'],
+                'quantity' => $row['quantity'],
+                'price'    => $row['unit_price'],
+                'image'    => !empty($row['product_image']) ? $row['product_image'] : 'assets/img/default.png'
+            ];
+        }
+    }
+
+    // Query order_number
+    $order_number = '';
+    $sql_order = "SELECT order_number FROM orders WHERE id = $orderId";
+    $result_order = mysqli_query($link, $sql_order);
+    if ($result_order && $row_order = mysqli_fetch_assoc($result_order)) {
+        $order_number = $row_order['order_number'];
+    }
+
+    header('Content-Type: application/json');
+    echo json_encode([
+        'order_number' => $order_number,
+        'products'     => $products
+    ]);
+    exit;
+}
+
 ?>
 
     <!-- ========================
@@ -209,7 +274,7 @@ $schemes_json = json_encode($schemes);
                                                                                         Bonus: <span class="badge bg-cyan fs-13 fw-bold p-1" id="customerBonus">0</span>
                                                                                     </p>
                                                                                     <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
-                                                                                        Loyalty: <span class="badge bg-teal fs-13 fw-bold p-1" id="customerLoyalty">$0.00</span>
+                                                                                        Loyalty: <span class="badge bg-teal fs-13 fw-bold p-1" id="customerLoyalty">0.00</span>
                                                                                     </p>
                                                                                 </div>
                                                                             </div>
@@ -398,10 +463,14 @@ $schemes_json = json_encode($schemes);
 		</div>
         <!-- End Content -->
     
-        <?php require_once __DIR__ . '/../partials/footer.php'; ?>
-        <?php require_once __DIR__ . '/../partials/modal-popup.php'; ?>
-        <?php require_once __DIR__ . '/../partials/modal-popup-new.php'; ?>
-        <?php require_once __DIR__ . '/../partials/pos-modals.php'; ?>
+        <?php 
+        // Set page variable for modal conditions
+        $page = 'pos.php';
+        require_once __DIR__ . '/../partials/footer.php'; 
+        require_once __DIR__ . '/../partials/modal-popup.php'; 
+        require_once __DIR__ . '/../partials/modal-popup-new.php'; 
+        require_once __DIR__ . '/../partials/pos-modals.php'; 
+        ?>
 
 
     </div>
@@ -870,7 +939,7 @@ function debugProducts() {
             const total = getCartTotal();
             const itemCount = cart.length;
             
-            document.getElementById('quick-total-amount').textContent = '$' + total.toFixed(2);
+            document.getElementById('quick-total-amount').textContent =  total.toFixed(2);
             document.getElementById('quick-item-count').textContent = itemCount + ' item(s)';
             
             // Update customer name
@@ -1036,7 +1105,7 @@ function debugProducts() {
                 const total = getCartTotal();
                 const customerName = customerSelect.options[customerSelect.selectedIndex].text;
                 
-                const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment ($${total.toFixed(2)})?`;
+                const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment (${total.toFixed(2)})?`;
                 
                 if (confirm(confirmMessage)) {
                     placeOrder(paymentMethod);
@@ -1130,6 +1199,19 @@ function debugProducts() {
                     // Show success modal with order details
                     showOrderSuccessModal(data);
                     
+                    // Store last order data for receipt
+                    window.lastOrderData = {
+                        order_number: data.order_number,
+                        customer_name: customerSelect.options[customerSelect.selectedIndex].text,
+                        customer_id: customerId,
+                        total_amount: data.total_amount,
+                        cart_items: [...cart],
+                        subtotal: subtotal,
+                        discount: parseFloat(document.getElementById('discountAmount').textContent.replace('-', '')) || 0,
+                        shipping: parseFloat(document.getElementById('shippingCost').textContent) || 0,
+                        tax: parseFloat(document.getElementById('taxAmount').textContent) || 0
+                    };
+                    
                     // Redirect to orders page after a short delay
                     setTimeout(() => {
                         window.location.href = 'orders.php';
@@ -1209,7 +1291,7 @@ function debugProducts() {
         // Function to update payment modal totals
         function updatePaymentModalTotals() {
             const total = getCartTotal();
-            const totalFormatted = '$' + total.toFixed(2);
+            const totalFormatted =  total.toFixed(2);
 
             // Update all payment modal totals
             const totalElements = [
@@ -1277,7 +1359,7 @@ function debugProducts() {
         function showOrderSuccessModal(orderData) {
             // Update modal content
             document.getElementById('completed-order-number').textContent = orderData.order_number;
-            document.getElementById('completed-total-amount').textContent = '$' + orderData.total_amount.toFixed(2);
+            document.getElementById('completed-total-amount').textContent =  orderData.total_amount.toFixed(2);
             document.getElementById('completed-payment-method').textContent = orderData.payment_method.replace('_', ' ').toUpperCase();
             
             // Show the modal
@@ -1453,7 +1535,6 @@ function debugProducts() {
                             </div>
                             ${notes}
                             <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-                                <a href="javascript:void(0);" class="btn btn-md btn-orange" onclick="openOrder(${order.id})">Open Order</a>
                                 <a href="javascript:void(0);" class="btn btn-md btn-teal" onclick="viewOrderProducts(${order.id})">View Products</a>
                                 <a href="javascript:void(0);" class="btn btn-md btn-indigo" onclick="printOrder(${order.id})">Print</a>
                             </div>
@@ -1473,14 +1554,158 @@ function debugProducts() {
         
         // Function to view order products
         function viewOrderProducts(orderId) {
-            // Implementation for viewing order products
             console.log('Viewing products for order:', orderId);
+
+            // Close any currently open modals first
+            const openModals = document.querySelectorAll('.modal.show');
+            openModals.forEach(openModalEl => {
+                const openModalInstance = bootstrap.Modal.getInstance(openModalEl) || bootstrap.Modal.getOrCreateInstance(openModalEl);
+                openModalInstance.hide();
+            });
+
+            // Now fetch and open the products modal
+            fetch(window.location.pathname + '?action=getOrderItems&order_id=' + orderId)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok, status ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data.products || data.products.length === 0) {
+                        alert('No products found for this order.');
+                        return;
+                    }
+
+                    // Update modal header
+                    document.querySelector('#products .badge').textContent =
+                        'Order ID : #' + (data.order_number || orderId);
+                    document.querySelector('#products .fs-16').textContent =
+                        'Number of Products : ' + data.products.length;
+
+                    // Build products HTML
+                    let productsHtml = '';
+                    data.products.forEach(p => {
+                        productsHtml += `
+                            <div class="product-list bg-white align-items-center justify-content-between">
+                                <div class="d-flex align-items-center product-info">
+                                    <a href="javascript:void(0);" class="pro-img">
+                                        <img src="assets/img/products/${p.image || 'images(1).jpg'}" alt="${p.name || ''}">
+                                    </a>
+                                    <div class="info">
+                                        <h6><a href="javascript:void(0);">${p.name || ''}</a></h6>
+                                        <p>Quantity : ${p.quantity || 0}</p>
+                                    </div>
+                                </div>
+                                <p class="text-teal fw-bold">${p.price !== undefined ? parseFloat(p.price).toFixed(2) : '0.00'}</p>
+                            </div>
+                        `;
+                    });
+
+                    // Fill modal body
+                    document.querySelector('#products .product-wrap').innerHTML = productsHtml;
+
+                    // Show the products modal after a tiny delay (allow first to hide)
+                    const modalEl = document.getElementById('products');
+                    const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                    setTimeout(() => modal.show(), 300); // <-- wait for animation to finish
+                })
+                .catch(err => {
+                    console.error('Error loading order products:', err);
+                    alert('Failed to load order products: ' + err.message);
+                });
         }
-        
+    
         // Function to print order
         function printOrder(orderId) {
             // Implementation for printing order
             console.log('Printing order:', orderId);
+        }
+        
+        // Function to show print receipt modal with current cart data from database
+        function showPrintReceiptFromCart() {
+            // Fetch cart data from database
+            fetch('receipt_api.php')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert('Error loading cart data: ' + data.message);
+                    return;
+                }
+                
+                if (data.cart_items.length === 0) {
+                    alert('Cart is empty. Cannot generate receipt.');
+                    return;
+                }
+                
+                // Get customer info
+                const customerSelect = document.getElementById('customerSelect');
+                const customerName = customerSelect && customerSelect.value ? 
+                    customerSelect.options[customerSelect.selectedIndex].text : 'Walk in Customer';
+                const customerId = customerSelect && customerSelect.value ? 
+                    '#' + customerSelect.value : '#WALKIN';
+                
+                // Generate invoice number
+                const invoiceNo = 'INV' + Date.now();
+                
+                // Get current date
+                const currentDate = new Date().toLocaleDateString();
+                
+                // Populate receipt header data
+                document.getElementById('receipt-customer-name').textContent = customerName;
+                document.getElementById('receipt-invoice-no').textContent = invoiceNo;
+                document.getElementById('receipt-customer-id').textContent = customerId;
+                document.getElementById('receipt-date').textContent = currentDate;
+                
+                // Populate items from database
+                const receiptItems = document.getElementById('receipt-items');
+                receiptItems.innerHTML = '';
+                
+                data.cart_items.forEach((item, index) => {
+                    receiptItems.innerHTML += `
+                        <tr>
+                            <td>${index + 1}. ${item.name}</td>
+                            <td>${item.price.toFixed(2)}</td>
+                            <td>${item.quantity}</td>
+                            <td class="text-end">${item.total.toFixed(2)}</td>
+                        </tr>
+                    `;
+                });
+                
+                // Get discount from UI
+                const discount = parseFloat(document.getElementById('discountAmount').textContent.replace('-', '')) || 0;
+                const shipping = parseFloat(document.getElementById('shippingCost').textContent) || 0;
+                
+                // Calculate final totals (no tax)
+                const finalTotal = data.subtotal + shipping - discount;
+                
+                // Populate totals
+                document.getElementById('receipt-subtotal').textContent = data.subtotal.toFixed(2);
+                document.getElementById('receipt-discount').textContent = discount > 0 ? '-' + discount.toFixed(2) : '0.00';
+                document.getElementById('receipt-shipping').textContent = shipping.toFixed(2);
+                document.getElementById('receipt-tax').textContent = '0.00';
+                document.getElementById('receipt-total-bill').textContent = finalTotal.toFixed(2);
+                document.getElementById('receipt-due').textContent = '0.00';
+                document.getElementById('receipt-total-payable').textContent = finalTotal.toFixed(2);
+                
+                // Set sale number
+                document.getElementById('receipt-sale-number').textContent = 'Sale ' + Date.now().toString().slice(-4);
+                
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to load cart data for receipt.');
+            });
+        }
+        
+        // Function to show print receipt modal with current cart data (legacy)
+        function showPrintReceipt() {
+            showPrintReceiptFromCart();
+        }
+        
+        // Function to print receipt
+        function printReceipt() {
+            window.print();
         }
         
         // Initialize cart display on page load
@@ -1571,7 +1796,7 @@ function debugProducts() {
     if (name) {
         customerName.textContent = name;
         customerBonus.textContent = bonus || '0';
-        customerLoyalty.textContent = '$' + (loyalty || '0.00');
+        customerLoyalty.textContent =  (loyalty || '0.00');
         
         // Show customer details
         customerDetails.style.display = 'flex';
