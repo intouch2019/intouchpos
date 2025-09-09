@@ -1,4 +1,77 @@
-<?php ob_start();?>
+<?php 
+ob_start();
+require_once '../partials/config.php';
+
+// Get filter parameters
+$category_filter = $_GET['category'] ?? '';
+$sort_filter = $_GET['sort'] ?? '';
+$search = $_GET['search'] ?? '';
+
+// Fetch categories for dropdown
+$categories = [];
+$categories_query = "SELECT * FROM categories WHERE is_active = 1 ORDER BY name ASC";
+$categories_result = mysqli_query($link, $categories_query);
+if($categories_result) {
+    while($row = mysqli_fetch_assoc($categories_result)) {
+        $categories[] = $row;
+    }
+}
+
+// Fetch distinct created_by values for dropdown
+$created_by_list = [];
+$created_by_query = "SELECT DISTINCT created_by FROM products WHERE created_by IS NOT NULL AND created_by != '' ORDER BY created_by ASC";
+$created_by_result = mysqli_query($link, $created_by_query);
+if($created_by_result) {
+    while($row = mysqli_fetch_assoc($created_by_result)) {
+        $created_by_list[] = $row['created_by'];
+    }
+}
+
+// Build products query with filters
+$where_conditions = ["p.is_active = 1"];
+$params = [];
+
+if($category_filter) {
+    $where_conditions[] = "p.category_id = ?";
+    $params[] = $category_filter;
+}
+
+if($search) {
+    $where_conditions[] = "(p.name LIKE ? OR p.sku LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+}
+
+$where_clause = implode(' AND ', $where_conditions);
+
+// Set order clause
+$order_clause = "ORDER BY p.id DESC";
+if($sort_filter == 'name_asc') $order_clause = "ORDER BY p.name ASC";
+elseif($sort_filter == 'name_desc') $order_clause = "ORDER BY p.name DESC";
+elseif($sort_filter == 'price_asc') $order_clause = "ORDER BY p.price ASC";
+elseif($sort_filter == 'price_desc') $order_clause = "ORDER BY p.price DESC";
+elseif($sort_filter == 'recent') $order_clause = "ORDER BY p.created_at DESC";
+
+$products_query = "SELECT p.*, c.name as category_name 
+                  FROM products p 
+                  LEFT JOIN categories c ON p.category_id = c.id 
+                  WHERE $where_clause 
+                  $order_clause";
+
+if($params) {
+    $stmt = mysqli_prepare($link, $products_query);
+    $types = str_repeat('s', count($params));
+    mysqli_stmt_bind_param($stmt, $types, ...$params);
+    mysqli_stmt_execute($stmt);
+    $products_result = mysqli_stmt_get_result($stmt);
+} else {
+    $products_result = mysqli_query($link, $products_query);
+}
+
+if(!$products_result) {
+    die("Error: " . mysqli_error($link));
+}
+?>
 
     <!-- ========================
         Start Page Content
@@ -42,68 +115,43 @@
                 <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
                     <div class="search-set">
                         <div class="search-input">
-                            <span class="btn-searchset"><i class="ti ti-search fs-14 feather-search"></i></span>
+<!--                            <input type="text" placeholder="Search products..." class="form-control" id="searchInput" value="<?php echo htmlspecialchars($search); ?>">
+                            <span class="btn-searchset" onclick="searchProducts()"><i class="ti ti-search fs-14 feather-search"></i></span>-->
                         </div>
                     </div>
                     <div class="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
-                        <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-                                Product
+
+<!--                        <div class="dropdown me-2">
+                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="createdByDropdownBtn">
+                                All Created By
                             </a>
                             <ul class="dropdown-menu  dropdown-menu-end p-3">
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Lenovo IdeaPad 3</a>
+                                    <a href="javascript:void(0);" onclick="filterByCreatedBy('')" class="dropdown-item rounded-1">All Created By</a>
                                 </li>
+                                <?php foreach($created_by_list as $creator): ?>
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Beats Pro </a>
+                                    <a href="javascript:void(0);" onclick="filterByCreatedBy('<?php echo htmlspecialchars($creator); ?>')" class="dropdown-item rounded-1"><?php echo htmlspecialchars($creator); ?></a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Nike Jordan</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Apple Series 5 Watch</a>
-                                </li>
+                                <?php endforeach; ?>
                             </ul>
-                        </div>
+                        </div>-->
                         <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-                                Created By
+                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="categoryDropdownBtn">
+                                All Categories
                             </a>
                             <ul class="dropdown-menu  dropdown-menu-end p-3">
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">James Kirwin</a>
+                                    <a href="javascript:void(0);" onclick="filterByCategory('')" class="dropdown-item rounded-1">All Categories</a>
                                 </li>
+                                <?php foreach($categories as $category): ?>
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Francis Chang</a>
+                                    <a href="javascript:void(0);" onclick="filterByCategory('<?php echo $category['id']; ?>')" class="dropdown-item rounded-1"><?php echo htmlspecialchars($category['name']); ?></a>
                                 </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Antonio Engle</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Leo Kelly</a>
-                                </li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
-                        <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-                                Category
-                            </a>
-                            <ul class="dropdown-menu  dropdown-menu-end p-3">
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Computers</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Electronics</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Shoe</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Electronics</a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="dropdown me-2">
+                        <!-- <div class="dropdown me-2">
                             <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
                                 Brand
                             </a>
@@ -121,26 +169,26 @@
                                     <a href="javascript:void(0);" class="dropdown-item rounded-1">Apple</a>
                                 </li>
                             </ul>
-                        </div>
+                        </div> -->
                         <div class="dropdown">
                             <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
                                 Sort By : Last 7 Days
                             </a>
                             <ul class="dropdown-menu  dropdown-menu-end p-3">
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Recently Added</a>
+                                    <a href="javascript:void(0);" onclick="sortProducts('recent')" class="dropdown-item rounded-1">Recently Added</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Ascending</a>
+                                    <a href="javascript:void(0);" onclick="sortProducts('name_asc')" class="dropdown-item rounded-1">Name A-Z</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
+                                    <a href="javascript:void(0);" onclick="sortProducts('name_desc')" class="dropdown-item rounded-1">Name Z-A</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
+                                    <a href="javascript:void(0);" onclick="sortProducts('price_asc')" class="dropdown-item rounded-1">Price Low-High</a>
                                 </li>
                                 <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
+                                    <a href="javascript:void(0);" onclick="sortProducts('price_desc')" class="dropdown-item rounded-1">Price High-Low</a>
                                 </li>
                             </ul>
                         </div>
@@ -164,11 +212,12 @@
                                     <th>Price</th>
                                     <th>Unit</th>
                                     <th>Qty</th>
-                                    <th>Created By</th>
+                                    <!--<th>Created By</th>-->
                                     <th class="no-sort"></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="productsTableBody">
+                                <?php while($product = mysqli_fetch_assoc($products_result)): ?>
                                 <tr>
                                     <td>
                                         <label class="checkboxs">
@@ -176,497 +225,45 @@
                                             <span class="checkmarks"></span>
                                         </label>
                                     </td>
-                                    <td>PT001 </td>
+                                    <td><?php echo htmlspecialchars($product['sku']); ?></td>
                                     <td>
                                         <div class="d-flex align-items-center">
                                             <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/stock-img-01.png" alt="product">
+                                                <img src="<?php echo !empty($product['image']) ? 'assets/img/products/' . htmlspecialchars($product['image']) : 'assets/img/products/images(1).jpg'; ?>" alt="product">
                                             </a>
-                                            <a href="javascript:void(0);">Lenovo IdeaPad 3 </a>
-                                        </div>												
-                                    </td>							
-                                    <td>Computers</td>
-                                    <td>Lenovo</td>
-                                    <td>$600</td>
+                                            <a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a>
+                                        </div>
+                                    </td>
+                                    <td><?php echo htmlspecialchars($product['category_name'] ?? 'N/A'); ?></td>
+                                    <td>N/A</td>
+                                    <td><?php echo number_format($product['price'], 2); ?></td>
                                     <td>Pc</td>
-                                    <td>100</td>
-                                    <td>
-                                    <div class="d-flex align-items-center">
-                                        <span>
-                                        <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                            <img src="assets/img/users/user-30.jpg" alt="product">
-                                        </a>
-                                    </span>
-                                        <a href="javascript:void(0);">James Kirwin</a>
-                                    </div></td>
+                                    <td><?php echo htmlspecialchars($product['stock_quantity']); ?></td>
+<!--                                    <td>
+                                        <div class="d-flex align-items-center">-->
+<!--                                            <span>
+                                                <a href="javascript:void(0);" class="avatar avatar-md me-2">
+                                                    <img src="assets/img/users/default-user.jpg" alt="user">
+                                                </a>
+                                            </span>-->
+<!--                                            <a href="javascript:void(0);">Admin</a>
+                                        </div>
+                                    </td>-->
                                     <td class="action-table-data">
                                         <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon  p-2" href="product-details.php">
+                                            <a class="me-2 edit-icon p-2" href="product-details.php?id=<?php echo $product['id']; ?>">
                                                 <i data-feather="eye" class="feather-eye"></i>
                                             </a>
-                                            <a class="me-2 p-2" href="edit-product.php" >
+                                            <a class="me-2 p-2" href="edit-product.php?id=<?php echo $product['id']; ?>">
                                                 <i data-feather="edit" class="feather-edit"></i>
                                             </a>
-                                            <a class="p-2" href="javascript:void(0);">
+                                            <a class="p-2" href="javascript:void(0);" onclick="deleteProduct(<?php echo $product['id']; ?>)">
                                                 <i data-feather="trash-2" class="feather-trash-2"></i>
                                             </a>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT002</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/stock-img-06.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Beats Pro</a>
-                                        </div>												
-                                    </td>
-                                    <td>Electronics</td>
-                                    <td>Beats</td>
-                                    <td>$160</td>
-                                    <td>Pc</td>
-                                    <td>140</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-13.jpg" alt="product">
-                                            </a>
-                                            </span>
-                                                <a href="javascript:void(0);">Francis Chang</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>
-                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT003</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/stock-img-02.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Nike Jordan</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Shoe</td>
-                                    <td>Nike</td>
-                                    <td>$110</td>
-                                    <td>Pc</td>
-                                    <td>300</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-11.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">Antonio Engle</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>
-                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT004</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/stock-img-03.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Apple Series 5 Watch</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Electronics</td>
-                                    <td>Apple</td>
-                                    <td>$120</td>
-                                    <td>Pc</td>
-                                    <td>450</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-32.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">Leo Kelly</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>
-                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT005</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/stock-img-04.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Amazon Echo Dot</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Electronics</td>
-                                    <td>Amazon</td>
-                                    <td>$80</td>
-                                    <td>Pc</td>
-                                    <td>320</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-02.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">Annette Walker</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT006</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/stock-img-05.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Sanford Chair Sofa</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Furnitures</td>
-                                    <td>Modern Wave</td>
-                                    <td>$320</td>
-                                    <td>Pc</td>
-                                    <td>650</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-05.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">John Weaver</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>
-                                        
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT007</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/expire-product-01.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Red Premium Satchel</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Bags</td>
-                                    <td>Dior</td>
-                                    <td>$60</td>
-                                    <td>Pc</td>
-                                    <td>700</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-08.jpg" alt="product">
-                                            </a>
-                                            </span>
-                                                <a href="javascript:void(0);">Gary Hennessy</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>	
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT008</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/expire-product-02.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Iphone 14 Pro</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Phone</td>
-                                    <td>Apple</td>
-                                    <td>$540</td>
-                                    <td>Pc</td>
-                                    <td>630</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-04.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">Eleanor Panek</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>	
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT009</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/expire-product-03.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Gaming Chair</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Furniture</td>
-                                    <td>Arlime</td>
-                                    <td>$200</td>
-                                    <td>Pc</td>
-                                    <td>410</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-09.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">William Levy</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>	
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT010</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/expire-product-04.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Borealis Backpack</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Bags</td>
-                                    <td>The North Face</td>
-                                    <td>$45</td>
-                                    <td>Pc</td>
-                                    <td>550</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-10.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">Charlotte Klotz</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>	
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="checkboxs">
-                                            <input type="checkbox">
-                                            <span class="checkmarks"></span>
-                                        </label>
-                                    </td>
-                                    <td>PT010</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/products/expire-product-04.png" alt="product">
-                                            </a>
-                                            <a href="javascript:void(0);">Borealis Backpack</a>
-                                        </div>												
-                                    </td>											
-                                    <td>Bags</td>
-                                    <td>The North Face</td>
-                                    <td>$45</td>
-                                    <td>Pc</td>
-                                    <td>550</td>
-                                    <td>
-                                        <div class="d-flex align-items-center">
-                                            <span>
-                                            <a href="javascript:void(0);" class="avatar avatar-md me-2">
-                                                <img src="assets/img/users/user-10.jpg" alt="product">
-                                            </a>
-                                        </span>
-                                                <a href="javascript:void(0);">Charlotte Klotz</a>
-                                        </div>
-                                    </td>
-                                    <td class="action-table-data">
-                                        <div class="edit-delete-action">
-                                            <a class="me-2 edit-icon p-2" href="product-details.php">
-                                                <i data-feather="eye" class="action-eye"></i>
-                                            </a>
-                                            <a class="me-2 p-2" href="edit-product.php">
-                                                <i data-feather="edit" class="feather-edit"></i>
-                                            </a>
-                                            <a class="p-2" href="javascript:void(0);">
-                                                <i data-feather="trash-2" class="feather-trash-2"></i>
-                                            </a>
-                                        </div>	
-                                    </td>
-                                </tr>
+                                <?php endwhile; ?>
                             </tbody>
                         </table>
                     </div>
@@ -683,6 +280,75 @@
     <!-- ========================
         End Page Content
     ========================= -->
+
+<script>
+function deleteProduct(productId) {
+    if(confirm('Are you sure you want to delete this product?')) {
+        window.location.href = 'delete-product.php?id=' + productId;
+    }
+}
+
+let currentFilters = {
+    category: '',
+    sort: '',
+    search: ''
+};
+
+function loadProducts() {
+    const params = new URLSearchParams(currentFilters);
+    
+    fetch('filter_products.php?' + params)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('productsTableBody').innerHTML = html;
+            // Re-initialize Feather icons
+            if(typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        })
+        .catch(error => console.error('Error:', error));
+}
+
+function filterByCategory(categoryId) {
+    currentFilters.category = categoryId;
+    // Update button text
+    const btn = document.getElementById('categoryDropdownBtn');
+    if(categoryId === '') {
+        btn.textContent = 'All Categories';
+    } else {
+        const selectedItem = event.target.textContent;
+        btn.textContent = selectedItem;
+    }
+    loadProducts();
+}
+
+
+
+
+
+function sortProducts(sortType) {
+    currentFilters.sort = sortType;
+    loadProducts();
+}
+
+function searchProducts() {
+    currentFilters.search = document.getElementById('searchInput').value;
+    loadProducts();
+}
+
+document.getElementById('searchInput').addEventListener('keypress', function(e) {
+    if(e.key === 'Enter') {
+        searchProducts();
+    }
+});
+
+document.getElementById('searchInput').addEventListener('input', function() {
+    clearTimeout(this.searchTimeout);
+    this.searchTimeout = setTimeout(() => {
+        searchProducts();
+    }, 300);
+});
+</script>
 
 <?php
 $content = ob_get_clean();
