@@ -61,9 +61,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             VALUES ('$return_id', '$pid', '$p_qty', '$r_qty', '$pprice', '$taxPerc', '$taxAmt', '$unitCost', '$totalCost')";
             mysqli_query($link, $itemQuery);
 
-            // ✅ Update stock quantity in products table
-            $updateStock = "UPDATE products SET stock_quantity = stock_quantity - $r_qty WHERE id = $pid";
-            mysqli_query($link, $updateStock);
+            if ($status === 'Received') {
+                // ✅ Update stock quantity in products table
+                $updateStock = "UPDATE products SET stock_quantity = stock_quantity - $r_qty WHERE id = $pid";
+                mysqli_query($link, $updateStock);
+            }
         }
 
         // ✅ Success response
