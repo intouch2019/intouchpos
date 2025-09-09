@@ -96,7 +96,7 @@ Start Page Content
 <div class="page-wrapper">
 
 	<!-- Start Content -->
-	<div class="content" style="margin-top: -42px;">
+	<div class="content">
 		<div class="page-header">
 			<div class="add-item d-flex">
 				<div class="page-title">

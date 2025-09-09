@@ -25184,8 +25184,8 @@ $page = end( $link_array );
 											<tr>
 												<th>Product Name</th>
 												<th>Net Unit Price</th>
-												<th>Stock</th>
-												<th>QTY	</th>
+												<th>Available  Qty</th>
+												<th>Return QTY</th>
 												<th>Discount</th>
 												<th>Tax %</th>
 												<th>Subtotal</th>
@@ -25331,8 +25331,8 @@ $page = end( $link_array );
 	                                        <tr>
 	                                            <th>Product Name</th>
 	                                            <th>Net Unit Price</th>
-	                                            <th>Stock</th>
-	                                            <th>QTY</th>
+	                                            <th>Available  Qty</th>
+	                                            <th>Return QTY</th>
 	                                            <th>Discount</th>
 	                                            <th>Tax %</th>
 	                                            <th>Subtotal</th>
