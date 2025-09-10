@@ -12,7 +12,7 @@ switch ($type) {
 
     $query = "SELECT id, name FROM suppliers";
     if ($search != '') {
-        $query .= " WHERE name LIKE '%$search%'";
+        $query .= " WHERE name LIKE '%$search%' OR phone LIKE '%$search%'";
     }
     $query .= " ORDER BY name ASC";
 
@@ -26,14 +26,31 @@ switch ($type) {
     echo json_encode($suppliers);
     break;
 
-    case 'customers':
+    case 'supplier-returns':
     $search = isset($_GET['search']) ? mysqli_real_escape_string($link, $_GET['search']) : '';
 
-    $query = "SELECT id, name FROM customers";
+    $query = "SELECT DISTINCT s.id, s.name FROM suppliers s INNER JOIN purchase_returns pr ON pr.supplier_id = s.id";
     if ($search != '') {
-        $query .= " WHERE name LIKE '%$search%' AND is_active = 1";
+        $query .= " WHERE s.name LIKE '%$search%' OR s.phone LIKE '%$search%'";
     }
-    $query .= " ORDER BY name ASC";
+    $query .= " ORDER BY s.name ASC";
+
+    $result = mysqli_query($link, $query);
+    $suppliers = [];
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $suppliers[] = $row;
+        }
+    }
+    echo json_encode($suppliers);
+    break;
+
+    case 'customers':
+    $search = isset($_GET['search']) ? mysqli_real_escape_string($link, $_GET['search']) : '';
+    $query = "SELECT id, name, phone FROM customers 
+              WHERE is_active = 1 
+              AND (name LIKE '%$search%' OR phone LIKE '%$search%')
+              ORDER BY name ASC LIMIT 10";
 
     $result = mysqli_query($link, $query);
     $customers = [];

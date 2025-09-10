@@ -276,83 +276,115 @@ require_once '../partials/main.php'; ?>
 	
 	$(document).ready(function() {
 
-		$('#sales_return_customer').select2({
-			placeholder: "Search Customer",
-			width: '100%',
-			dropdownParent: $('#add-sales-return-new'),
-		    allowClear: true,   // lets you clear the selection
-		    ajax: {
-		    	url: 'getData.php',
-		    	dataType: 'json',
-		    	delay: 250,
-		    	data: function (params) {
-		    		return {
-		                type: "customers",   // handle in getData.php
-		                search: params.term || ''
-		            };
-		        },
-		        processResults: function (data) {
-		        	return {
-		        		results: $.map(data, function (item) {
-		        			return {
-		        				id: item.id,
-		        				text: item.name
-		        			};
-		        		})
-		        	};
-		        },
-		        cache: true
-		    }
-		});
+		// 🔹 Search on input
+	    $("#customerSearch").on("input", function () {
+	        let search = $(this).val().trim();
 
-		// When supplier changes, load purchase references
-		$('#sales_return_customer').on('change', function () {
-			let custId = $(this).val();
+	        if (search.length === 0) {
+	            $("#customerName").hide();
+	            return;
+	        }
 
-		    // Reset purchase_reference & product select
-		    $('#sales_return_order_no').empty().trigger('change');
-		    if ($.fn.select2 && $('#salesReturnProductSelect').hasClass("select2-hidden-accessible")) {
-		    	$('#salesReturnProductSelect').select2('destroy');
-		    	$('#salesReturnProductSelect').empty();
-		    }
+	        $.ajax({
+	            url: "getData.php",
+	            method: "GET",
+	            data: {
+	                type: "customers",  // ask PHP for customers
+	                search: search
+	            },
+	            dataType: "json",
+	            success: function (response) {
+	                let suggestionBox = $("#customerName");
+	                suggestionBox.empty(); // clear old suggestions
 
-		    // 🔹 Empty product table when customer changes
-		    $('#salesReturnTable tbody').empty();
-		    $("#grandTotal").text("0.00");
+	                if (response.length > 0) {
+	                    response.forEach(function (item) {
+	                        let label = item.name + " (" + item.phone + ")";
+	                        suggestionBox.append(
+	                            `<div class="suggestion-item p-2 border-bottom" 
+	                                  data-id="${item.id}" 
+	                                  data-name="${item.name}">
+	                                ${label}
+	                             </div>`
+	                        );
+	                    });
+	                    suggestionBox.show();
+	                } else {
+	                    suggestionBox.hide();
+	                }
+	            }
+	        });
+	    });
 
-		    if (!custId) return;
+	    // 🔹 Click on suggestion
+	    $(document).on("click", ".suggestion-item", function () {
+	        let id = $(this).data("id");
+	        let name = $(this).data("name");
 
-		    // Initialize searchable purchase_reference dropdown
-		    $('#sales_return_order_no').select2({
-		    	placeholder: "Search Order No",
-		    	width: '100%',
-		    	dropdownParent: $('#add-sales-return-new'),
-		    	allowClear: true,
-		    	ajax: {
-		    		url: 'getData.php',
-		    		dataType: 'json',
-		    		delay: 250,
-		    		data: function (params) {
-		    			return {
-		    				type: "order_references",
-		    				cust_id: custId,
-		    				search: params.term || ''
-		    			};
-		    		},
-		    		processResults: function (data) {
-		    			return {
-		    				results: $.map(data, function (ref) {
-		    					return {
-		    						id: ref.id,
-		    						text: ref.order_number
-		    					};
-		    				})
-		    			};
-		    		},
-		    		cache: true
-		    	}
-		    });
-		});
+	        $("#customerSearch").val(name);
+	        $("#sales_return_customer").val(id); // hidden input with ID
+	        $("#customerName").hide();
+
+	        // Trigger change event so dependent dropdowns reset
+	        $("#sales_return_customer").trigger("change");
+	    });
+
+	    // 🔹 Hide suggestions if clicked outside
+	    $(document).on("click", function (e) {
+	        if (!$(e.target).closest("#customerSearch, #customerName").length) {
+	            $("#customerName").hide();
+	        }
+	    });
+
+	    // 🔹 When customer is selected, reset order no & product table
+	    $('#sales_return_customer').on('change', function () {
+	        let custId = $(this).val();
+
+	        // Reset purchase_reference & product select
+	        $('#sales_return_order_no').empty().trigger('change');
+
+	        if ($.fn.select2 && $('#salesReturnProductSelect').hasClass("select2-hidden-accessible")) {
+	            $('#salesReturnProductSelect').select2('destroy');
+	            $('#salesReturnProductSelect').empty();
+	        }
+
+	        // Empty product table + reset total
+	        $('#salesReturnTable tbody').empty();
+	        $("#grandTotal").text("0.00");
+
+	        if (!custId) return;
+
+	        // Initialize searchable purchase_reference dropdown
+	        $('#sales_return_order_no').select2({
+	            placeholder: "Search Order No",
+	            width: '100%',
+	            dropdownParent: $('#add-sales-return-new'),
+	            allowClear: true,
+	            ajax: {
+	                url: 'getData.php',
+	                dataType: 'json',
+	                delay: 250,
+	                data: function (params) {
+	                    return {
+	                        type: "order_references",
+	                        cust_id: custId,
+	                        search: params.term || ''
+	                    };
+	                },
+	                processResults: function (data) {
+	                    return {
+	                        results: $.map(data, function (ref) {
+	                            return {
+	                                id: ref.id,
+	                                text: ref.order_number
+	                            };
+	                        })
+	                    };
+	                },
+	                cache: true
+	            }
+	        });
+	    });
 
 		// Re-init product select when reference changes
 		$('#sales_return_order_no').on('change', function () {

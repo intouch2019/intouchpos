@@ -253,34 +253,34 @@ require_once '../partials/main.php'; ?>
 
 	$(document).ready(function() {
 
-		$('#return_supplier_id').select2({
-			placeholder: "Search Supplier",
-			width: '100%',
-			dropdownParent: $('#add-sales-new'),
-		    allowClear: true,   // lets you clear the selection
-		    ajax: {
-		    	url: 'getData.php',
-		    	dataType: 'json',
-		    	delay: 250,
-		    	data: function (params) {
-		    		return {
-		                type: "suppliers",   // handle in getData.php
-		                search: params.term || ''
-		            };
-		        },
-		        processResults: function (data) {
-		        	return {
-		        		results: $.map(data, function (item) {
-		        			return {
-		        				id: item.id,
-		        				text: item.name
-		        			};
-		        		})
-		        	};
-		        },
-		        cache: true
-		    }
-		});
+		// $('#return_supplier_id').select2({
+		// 	placeholder: "Search Supplier",
+		// 	width: '100%',
+		// 	dropdownParent: $('#add-sales-new'),
+		//     allowClear: true,   // lets you clear the selection
+		//     ajax: {
+		//     	url: 'getData.php',
+		//     	dataType: 'json',
+		//     	delay: 250,
+		//     	data: function (params) {
+		//     		return {
+		//                 type: "suppliers",   // handle in getData.php
+		//                 search: params.term || ''
+		//             };
+		//         },
+		//         processResults: function (data) {
+		//         	return {
+		//         		results: $.map(data, function (item) {
+		//         			return {
+		//         				id: item.id,
+		//         				text: item.name
+		//         			};
+		//         		})
+		//         	};
+		//         },
+		//         cache: true
+		//     }
+		// });
 
 		// When supplier changes, load purchase references
 		$('#return_supplier_id').on('change', function () {
@@ -328,6 +328,86 @@ require_once '../partials/main.php'; ?>
 		    		cache: true
 		    	}
 		    });
+		});
+
+		// --- Live search for supplier ---
+		$("#supplierReturnSearch").on("input", function () {
+			let search = $(this).val().trim();
+
+			if (search.length === 0) {
+				$("#supplierRteurnSuggestions").hide();
+				return;
+			}
+
+			$.ajax({
+				url: "getData.php",
+				method: "GET",
+				data: {
+					type: "supplier-returns",
+					search: search
+				},
+				dataType: "json",
+				success: function (response) {
+					let suggestionBox = $("#supplierRteurnSuggestions");
+					suggestionBox.empty();
+
+					if (response.length > 0) {
+						response.forEach(function (item) {
+							let label = item.name + (item.phone ? " (" + item.phone + ")" : "");
+							suggestionBox.append(
+								`<div class="suggestion-item p-2 border-bottom"
+									data-id="${item.id}" data-name="${item.name}">
+									${label}
+								</div>`
+							);
+						});
+						suggestionBox.show();
+					} else {
+						suggestionBox.hide();
+					}
+				}
+			});
+		});
+
+		// --- Click on suggestion ---
+		$(document).on("click", ".suggestion-item", function () {
+			let id = $(this).data("id");
+			let name = $(this).data("name");
+
+			$("#supplierReturnSearch").val(name);
+			$("#return_supplier_id").val(id);  // hidden supplier_id
+			$("#supplierRteurnSuggestions").hide();
+
+			// Reset purchase_reference & products
+			$('#purchase_reference').empty();
+			$('#productReturnSelect').empty();
+			$('#purchaseReturnTable tbody').empty();
+			$("#return_supplier_id").trigger("change");
+			// if (!id) return;
+
+			// // 🔹 Load purchase references for selected supplier
+			// $.ajax({
+			// 	url: "getData.php",
+			// 	method: "GET",
+			// 	data: { type: "purchase_references", supplier_id: id },
+			// 	dataType: "json",
+			// 	success: function (data) {
+			// 		if (data.length > 0) {
+			// 			data.forEach(ref => {
+			// 				$('#purchase_reference').append(
+			// 					`<option value="${ref.id}">${ref.reference_no}</option>`
+			// 				);
+			// 			});
+			// 		}
+			// 	}
+			// });
+		});
+
+		// --- Hide suggestions if click outside ---
+		$(document).on("click", function (e) {
+			if (!$(e.target).closest("#supplierReturnSearch, #supplierRteurnSuggestions").length) {
+				$("#supplierRteurnSuggestions").hide();
+			}
 		});
 
 		// Re-init product select when reference changes

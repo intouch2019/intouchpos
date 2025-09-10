@@ -199,34 +199,94 @@ require_once '../partials/main.php'; ?>
 
 	$(document).ready(function() {
 
-		$('#supplier_id').select2({
-			placeholder: "Search Supplier",
-			width: '100%',
-			dropdownParent: $('#add-purchase'),
-		    allowClear: true,   // lets you clear the selection
-		    ajax: {
-		    	url: 'getData.php',
-		    	dataType: 'json',
-		    	delay: 250,
-		    	data: function (params) {
-		    		return {
-		                type: "suppliers",   // handle in getData.php
-		                search: params.term || ''
-		            };
-		        },
-		        processResults: function (data) {
-		        	return {
-		        		results: $.map(data, function (item) {
-		        			return {
-		        				id: item.id,
-		        				text: item.name
-		        			};
-		        		})
-		        	};
-		        },
-		        cache: true
-		    }
-		});
+		// $('#supplier_id').select2({
+		// 	placeholder: "Search Supplier",
+		// 	width: '100%',
+		// 	dropdownParent: $('#add-purchase'),
+		//     allowClear: true,   // lets you clear the selection
+		//     ajax: {
+		//     	url: 'getData.php',
+		//     	dataType: 'json',
+		//     	delay: 250,
+		//     	data: function (params) {
+		//     		return {
+		//                 type: "suppliers",   // handle in getData.php
+		//                 search: params.term || ''
+		//             };
+		//         },
+		//         processResults: function (data) {
+		//         	return {
+		//         		results: $.map(data, function (item) {
+		//         			return {
+		//         				id: item.id,
+		//         				text: item.name
+		//         			};
+		//         		})
+		//         	};
+		//         },
+		//         cache: true
+		//     }
+		// });
+
+		// 🔹 Search suppliers on input
+	    $("#supplierSearch").on("input", function () {
+	        let search = $(this).val().trim();
+
+	        if (search.length === 0) {
+	            $("#supplierSuggestions").hide();
+	            return;
+	        }
+
+	        $.ajax({
+	            url: "getData.php",
+	            method: "GET",
+	            data: {
+	                type: "suppliers",   // ask PHP for suppliers
+	                search: search
+	            },
+	            dataType: "json",
+	            success: function (response) {
+	                let suggestionBox = $("#supplierSuggestions");
+	                suggestionBox.empty();
+
+	                if (response.length > 0) {
+	                    response.forEach(function (item) {
+	                        let label = item.name + (item.phone ? " (" + item.phone + ")" : "");
+	                        suggestionBox.append(
+	                            `<div class="suggestion-item p-2 border-bottom" 
+	                                  data-id="${item.id}" 
+	                                  data-name="${item.name}">
+	                                ${label}
+	                             </div>`
+	                        );
+	                    });
+	                    suggestionBox.show();
+	                } else {
+	                    suggestionBox.hide();
+	                }
+	            }
+	        });
+	    });
+
+	    // 🔹 Click on suggestion
+	    $(document).on("click", "#supplierSuggestions .suggestion-item", function () {
+	        let id = $(this).data("id");
+	        let name = $(this).data("name");
+
+	        $("#supplierSearch").val(name);
+	        $("#supplier_id").val(id); // hidden input with supplier_id
+	        $("#supplierSuggestions").hide();
+
+	        // Trigger change if dependent fields exist
+	        //$("#supplier_id").trigger("change");
+	    });
+
+	    // 🔹 Hide suggestions if clicked outside
+	    $(document).on("click", function (e) {
+	        if (!$(e.target).closest("#supplierSearch, #supplierSuggestions").length) {
+	            $("#supplierSuggestions").hide();
+	        }
+	    });
 
     	// Function to populate a select element with supplier data
     	function populateSuppliers(selectId) {
@@ -311,12 +371,10 @@ require_once '../partials/main.php'; ?>
 			}
 		});
 
-
 	    // Remove row when trash icon clicked
 	    $(document).on('click', '.remove-row', function() {
 	    	$(this).closest('tr').remove();
 	    });
-
 
 		// ---------- ADD PURCHASE PRODUCT ----------
 		$('#productSelect').on('select2:select', function (e) {
@@ -327,14 +385,6 @@ require_once '../partials/main.php'; ?>
 			let stock = parseInt(data.stock) || 0;
 
 			if (!productId) return;
-
-			// 🚫 If no stock left for return
-			if (stock <= 0) {
-				alert("❌ Stock not available.");
-		        // Reset dropdown
-		        $('#productSelect').val(null).trigger('change');
-		        return;
-		    }
 
 		    let existingRow = $('#purchaseTable tbody tr').filter(function () {
 		    	return $(this).find('input[name="product_id[]"]').val() == productId;
@@ -364,8 +414,8 @@ require_once '../partials/main.php'; ?>
         		</div>
         		</td>
         		<td><input name="purchase_price[]" class="form-control" value="${price}" readonly></td>
-        		<td><input type="number" name="discount[]" class="form-control" value="${discount}"></td>
-        		<td><input type="number" name="tax_percentage[]" class="form-control" value="${taxPerc}"></td>
+        		<td><input type="text" name="discount[]" class="form-control" value="${discount}"></td>
+        		<td><input type="text" name="tax_percentage[]" class="form-control" value="${taxPerc}"></td>
         		<td><input type="text" name="tax_amount[]" class="form-control" value="${taxAmount.toFixed(2)}" readonly></td>
         		<td><input type="text" name="unit_cost[]" class="form-control" value="${unitCost.toFixed(2)}" style="width: 125%;" readonly></td>
         		<td><input type="text" style="width: 125%;" name="total_cost[]" class="form-control" value="${totalCost.toFixed(2)}" readonly></td>
@@ -463,6 +513,47 @@ require_once '../partials/main.php'; ?>
 			row.find('input[name="total_cost[]"]').val(totalCost.toFixed(2));
 		});
 
+		// -------- Form Validation --------
+	    $("#purchaseForm").on("submit", function (e) {
+	        let isValid = true;
+	        let errorMsg = "";
+
+	        // ✅ Supplier required
+	        if ($("#supplier_id").val().trim() === "") {
+	            isValid = false;
+	            errorMsg += "⚠️ Please select a supplier.\n";
+	        }
+
+	        // ✅ Date required
+	        if ($("input[name='purchase_date']").val().trim() === "") {
+	            isValid = false;
+	            errorMsg += "⚠️ Please select a purchase date.\n";
+	        }
+
+	        // ✅ Reference No. required
+	        if ($("input[name='reference_no']").val().trim() === "") {
+	            isValid = false;
+	            errorMsg += "⚠️ Purchase reference number is missing.\n";
+	        }
+
+	        // ✅ Status required
+	        if ($("select[name='status']").val().trim() === "") {
+	            isValid = false;
+	            errorMsg += "⚠️ Please select a status.\n";
+	        }
+
+	        // ✅ At least one product required
+	        if ($("#purchaseTable tbody tr").length === 0) {
+	            isValid = false;
+	            errorMsg += "⚠️ Please add at least one product.\n";
+	        }
+
+	        if (!isValid) {
+	            e.preventDefault();
+	            alert(errorMsg); // 🔹 You can replace with SweetAlert/Toast
+	        }
+	    });
+    
     	// Save supplier dynamically
     	$('#supplierForm').on('submit', function(e) {
     		e.preventDefault();

@@ -23468,9 +23468,11 @@ $page = end( $link_array );
 									<label class="form-label">Supplier Name<span class="text-danger ms-1">*</span></label>
 									<div class="row">
 										<div class="col-lg-10 col-sm-10 col-10">
-											<select class="form-control" name="supplier_id" id="supplier_id" required>
-											    <!-- <option value="" disabled>Select Supplier</option> -->
-											</select>
+											<input type="text" id="supplierSearch" class="form-control" placeholder="Search supplier by name or mobile">
+										    <div id="supplierSuggestions" class="customer-suggestions" style="display:none; position:absolute; z-index:999; background:rgb(207 204 204);; border:1px solid #ddd; width:25.5%; max-height:200px; overflow-y:auto;"></div>
+										    <input type="hidden" name="supplier_id" id="supplier_id">
+											<!-- <select class="form-control" name="supplier_id" id="supplier_id" required>
+											</select> -->
 										</div>
 										<div class="col-lg-2 col-sm-2 col-2 ps-0">
 											<div class="add-icon tab">
@@ -23918,8 +23920,9 @@ $page = end( $link_array );
 								<label class="form-label">Supplier<span class="text-danger ms-1">*</span></label>
 								<div class="row">
 									<div class="col-lg-10 col-sm-10 col-10">
-										<select class="form-control" name="return_supplier_id" id="return_supplier_id" required>
-										</select>
+										<input type="text" id="supplierReturnSearch" class="form-control" placeholder="Search supplier by name or mobile">
+										<div id="supplierRteurnSuggestions" class="customer-suggestions" style="display:none; position:absolute; z-index:999; background:rgb(207 204 204);; border:1px solid #ddd; width:25.5%; max-height:200px; overflow-y:auto;"></div>
+										<input type="hidden" name="return_supplier_id" id="return_supplier_id">
 									</div>
 									<div class="col-lg-2 col-sm-2 col-2 ps-0">
 										<div class="add-icon tab">
@@ -24046,7 +24049,11 @@ $page = end( $link_array );
 					<div class="modal-body">
 						<div>
 							<label class="form-label">Supplier<span class="text-danger">*</span></label>
-							<input type="text" name="name" class="form-control">
+							<input type="text" name="name" placeholder="Supplier Name" class="form-control">
+						</div><br>
+						<div>
+							<label class="form-label">Mobile No.<span class="text-danger">*</span></label>
+							<input type="text" name="mobile_no" placeholder="Supplier Mobile No." class="form-control">
 						</div>												
 					</div>
 					<div class="modal-footer">
@@ -25140,14 +25147,10 @@ $page = end( $link_array );
 										<label class="form-label">Customer Name<span class="text-danger ms-1">*</span></label>
 										<div class="row">
 											<div class="col-lg-12 col-sm-12 col-12">
-												<select class="form-control" name="customer_id" id="sales_return_customer" required>
-						            			</select>
+												<input type="text" id="customerSearch" class="form-control" placeholder="Search by name or mobile">
+											    <div id="customerName" class="customer-suggestions" style="display:none; position:absolute; z-index:999; background:rgb(207 204 204);; border:1px solid #ddd; width:31%; max-height:200px; overflow-y:auto;"></div>
+											    <input type="hidden" name="customer_id" id="sales_return_customer">
 											</div>
-											<!-- <div class="col-lg-2 col-sm-2 col-2 ps-0">
-												<div class="add-icon">
-													<a href="#" class="bg-dark text-white p-2 rounded" data-bs-toggle="modal" data-bs-target="#add_customer"><i data-feather="plus-circle" class="plus"></i></a>
-												</div>
-											</div> -->
 										</div>
 									</div>
 								</div>
@@ -25246,7 +25249,7 @@ $page = end( $link_array );
 	                            <div class="col-lg-3 col-sm-6 col-12">
 	                                <div class="mb-3">
 	                                    <label class="form-label">Status<span class="text-danger">*</span></label>
-	                                    <select name="sales_return_status" class="form-control">
+	                                    <select name="sales_return_status" class="form-control" required>
 	                                    	<option value="">Select</option>
 	                                        <option value="Pending">Pending</option>
 	                                        <option value="Received">Received</option>
