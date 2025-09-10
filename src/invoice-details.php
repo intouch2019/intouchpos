@@ -5,7 +5,7 @@ require_once __DIR__ . '/../partials/config.php';
 requireLogin();
 
 // Get order ID from URL parameter
-$order_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : (isset($_GET['id']) ? intval($_GET['id']) : 0);
 
 if ($order_id <= 0) {
     header('Location: orders.php');
@@ -91,7 +91,7 @@ function numberToWords($number) {
         return numberToWords(floor($number / 1000)) . ' Thousand' . ($number % 1000 ? ' ' . numberToWords($number % 1000) : '');
     }
     
-    return 'Dollar ' . number_format($number, 2);
+    return number_format($number, 2);
 }
 ?>
 
@@ -121,7 +121,7 @@ function numberToWords($number) {
                     </li>
                 </ul>
                 <div class="page-btn">
-                    <a href="invoice.php" class="btn btn-primary"><i data-feather="arrow-left" class="me-2"></i>Back to Invoices</a>
+                    <a href="orders.php" class="btn btn-primary"><i data-feather="arrow-left" class="me-2"></i>Back to Orders</a>
                 </div>
             </div>
             
@@ -169,12 +169,14 @@ function numberToWords($number) {
                                 <?php 
                                 $status_class = 'bg-success';
                                 $status_text = 'Paid';
-                                if ($order['payment_status'] === 'pending') {
-                                    $status_class = 'bg-warning';
-                                    $status_text = 'Pending';
-                                } elseif ($order['payment_status'] === 'failed') {
-                                    $status_class = 'bg-danger';
-                                    $status_text = 'Failed';
+                                if (isset($order['payment_status'])) {
+                                    if ($order['payment_status'] === 'pending') {
+                                        $status_class = 'bg-warning';
+                                        $status_text = 'Pending';
+                                    } elseif ($order['payment_status'] === 'failed') {
+                                        $status_class = 'bg-danger';
+                                        $status_text = 'Failed';
+                                    }
                                 }
                                 ?>
                                 <span class="<?php echo $status_class; ?> text-white fs-10 px-1 rounded"><i class="ti ti-point-filled "></i><?php echo $status_text; ?></span>
@@ -207,9 +209,9 @@ function numberToWords($number) {
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-gray-9 fw-medium text-end"><?php echo $item['quantity']; ?></td>
-                                        <td class="text-gray-9 fw-medium text-end">$<?php echo number_format($item['unit_price'], 2); ?></td>
-                                        <td class="text-gray-9 fw-medium text-end">$0.00</td>
-                                        <td class="text-gray-9 fw-medium text-end">$<?php echo number_format($item['total_price'], 2); ?></td>
+                                        <td class="text-gray-9 fw-medium text-end"><?php echo number_format($item['unit_price'], 2); ?></td>
+                                        <td class="text-gray-9 fw-medium text-end">0.00</td>
+                                        <td class="text-gray-9 fw-medium text-end"><?php echo number_format($item['total_price'], 2); ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
@@ -220,19 +222,19 @@ function numberToWords($number) {
                         <div class="col-md-5 ms-auto mb-3">
                             <div class="d-flex justify-content-between align-items-center border-bottom mb-2 pe-3">
                                 <p class="mb-0">Sub Total</p>
-                                <p class="text-dark fw-medium mb-2">$<?php echo number_format($order['subtotal'], 2); ?></p>
+                                <p class="text-dark fw-medium mb-2"><?php echo number_format($order['subtotal'] ?? 0, 2); ?></p>
                             </div>
                             <div class="d-flex justify-content-between align-items-center border-bottom mb-2 pe-3">
                                 <p class="mb-0">Discount</p>
-                                <p class="text-dark fw-medium mb-2">$<?php echo number_format($order['discount_amount'], 2); ?></p>
+                                <p class="text-dark fw-medium mb-2"><?php echo number_format($order['discount_amount'] ?? 0, 2); ?></p>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2 pe-3">
                                 <p class="mb-0">Tax</p>
-                                <p class="text-dark fw-medium mb-2">$<?php echo number_format($order['tax_amount'], 2); ?></p>
+                                <p class="text-dark fw-medium mb-2"><?php echo number_format($order['tax_amount'] ?? 0, 2); ?></p>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mb-2 pe-3">
                                 <h5>Total Amount</h5>
-                                <h5>$<?php echo number_format($order['total_amount'], 2); ?></h5>
+                                <h5><?php echo number_format($order['total_amount'], 2); ?></h5>
                             </div>
                             <p class="fs-12">
                                 Amount in Words : <?php echo numberToWords($order['total_amount']); ?>

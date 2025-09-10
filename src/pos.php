@@ -293,7 +293,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 											<h5 class="me-2">Order Details</h5>
 											<div class="badge bg-light text-gray-9 fs-12 fw-semibold py-2 border rounded">Items : <span class="text-teal" id="cartItemCount">0</span></div>
 										</div>
-										<a href="javascript:void(0);" onclick="clearCart()" class="d-flex align-items-center clear-icon fs-10 fw-medium">Clear all</a>
+										<a href="javascript:void(0);" onclick="clearCartWithRestore()" class="d-flex align-items-center clear-icon fs-10 fw-medium">Clear all</a>
 									</div>
 									<div class="product-wrap">
 										<div class="empty-cart" id="emptyCart">
@@ -462,6 +462,27 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 			</div>
 		</div>
         <!-- End Content -->
+        
+        <div id="modal-overlay" class="modal-overlay">
+    <div class="custom-modal">
+        <div class="modal-header">
+            <div id="modal-icon" class="modal-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+            </div>
+            <h3 id="modal-title" class="modal-title">Success</h3>
+        </div>
+        <p id="modal-message" class="modal-message">Item added to cart successfully!</p>
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+            <button class="btn btn-primary" onclick="closeModal()">Continue Shopping</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-container" class="toast-container"></div>
     
         <?php 
         // Set page variable for modal conditions
@@ -483,7 +504,104 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
         // Global cart variable
         let cart = [];
         
-        // Function to add product to cart
+        function showModal(type, title, message) {
+            const overlay = document.getElementById('modal-overlay');
+            const icon = document.getElementById('modal-icon');
+            const titleEl = document.getElementById('modal-title');
+            const messageEl = document.getElementById('modal-message');
+            const buttonsEl = document.querySelector('.modal-buttons');
+
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Update icon and style based on type
+            if (type === 'success') {
+                icon.className = 'modal-icon success';
+                icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+            } else if (type === 'error') {
+                icon.className = 'modal-icon error';
+                icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+            }
+
+            // Show only OK button for success/error messages
+            buttonsEl.innerHTML = '<button class="btn btn-primary" onclick="closeModal()">OK</button>';
+
+            overlay.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // Toast Functions
+        function showToast(type, title, message, duration = 4000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+
+            const iconSvg = type === 'success' 
+                ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="#10b981"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+                : '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+
+            toast.innerHTML = `
+                <div class="toast-icon">${iconSvg}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            `;
+
+            container.appendChild(toast);
+
+            // Auto remove after duration
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    removeToast(toast.querySelector('.toast-close'));
+                }
+            }, duration);
+        }
+
+        function removeToast(closeBtn) {
+            const toast = closeBtn.closest('.toast');
+            toast.style.animation = 'slideOutRight 0.3s ease';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }
+
+        // Demo functions
+        function showSuccessModal() {
+            showModal('success', 'Success!', 'Item added to cart successfully!');
+        }
+
+        function showErrorModal() {
+            showModal('error', 'Error', 'Failed to add item to cart. Please try again.');
+        }
+
+        function showSuccessToast() {
+            showToast('success', 'Success!', 'Item added to cart successfully!');
+        }
+
+        function showErrorToast() {
+            showToast('error', 'Error', 'Failed to add item to cart.');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Your updated addToCart function
         function addToCart(productId, productName, price) {
             // Get quantity from product input
             const productElement = document.querySelector(`[onclick*="addToCart(${productId}"]`).closest('.product-item');
@@ -501,19 +619,20 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    loadCart(); // Reload cart from database
-                    // Reset quantity input
+                    loadCart();
                     quantityInput.value = 1;
+
+                    // Use Toast instead of Modal
+                    showToast('success', 'Success!', `${productName} added to cart!`);
+
                 } else {
-                    alert(data.message);
-                    // Ensure cart display is clean when product cannot be added
+                    showToast('error', 'Error', data.message || 'Failed to add item to cart');
                     loadCart();
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to add item to cart');
-                // Ensure cart display is clean on error
+                showToast('error', 'Connection Error', 'Failed to add item to cart');
                 loadCart();
             });
         }
@@ -614,13 +733,19 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             .then(data => {
                 if (data.success) {
                     loadCart();
+                    // Check if cart is now empty and restore revived order if needed
+                    setTimeout(() => {
+                        if (cart.length === 0 && revivedOrderId) {
+                            restoreOrder(revivedOrderId);
+                        }
+                    }, 100);
                 } else {
-                    alert(data.message);
+                    showModal('error', 'Error', data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to remove item from cart');
+                showModal('error', 'Connection Error', 'Failed to remove item from cart');
             });
         }
         
@@ -658,12 +783,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 if (data.success) {
                     loadCart();
                 } else {
-                    alert(data.message);
+                    showModal('error', 'Error', data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to update cart');
+                showModal('error', 'Connection Error', 'Failed to update cart');
             });
         }
         
@@ -723,30 +848,74 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             document.getElementById('cartTotal').textContent = finalTotal.toFixed(2);
         }
 
-        // Function to clear cart
-        function clearCart() {
-            if (confirm('Are you sure you want to clear the cart?')) {
-                fetch('cart_api.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'action=clear'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        loadCart();
-                    } else {
-                        alert(data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Failed to clear cart');
-                });
+        // Function to show confirmation modal
+        function showConfirmModal(title, message, onConfirm) {
+            const overlay = document.getElementById('modal-overlay');
+            const icon = document.getElementById('modal-icon');
+            const titleEl = document.getElementById('modal-title');
+            const messageEl = document.getElementById('modal-message');
+            const buttonsEl = document.querySelector('.modal-buttons');
+
+            // Update content
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            // Set warning icon
+            icon.className = 'modal-icon warning';
+            icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+
+            // Update buttons for confirmation
+            buttonsEl.innerHTML = `
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmAction()">Confirm</button>
+            `;
+
+            // Store callback
+            window.confirmCallback = onConfirm;
+
+            overlay.style.display = 'flex';
+        }
+
+        // Function to handle confirmation
+        function confirmAction() {
+            closeModal();
+            if (window.confirmCallback) {
+                window.confirmCallback();
+                window.confirmCallback = null;
             }
         }
+
+        // Function to clear cart
+        function clearCart() {
+    showConfirmModal(
+        'Clear Cart',
+        'Are you sure you want to clear all items from the cart? This action cannot be undone.',
+        function() {
+            // On confirm
+            fetch('cart_api.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=clear'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadCart();
+                    // Use modal instead of toast
+                    showModal('success', 'Cart Cleared', 'All items have been removed from the cart');
+                } else {
+                    showModal('error', 'Error', data.message || 'Failed to clear cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showModal('error', 'Connection Error', 'Failed to clear cart. Please check your connection.');
+            });
+        }
+    );
+}
 
 function filterProducts(categoryId) {
     console.log('Filtering by category:', categoryId);
@@ -912,14 +1081,14 @@ function debugProducts() {
         // Function to show payment options when Place Order is clicked
         function showPaymentOptions() {
             if (cart.length === 0) {
-                alert('Cart is empty. Please add items before placing order.');
+                showModal('error', 'Empty Cart', 'Cart is empty. Please add items before placing order.');
                 return;
             }
             
             // Check if customer is selected
             const customerSelect = document.getElementById('customerSelect');
             if (!customerSelect || !customerSelect.value) {
-                alert('Please select a customer before placing order.');
+                showModal('error', 'Customer Required', 'Please select a customer before placing order.');
                 if (customerSelect) {
                     customerSelect.focus();
                 }
@@ -1027,7 +1196,7 @@ function debugProducts() {
             }
             
             if (!isValid) {
-                alert(errorMessage);
+                showModal('error', 'Validation Error', errorMessage);
                 return;
             }
             
@@ -1047,14 +1216,14 @@ function debugProducts() {
         // Function to select payment method directly
         function selectPaymentMethod(paymentMethod) {
             if (cart.length === 0) {
-                alert('Cart is empty. Please add items before selecting payment method.');
+                showModal('error', 'Empty Cart', 'Cart is empty. Please add items before selecting payment method.');
                 return;
             }
             
             // Check if customer is selected
             const customerSelect = document.getElementById('customerSelect');
             if (!customerSelect || !customerSelect.value) {
-                alert('Please select a customer before selecting payment method.');
+                showModal('error', 'Customer Required', 'Please select a customer before selecting payment method.');
                 if (customerSelect) {
                     customerSelect.focus();
                 }
@@ -1107,23 +1276,23 @@ function debugProducts() {
                 
                 const confirmMessage = `Place order for ${customerName} using ${paymentMethod.replace('_', ' ').toUpperCase()} payment (${total.toFixed(2)})?`;
                 
-                if (confirm(confirmMessage)) {
+                showConfirmModal('Confirm Order', confirmMessage, function() {
                     placeOrder(paymentMethod);
-                }
+                });
             }
         }
         
         // Function to place order
         function placeOrder(paymentMethod) {
             if (cart.length === 0) {
-                alert('Cart is empty. Please add items before placing order.');
+                showModal('error', 'Empty Cart', 'Cart is empty. Please add items before placing order.');
                 return;
             }
             
             // Check if customer is selected
             const customerSelect = document.getElementById('customerSelect');
             if (!customerSelect || !customerSelect.value) {
-                alert('Please select a customer before placing order.');
+                showModal('error', 'Customer Required', 'Please select a customer before placing order.');
                 // Focus on customer dropdown
                 if (customerSelect) {
                     customerSelect.focus();
@@ -1169,7 +1338,7 @@ function debugProducts() {
             .then(data => {
                 if (data.success) {
                     // Show success message
-//                    alert(`Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: ${data.total_amount.toFixed(2)}`);
+//                    showModal('success', 'Order Placed', `Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: ${data.total_amount.toFixed(2)}`);
                     
                     // Clear cart from database
                     fetch('cart_api.php', {
@@ -1218,12 +1387,12 @@ function debugProducts() {
                     }, 3000);
                     
                 } else {
-                    alert('Error placing order: ' + data.message);
+                    showModal('error', 'Order Error', 'Error placing order: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error placing order. Please try again.');
+                showModal('error', 'Connection Error', 'Error placing order. Please try again.');
             })
             .finally(() => {
                 // Restore button state
@@ -1387,14 +1556,14 @@ function debugProducts() {
         // Function to prepare hold order modal
         function prepareHoldModal() {
             if (cart.length === 0) {
-                alert('Cart is empty. Please add items before holding order.');
+                showModal('error', 'Empty Cart', 'Cart is empty. Please add items before holding order.');
                 return false;
             }
             
             // Check if customer is selected
             const customerSelect = document.getElementById('customerSelect');
             if (!customerSelect || !customerSelect.value) {
-                alert('Please select a customer before holding order.');
+                showModal('error', 'Customer Required', 'Please select a customer before holding order.');
                 if (customerSelect) {
                     customerSelect.focus();
                 }
@@ -1451,7 +1620,7 @@ function debugProducts() {
                     const holdModal = bootstrap.Modal.getInstance(document.getElementById('hold-order'));
                     holdModal.hide();
                     
-                    alert(`Order held successfully!\nReference: ${holdRef}\nYou can retrieve this order from pending orders.`);
+                    showModal('success', 'Order Held', `Order held successfully!\nReference: ${holdRef}\nYou can retrieve this order from pending orders.`);
                     
                     // Clear cart from database
                     fetch('cart_api.php', {
@@ -1472,12 +1641,12 @@ function debugProducts() {
                     // Keep customer selected for next order
                     
                 } else {
-                    alert('Error holding order: ' + data.message);
+                    showModal('error', 'Hold Error', 'Error holding order: ' + data.message);
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Error holding order. Please try again.');
+                showModal('error', 'Connection Error', 'Error holding order. Please try again.');
             });
         }
         
@@ -1573,7 +1742,7 @@ function debugProducts() {
                 })
                 .then(data => {
                     if (!data.products || data.products.length === 0) {
-                        alert('No products found for this order.');
+                        showModal('error', 'No Products', 'No products found for this order.');
                         return;
                     }
 
@@ -1612,7 +1781,7 @@ function debugProducts() {
                 })
                 .catch(err => {
                     console.error('Error loading order products:', err);
-                    alert('Failed to load order products: ' + err.message);
+                    showModal('error', 'Load Error', 'Failed to load order products: ' + err.message);
                 });
         }
     
@@ -1629,12 +1798,12 @@ function debugProducts() {
             .then(response => response.json())
             .then(data => {
                 if (!data.success) {
-                    alert('Error loading cart data: ' + data.message);
+                    showModal('error', 'Load Error', 'Error loading cart data: ' + data.message);
                     return;
                 }
                 
                 if (data.cart_items.length === 0) {
-                    alert('Cart is empty. Cannot generate receipt.');
+                    showModal('error', 'Empty Cart', 'Cart is empty. Cannot generate receipt.');
                     return;
                 }
                 
@@ -1694,7 +1863,7 @@ function debugProducts() {
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to load cart data for receipt.');
+                showModal('error', 'Connection Error', 'Failed to load cart data for receipt.');
             });
         }
         
@@ -1737,18 +1906,7 @@ function debugProducts() {
         // ... your existing customer code
     }
     
-    // Add event listeners for order tabs
-    document.getElementById('onhold-tab').addEventListener('click', () => loadOrders('hold'));
-    document.getElementById('unpaid-tab').addEventListener('click', () => loadOrders('unpaid'));
-    document.getElementById('paid-tab').addEventListener('click', () => loadOrders('paid'));
-    
-    // Load orders when modal is shown
-    const ordersModal = document.getElementById('orders');
-    if (ordersModal) {
-        ordersModal.addEventListener('show.bs.modal', function() {
-            loadOrders('hold'); // Load hold orders by default
-        });
-    }
+
     
     // Your existing event listeners
     document.getElementById('cash-received').addEventListener('input', calculateCashChange);
@@ -1811,7 +1969,7 @@ function applyCustomer() {
         const customerName = document.getElementById('customerName').textContent;
         
         // Add your logic here to apply customer to order/form
-        alert('Customer ' + customerName + ' applied successfully!');
+        showModal('success', 'Customer Applied', 'Customer ' + customerName + ' applied successfully!');
         
         // Example: Update a hidden form field
         // document.getElementById('selected_customer_id').value = selectedValue;
@@ -1826,14 +1984,427 @@ function clearCustomer() {
     // document.getElementById('selected_customer_id').value = '';
 }
 
+
+
+
+
+
+
+function displayOrders(orders, containerId) {
+    const container = document.getElementById(containerId);
+    
+    if (orders.length === 0) {
+        container.innerHTML = '<div class="text-center p-3"><p>No orders found</p></div>';
+        return;
+    }
+    
+    let html = '';
+    orders.forEach(order => {
+        const date = new Date(order.created_at).toLocaleString();
+        const notes = order.notes ? `<div class="bg-info-transparent p-1 rounded text-center my-3"><p class="text-info fw-medium">${order.notes}</p></div>` : '';
+        
+        // Add revive button only for hold orders (containerId === 'onhold')
+        const reviveButton = containerId === 'onhold' ? 
+            `<a href="javascript:void(0);" class="btn btn-md btn-success" onclick="reviveOrder(${order.id})">Revive Order</a>` : '';
+        
+        html += `
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <span class="badge bg-dark fs-12 mb-2">Order ID : ${order.order_number || '#' + order.id}</span>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> ${order.cashier_name || 'N/A'}</p>
+                            <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> ${parseFloat(order.total_amount).toFixed(2)}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span> ${order.customer_name || 'Walk-in'}</p>
+                            <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Date :</span> ${date}</p>
+                        </div>
+                    </div>
+                    ${notes}
+                    <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
+                        <a href="javascript:void(0);" class="btn btn-md btn-teal" onclick="viewOrderProducts(${order.id})">View Products</a>
+                        <a href="javascript:void(0);" class="btn btn-md btn-indigo" onclick="printOrder(${order.id})">Print</a>
+                        ${reviveButton}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Load orders function
+function loadOrders(type) {
+    fetch('get_hold_orders.php?type=' + type)
+    .then(response => response.json())
+    .then(data => {
+        let containerId;
+        if (type === 'hold') {
+            containerId = 'onhold';
+        } else if (type === 'unpaid') {
+            containerId = 'unpaid';
+        } else if (type === 'paid') {
+            containerId = 'paid';
+        }
+        
+        if (data.success && data.orders) {
+            displayOrders(data.orders, containerId);
+        } else {
+            displayOrders([], containerId);
+        }
+    })
+    .catch(error => {
+        console.error('Error loading orders:', error);
+    });
+}
+
+// Track revived order
+let revivedOrderId = null;
+
+// Revive order function
+function reviveOrder(orderId) {
+    if (!confirm('Are you sure you want to revive this order?')) {
+        return;
+    }
+    
+    fetch('revive_order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ order_id: orderId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Clear current cart
+            clearCart();
+            
+            // Track revived order ID
+            revivedOrderId = data.revived_order_id;
+            
+            // Load order items into cart
+            data.order_items.forEach(item => {
+                addToCart(item.product_id, item.quantity, item.price);
+            });
+            
+            // Select customer if order has one
+            if (data.order.customer_id) {
+                const customerSelect = document.getElementById('customerSelect');
+                if (customerSelect) {
+                    customerSelect.value = data.order.customer_id;
+                    updateCustomerInfo();
+                }
+            }
+            
+            // Close orders modal
+            const ordersModal = bootstrap.Modal.getInstance(document.getElementById('orders'));
+            if (ordersModal) {
+                ordersModal.hide();
+            }
+            
+            // Refresh hold orders list
+            loadOrders('hold');
+            
+            showModal('success', 'Order Revived', 'Order has been loaded into your cart successfully!');
+        } else {
+            showModal('error', 'Error', data.message || 'Failed to revive order');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showModal('error', 'Error', 'Failed to revive order');
+    });
+}
+
+// Restore order function
+function restoreOrder(orderId) {
+    fetch('restore_order.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ order_id: orderId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            revivedOrderId = null;
+        }
+    })
+    .catch(error => {
+        console.error('Error restoring order:', error);
+    });
+}
+
+// Override clearCart to restore order if needed
+function clearCartWithRestore() {
+    if (revivedOrderId) {
+        restoreOrder(revivedOrderId);
+    }
+    clearCart();
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     const customerDetails = document.getElementById('customerDetails');
     if (customerDetails) {
         customerDetails.style.display = 'none';
     }
+    
+    // Add event listeners for order tabs
+    const onholdTab = document.getElementById('onhold-tab');
+    if (onholdTab) {
+        onholdTab.addEventListener('click', () => loadOrders('hold'));
+    }
+    
+    const unpaidTab = document.getElementById('unpaid-tab');
+    if (unpaidTab) {
+        unpaidTab.addEventListener('click', () => loadOrders('unpaid'));
+    }
+    
+    const paidTab = document.getElementById('paid-tab');
+    if (paidTab) {
+        paidTab.addEventListener('click', () => loadOrders('paid'));
+    }
+    
+    // Load orders when modal is shown
+    const ordersModal = document.getElementById('orders');
+    if (ordersModal) {
+        ordersModal.addEventListener('show.bs.modal', function() {
+            loadOrders('hold'); // Load hold orders by default
+        });
+    }
 });
     </script>
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .custom-modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideIn 0.3s ease;
+            margin: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+
+        .modal-icon.success {
+            color: #10b981;
+        }
+
+        .modal-icon.error {
+            color: #ef4444;
+        }
+
+        .modal-icon.warning {
+            color: #f59e0b;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-message {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 12px;
+            color: #9ca3af;
+        }
+
+        .toast-close:hover {
+            color: #374151;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Demo styles */
+        .demo-section {
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+
+        .demo-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #374151;
+        }
+        
+
+    </style>
 
 <?php
 $content = ob_get_clean();

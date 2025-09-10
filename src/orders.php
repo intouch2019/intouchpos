@@ -7,26 +7,121 @@ requireLogin();
 // Get current user
 $current_user = getCurrentUser();
 
-// Get orders with customer and user information
+// Get filter parameters
+$product_filter = $_GET['product'] ?? '';
+$user_filter = $_GET['user'] ?? '';
+$payment_filter = $_GET['payment'] ?? '';
+$date_filter = $_GET['date'] ?? '';
+$search = $_GET['search'] ?? '';
+
+// Build WHERE clause
+$where_conditions = [];
+$params = [];
+$types = '';
+
+$where_conditions[] = " hold_reference is NULL ";
+
+if (!empty($product_filter)) {
+    $where_conditions[] = "p.name LIKE ?";
+    $params[] = "%$product_filter%";
+    $types .= 's';
+}
+
+if (!empty($user_filter)) {
+    $where_conditions[] = "u.full_name LIKE ?";
+    $params[] = "%$user_filter%";
+    $types .= 's';
+}
+
+if (!empty($payment_filter)) {
+    $where_conditions[] = "o.payment_method = ?";
+    $params[] = $payment_filter;
+    $types .= 's';
+}
+
+if (!empty($date_filter)) {
+    switch($date_filter) {
+        case 'today':
+            $where_conditions[] = "DATE(o.created_at) = CURDATE()";
+            break;
+        case 'last_7_days':
+            $where_conditions[] = "o.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+            break;
+        case 'last_month':
+            $where_conditions[] = "o.created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)";
+            break;
+    }
+}
+
+if (!empty($search)) {
+    $where_conditions[] = "(o.order_number LIKE ? OR c.name LIKE ? OR u.full_name LIKE ?)";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $params[] = "%$search%";
+    $types .= 'sss';
+}
+
+// Get orders with filters
 $orders = [];
-$sql = "SELECT o.*, COALESCE(c.name, 'Walk in Customer') AS customer_name, 
+$sql = "SELECT DISTINCT o.*, COALESCE(c.name, 'Walk in Customer') AS customer_name, 
     c.phone AS customer_phone, 
     u.full_name AS created_by_name
 FROM orders o
 LEFT JOIN customers c ON o.customer_id = c.id
 LEFT JOIN users u ON o.user_id = u.id
-ORDER BY o.created_at DESC;
-";
-$result = mysqli_query($link, $sql);
-if ($result) {
-    while ($row = mysqli_fetch_assoc($result)) {
-        $orders[] = $row;
+LEFT JOIN order_items oi ON o.id = oi.order_id
+LEFT JOIN products p ON oi.product_id = p.id";
+
+if (!empty($where_conditions)) {
+    $sql .= " WHERE " . implode(' AND ', $where_conditions);
+}
+
+$sql .= " ORDER BY o.created_at DESC";
+
+if (!empty($params)) {
+    $stmt = mysqli_prepare($link, $sql);
+    if ($stmt) {
+        mysqli_stmt_bind_param($stmt, $types, ...$params);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        while ($row = mysqli_fetch_assoc($result)) {
+            $orders[] = $row;
+        }
+        mysqli_stmt_close($stmt);
+    }
+} else {
+    $result = mysqli_query($link, $sql);
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $orders[] = $row;
+        }
     }
 }
 
-//foreach($orders as $order){ 
-////    print_r($order['order_number']);exit();
-//}
+// Get filter options
+$products = mysqli_query($link, "SELECT DISTINCT p.name FROM products p JOIN order_items oi ON p.id = oi.product_id WHERE p.is_active = 1 ORDER BY p.name");
+$users = mysqli_query($link, "SELECT DISTINCT full_name FROM users ORDER BY full_name");
+$payment_methods = ['cash', 'card', 'mobile_money'];
+
+// Get all orders with product names for JavaScript filtering
+$all_orders_sql = "SELECT DISTINCT o.*, COALESCE(c.name, 'Walk in Customer') AS customer_name, 
+    c.phone AS customer_phone, 
+    u.full_name AS created_by_name,
+    GROUP_CONCAT(DISTINCT p.name SEPARATOR '|') AS order_products
+FROM orders o
+LEFT JOIN customers c ON o.customer_id = c.id
+LEFT JOIN users u ON o.user_id = u.id
+LEFT JOIN order_items oi ON o.id = oi.order_id
+LEFT JOIN products p ON oi.product_id = p.id
+GROUP BY o.id
+ORDER BY o.created_at DESC";
+$all_orders_result = mysqli_query($link, $all_orders_sql);
+$all_orders = [];
+if ($all_orders_result) {
+    while ($row = mysqli_fetch_assoc($all_orders_result)) {
+        $all_orders[] = $row;
+    }
+}
 ?>
 
     <!-- ========================
@@ -65,106 +160,54 @@ if ($result) {
                 <div class="card-header d-flex align-items-center justify-content-between flex-wrap row-gap-3">
                     <div class="search-set">
                         <div class="search-input">
-                            <span class="btn-searchset"><i class="ti ti-search fs-14 feather-search"></i></span>
+<!--                            <input type="text" id="search-input" placeholder="Search orders..." value="<?= htmlspecialchars($search) ?>">
+                            <span class="btn-searchset" onclick="performSearch()"><i class="ti ti-search fs-14 feather-search"></i></span>-->
                         </div>
                     </div>
                     <div class="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
                         <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="product-filter-btn">
                                 Product
                             </a>
-                            <ul class="dropdown-menu  dropdown-menu-end p-3">
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Lenovo IdeaPad 3</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Beats Pro </a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Nike Jordan</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Apple Series 5 Watch</a>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end p-3">
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('product', '')">All Products</a></li>
+                                <?php while($product = mysqli_fetch_assoc($products)): ?>
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('product', '<?= htmlspecialchars($product['name']) ?>')"><?= htmlspecialchars($product['name']) ?></a></li>
+                                <?php endwhile; ?>
                             </ul>
                         </div>
                         <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
+                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="user-filter-btn">
                                 Created By
                             </a>
-                            <ul class="dropdown-menu  dropdown-menu-end p-3">
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">James Kirwin</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Francis Chang</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Antonio Engle</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Leo Kelly</a>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end p-3">
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('user', '')">All Users</a></li>
+                                <?php while($user = mysqli_fetch_assoc($users)): ?>
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('user', '<?= htmlspecialchars($user['full_name']) ?>')"><?= htmlspecialchars($user['full_name']) ?></a></li>
+                                <?php endwhile; ?>
                             </ul>
                         </div>
                         <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-                                Category
+                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="payment-filter-btn">
+                                Payment Method
                             </a>
-                            <ul class="dropdown-menu  dropdown-menu-end p-3">
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Computers</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Electronics</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Shoe</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Electronics</a>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end p-3">
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('payment', '')">All Methods</a></li>
+                                <?php foreach($payment_methods as $method): ?>
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('payment', '<?= $method ?>')"><?= ucfirst($method) ?></a></li>
+                                <?php endforeach; ?>
                             </ul>
                         </div>
-                        <div class="dropdown me-2">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-                                Brand
-                            </a>
-                            <ul class="dropdown-menu  dropdown-menu-end p-3">
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Lenovo</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Beats</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Nike</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Apple</a>
-                                </li>
-                            </ul>
-                        </div>
+
                         <div class="dropdown">
-                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-                                Sort By : Last 7 Days
+                            <a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="date-filter-btn">
+                                All Time
                             </a>
-                            <ul class="dropdown-menu  dropdown-menu-end p-3">
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Recently Added</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Ascending</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Desending</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Last Month</a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0);" class="dropdown-item rounded-1">Last 7 Days</a>
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end p-3">
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('date', '')">All Time</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('date', 'today')">Today</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('date', 'last_7_days')">Last 7 Days</a></li>
+                                <li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('date', 'last_month')">Last Month</a></li>
                             </ul>
                         </div>
                     </div>
@@ -210,11 +253,11 @@ if ($result) {
     </td>
     <td class="d-flex">
         <div class="edit-delete-action d-flex align-items-center">
-            <a class="me-2 edit-icon p-2 border d-flex align-items-center rounded" href="invoice-details.php">
+            <a class="me-2 edit-icon p-2 border d-flex align-items-center rounded" href="invoice-details.php?order_id=<?= $order['id']; ?>">
                 <i data-feather="eye" class="action-eye"></i>
             </a>
             <a class="me-2 p-2 d-flex align-items-center border rounded" href="javascript:void(0);" onclick="viewOrderProducts(<?= $order['id']; ?>)" data-bs-toggle="modal" data-bs-target="#order-products">
-                <i data-feather="package" class="feather-package"></i>
+                <i data-feather="edit" class="feather-edit"></i>
             </a>
             <a class="p-2 d-flex align-items-center border rounded" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete">
                 <i data-feather="trash-2" class="feather-trash-2"></i>
@@ -656,6 +699,178 @@ if ($result) {
             content.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading products</p></div>';
         });
     }
+    
+    function viewOrder(orderId) {
+        window.location.href = `invoice-details.php?order_id=${orderId}`;
+    }
+    
+    let allOrders = <?= json_encode($all_orders) ?>;
+    let currentFilters = {
+        product: '',
+        user: '',
+        payment: '',
+        date: '',
+        search: ''
+    };
+    
+    function applyFilter(type, value) {
+        currentFilters[type] = value;
+        
+        // Update button text
+        const btnTexts = {
+            product: value || 'Product',
+            user: value || 'Created By', 
+            payment: value ? value.charAt(0).toUpperCase() + value.slice(1) : 'Payment Method',
+            date: getDateText(value)
+        };
+        
+        if (btnTexts[type]) {
+            document.getElementById(type + '-filter-btn').textContent = btnTexts[type];
+        }
+        
+        filterOrders();
+    }
+    
+    function getDateText(value) {
+        switch(value) {
+            case 'today': return 'Today';
+            case 'last_7_days': return 'Last 7 Days';
+            case 'last_month': return 'Last Month';
+            default: return 'All Time';
+        }
+    }
+    
+    function performSearch() {
+        currentFilters.search = document.getElementById('search-input').value;
+        filterOrders();
+    }
+    
+    function filterOrders() {
+        let filtered = allOrders.filter(order => {
+            // Search filter
+            if (currentFilters.search) {
+                const search = currentFilters.search.toLowerCase();
+                if (!order.order_number.toLowerCase().includes(search) && 
+                    !order.customer_name.toLowerCase().includes(search) &&
+                    !(order.created_by_name && order.created_by_name.toLowerCase().includes(search))) {
+                    return false;
+                }
+            }
+            
+            // Product filter
+            if (currentFilters.product) {
+                if (!order.order_products || !order.order_products.includes(currentFilters.product)) {
+                    return false;
+                }
+            }
+            
+            // Payment filter
+            if (currentFilters.payment && order.payment_method !== currentFilters.payment) {
+                return false;
+            }
+            
+            // User filter
+            if (currentFilters.user && (!order.created_by_name || !order.created_by_name.includes(currentFilters.user))) {
+                return false;
+            }
+            
+            // Date filter
+            if (currentFilters.date) {
+                const orderDate = new Date(order.created_at);
+                const now = new Date();
+                
+                switch(currentFilters.date) {
+                    case 'today':
+                        if (orderDate.toDateString() !== now.toDateString()) return false;
+                        break;
+                    case 'last_7_days':
+                        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        if (orderDate < sevenDaysAgo) return false;
+                        break;
+                    case 'last_month':
+                        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                        if (orderDate < oneMonthAgo) return false;
+                        break;
+                }
+            }
+            
+            return true;
+        });
+        
+        updateTable(filtered);
+    }
+    
+    function updateTable(orders) {
+        // Destroy existing DataTable if it exists
+        if ($.fn.DataTable.isDataTable('.datatable')) {
+            $('.datatable').DataTable().destroy();
+        }
+        
+        const tbody = document.querySelector('.datatable tbody');
+        tbody.innerHTML = '';
+        
+        orders.forEach(order => {
+            const row = `
+                <tr>
+                    <td>
+                        <label class="checkboxs">
+                            <input type="checkbox">
+                            <span class="checkmarks"></span>
+                        </label>
+                    </td>
+                    <td>${order.order_number}</td>
+                    <td>${order.customer_name}</td>
+                    <td>${order.payment_method}</td>
+                    <td>${order.total_amount}</td>
+                    <td>${order.created_at}</td>
+                    <td>
+                        <span class="bg-success fs-10 text-white p-1 rounded">
+                            <i class="ti ti-point-filled me-1"></i>${order.payment_status || 'paid'}
+                        </span>
+                    </td>
+                    <td class="d-flex">
+                        <div class="edit-delete-action d-flex align-items-center">
+                            <a class="me-2 edit-icon p-2 border d-flex align-items-center rounded" href="invoice-details.php?order_id=${order.id}">
+                                <i data-feather="eye" class="action-eye"></i>
+                            </a>
+                            <a class="me-2 p-2 d-flex align-items-center border rounded" href="javascript:void(0);" onclick="viewOrderProducts(${order.id})" data-bs-toggle="modal" data-bs-target="#order-products">
+                                <i data-feather="edit" class="feather-edit"></i>
+                            </a>
+                            <a class="p-2 d-flex align-items-center border rounded" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#delete">
+                                <i data-feather="trash-2" class="feather-trash-2"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+        
+        // Reinitialize DataTable with new data
+        $('.datatable').DataTable({
+            paging: true,
+            searching: false,
+            info: true,
+            lengthChange: false,
+            pageLength: 10
+        });
+        
+        // Reinitialize feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    }
+    
+    // Allow search on Enter key
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            performSearch();
+        }
+    });
+    
+    document.getElementById('search-input').addEventListener('input', function() {
+        performSearch();
+    });
     
     function displayOrderProducts(items) {
         const content = document.getElementById('order-products-content');
