@@ -177,12 +177,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 										</div>
 										<a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
 										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
-<!--                                                                                <div class="form-check form-check-inline mb-2 me-2">
-                                                                                  <input class="btn-check" type="checkbox" id="exchangeCheckbox" autocomplete="off" onchange="toggleExchangeMode(this)">
-                                                                                  <label class="btn btn-outline-warning btn-sm d-flex align-items-center" for="exchangeCheckbox">
-                                                                                    <i class="ti ti-refresh me-2"></i> Exchange
-                                                                                  </label>
-                                                                                </div>-->
+<div class="custom-checkbox">
+  <input type="checkbox" id="exchangeCheckbox" />
+  <span class="checkmark"></span>
+  <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>
+</div>
 									</div>
 								</div>
 								<div class="pos-products">
@@ -192,10 +191,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 												<?php foreach ($products as $product): ?>
 												<div class="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3 product-item" data-category="<?php echo $product['category_id']; ?>" data-sku="<?php echo htmlspecialchars($product['sku']); ?>" style="display: block;">
 													<div class="product-info card mb-0<?php echo ($product['stock_quantity'] <= 0) ? ' out-of-stock' : ''; ?>">
-														<a href="javascript:void(0);" class="pro-img"<?php echo ($product['stock_quantity'] > 0) ? ' onclick="addToCart(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' : ''; ?>>
-															<img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" alt="<?php echo htmlspecialchars($product['name']); ?>" onerror="this.src='assets/img/products/images(1).png'">
-															<span><i class="ti ti-circle-check-filled"></i></span>
-														</a>
+														<a href="javascript:void(0);" class="pro-img"
+   <?php echo ($product['stock_quantity'] > 0) 
+      ? ' onclick="addToCart(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' 
+      : ''; ?>>
+    <img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" 
+         alt="<?php echo htmlspecialchars($product['name']); ?>" 
+         onerror="this.src='assets/img/products/images(1).png'">
+    <span><i class="ti ti-circle-check-filled"></i></span>
+</a>
 														<h6 class="product-name"><a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a></h6>
 														<p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
 														<div class="d-flex flex-column align-items-start w-100">
@@ -464,7 +468,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 				<div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
 					<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>
 					<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>
-					<a href="javascript:void(0);" class="btn btn-warning d-inline-flex align-items-center justify-content-center" onclick="openExchange()"><i  class="ti ti-refresh me-2"></i>Exchange</a>
+					<!--<a href="javascript:void(0);" class="btn btn-warning d-inline-flex align-items-center justify-content-center" onclick="openExchange()"><i  class="ti ti-refresh me-2"></i>Exchange</a>-->
 					<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completedd"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>
 					<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
 					<!--<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
@@ -692,11 +696,17 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 
         // Your updated addToCart function
         function addToCart(productId, productName, price) {
+            const exchangeChecked = document.getElementById('exchangeCheckbox')?.checked;
+
+            if (exchangeChecked) {
+                addExchangeToCart(productId, productName, price);
+                return;
+            }
             // Get quantity from product input
             const productElement = document.querySelector(`[onclick*="addToCart(${productId}"]`).closest('.product-item');
-            const quantityInput = productElement.querySelector('.product-qty');
-            const quantity = parseInt(quantityInput.value) || 1;
-            
+            const quantityInput = productElement?.querySelector('.product-qty');
+            const quantity = parseInt(quantityInput?.value) || 1;
+
             // Add to database
             fetch('cart_api.php', {
                 method: 'POST',
@@ -709,11 +719,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             .then(data => {
                 if (data.success) {
                     loadCart();
-                    quantityInput.value = 1;
+                    if (quantityInput) quantityInput.value = 1;
 
-                    // Use Toast instead of Modal
                     showToast('success', 'Success!', `${productName} added to cart!`);
-
                 } else {
                     showToast('error', 'Error', data.message || 'Failed to add item to cart');
                     loadCart();
@@ -725,6 +733,98 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 loadCart();
             });
         }
+
+    // Assuming your API returns items with a property indicating exchange
+    // Example for loading cart:
+    function loadCart() {
+        fetch('cart_api.php?action=get')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Map API response to cart array with is_exchange flag
+                cart = data.cart.map(item => ({
+                    ...item,
+                    is_exchange: item.is_exchange || false // set based on your data
+                }));
+                updateCartDisplay();
+            }
+        });
+    }
+
+    function addExchangeToCart(productId, productName, price) {
+        const hasProducts = cart.length > 0;
+        if (!hasProducts) {
+            showModal('error', 'Empty Cart', 'Please add products to the cart before adding an exchange product.');
+            // Uncheck the exchange checkbox right after
+            const exchangeCheckbox = document.getElementById('exchangeCheckbox');
+            if (exchangeCheckbox) {
+                exchangeCheckbox.checked = false;
+            }
+            return;
+        }
+
+        const totalNonExchangeAmount = cart.reduce((sum, item) => {
+            if (!item.is_exchange) {
+                return sum + parseFloat(item.price || 0) * (item.quantity || 1);
+            }
+            return sum;
+        }, 0);
+
+        if (totalNonExchangeAmount < price) {
+            showModal('error', 'Insufficient Funds', 'Total of non-exchange items is less than the exchange product price.');
+            const exchangeCheckbox = document.getElementById('exchangeCheckbox');
+            if (exchangeCheckbox) {
+                exchangeCheckbox.checked = false;
+            }
+            return;
+        }
+
+        // Calculate total cart value
+        const cartTotal = getCartTotal();
+
+        // Calculate current exchange total
+        const currentExchangeTotal = cart.reduce((sum, item) => item.is_exchange ? sum + (item.price * item.quantity) : sum, 0);
+
+        // Check if new exchange item exceeds cart total
+        const newItemTotal = -Math.abs(price);
+        const newTotalExchange = currentExchangeTotal + newItemTotal;
+
+        if (Math.abs(newTotalExchange) > cartTotal) {
+            showModal('error', 'Exchange Limit Exceeded', `Exchange total cannot exceed cart total.\nCart Total: ${cartTotal.toFixed(2)}\nCurrent Exchange: ${Math.abs(currentExchangeTotal).toFixed(2)}`);
+            const exchangeCheckbox = document.getElementById('exchangeCheckbox');
+            if (exchangeCheckbox) {
+                exchangeCheckbox.checked = false;
+            }
+            return;
+        }
+
+        // Add exchange item with negative price and mark as exchange
+        fetch('cart_api.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=add_exchange&product_id=${productId}&quantity=1&price=${newItemTotal}&name=${encodeURIComponent(productName)} (Exchange)`
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadCart();
+                showToast('success', 'Success!', `${productName} added as exchange product`);
+                // Uncheck the exchange checkbox
+                const exchangeCheckbox = document.getElementById('exchangeCheckbox');
+                if (exchangeCheckbox) {
+                    exchangeCheckbox.checked = false;
+                }
+            } else {
+                showToast('error', 'Error', data.message || 'Failed to add exchange product');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('error', 'Connection Error', 'Failed to add exchange product');
+        });
+    }
         
         // Function to update cart display
         function updateCartDisplay() {
@@ -772,7 +872,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 calculatedSubtotal += itemTotal;
                 
                 if (cartItemsList) {
-                    const exchangeLabel = item.is_exchange ? '<span class="badge bg-warning text-dark ms-2">Exchange</span>' : '';
+                    const exchangeLabel = item.is_exchange ? '' : '';
                     cartItemsList.innerHTML += `
                         <tr>
                             <td>
@@ -780,7 +880,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                                     <a class="delete-icon" href="javascript:void(0);" onclick="removeFromCart(${item.id})">
                                         <i class="ti ti-trash-x-filled"></i>
                                     </a>
-                                    <h6 class="fs-13 fw-normal">${item.name}${exchangeLabel}</h6>
+                                    <h6 class="fs-13 fw-normal">${item.name}</h6>
                                 </div>
                             </td>
                             <td>

@@ -122,6 +122,10 @@ try {
         throw new Exception('Failed to prepare stock update statement: ' . mysqli_error($link));
     }
     
+    // Prepare stock increase for exchange items outside the loop
+    $stock_increase_sql = "UPDATE products SET stock_quantity = stock_quantity + ? WHERE id = ?";
+    $stock_increase_stmt = mysqli_prepare($link, $stock_increase_sql);
+    
     foreach ($data['cart_items'] as $item) {
         $product_id = (int)$item['id'];
         $quantity = (int)$item['quantity'];
@@ -130,6 +134,10 @@ try {
         
         // Skip validation and stock update for exchange items
         if (isset($item['is_exchange']) && $item['is_exchange']) {
+            $upproduct_id = -(int)$item['id'];
+            mysqli_stmt_bind_param($stock_increase_stmt, 'ii', $quantity, $upproduct_id);
+            mysqli_stmt_execute($stock_increase_stmt);
+            
             // Insert order item for exchange item
             mysqli_stmt_bind_param($item_stmt, 'iiidd', $order_id, $product_id, $quantity, $unit_price, $total_price);
             if (!mysqli_stmt_execute($item_stmt)) {
