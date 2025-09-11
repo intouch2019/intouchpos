@@ -209,7 +209,7 @@ function getCart($link, $user_id) {
         ];
     }
     
-    // Get exchange items
+    // Get exchange items (negative product_ids)
     $exchange_sql = "SELECT * FROM cart WHERE user_id = ? AND exchange_name IS NOT NULL ORDER BY created_at ASC";
     $stmt = mysqli_prepare($link, $exchange_sql);
     mysqli_stmt_bind_param($stmt, "i", $user_id);
@@ -218,7 +218,7 @@ function getCart($link, $user_id) {
     
     while ($row = mysqli_fetch_assoc($result)) {
         $cart_items[] = [
-            'id' => $row['product_id'],
+            'id' => $row['product_id'], // This will be negative for exchange items
             'name' => $row['exchange_name'],
             'price' => floatval($row['exchange_price']),
             'quantity' => intval($row['quantity']),
@@ -242,17 +242,39 @@ function addExchangeToCart($link, $user_id) {
         return;
     }
     
-    // For exchange discount, use product_id 0, for exchange products use actual product_id
-    $exchange_product_id = $product_id;
+    // Use negative product_id for exchange items to avoid unique constraint conflicts
+    $exchange_product_id = -abs($product_id);
     
-    $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, exchange_name, exchange_price) VALUES (?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($link, $insert_sql);
-    mysqli_stmt_bind_param($stmt, "iiisd", $user_id, $exchange_product_id, $quantity, $name, $price);
+    // Check if exchange item with same negative product_id already exists
+    $check_sql = "SELECT id, quantity FROM cart WHERE user_id = ? AND product_id = ? AND exchange_name IS NOT NULL";
+    $stmt = mysqli_prepare($link, $check_sql);
+    mysqli_stmt_bind_param($stmt, "ii", $user_id, $exchange_product_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     
-    if (mysqli_stmt_execute($stmt)) {
-        echo json_encode(['success' => true, 'message' => 'Exchange item added']);
+    if ($existing = mysqli_fetch_assoc($result)) {
+        // Update existing exchange item
+        $new_quantity = $existing['quantity'] + $quantity;
+        $update_sql = "UPDATE cart SET quantity = ?, exchange_price = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?";
+        $stmt = mysqli_prepare($link, $update_sql);
+        mysqli_stmt_bind_param($stmt, "idi", $new_quantity, $price, $existing['id']);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            echo json_encode(['success' => true, 'message' => 'Exchange item updated']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to update exchange item']);
+        }
     } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to add exchange item: ' . mysqli_error($link)]);
+        // Insert new exchange item with negative product_id
+        $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, exchange_name, exchange_price) VALUES (?, ?, ?, ?, ?)";
+        $stmt = mysqli_prepare($link, $insert_sql);
+        mysqli_stmt_bind_param($stmt, "iiisd", $user_id, $exchange_product_id, $quantity, $name, $price);
+        
+        if (mysqli_stmt_execute($stmt)) {
+            echo json_encode(['success' => true, 'message' => 'Exchange item added']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to add exchange item: ' . mysqli_error($link)]);
+        }
     }
 }
 

@@ -176,7 +176,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 											<input type="text" id="searchProduct" class="form-control" placeholder="Search Product" onkeyup="searchProducts()">
 										</div>
 										<a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
-										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
+										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
 									</div>
 								</div>
 								<div class="pos-products">
@@ -222,6 +222,9 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 				<!-- Order Details -->
 				<div class="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar d-lg-flex">
 					<aside class="product-order-list bg-secondary-transparent flex-fill">
+						<div class="mb-3">
+							<button class="btn btn-purple w-100" onclick="showSchemesModal()"><i class="ti ti-discount-2 me-1"></i>Available Schemes</button>
+						</div>
 						<div class="card">
 							<div class="card-body">
 								<div class="order-head d-flex align-items-center justify-content-between w-100">
@@ -233,40 +236,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 										<a class="link-danger fs-16" href="javascript:void(0);"><i class="ti ti-trash-x-filled"></i></a>
 									</div>
 								</div>
-								<!-- Available Schemes Section -->
-								<div class="schemes-info block-section">
-									<h5 class="mb-3 d-flex align-items-center">
-										<i class="ti ti-discount-2 me-2 text-purple"></i>
-										Available Schemes
-									</h5>
-									<div class="schemes-container">
-										<?php if (empty($schemes)): ?>
-											<div class="text-center text-muted p-3">
-												<i class="ti ti-discount-off fs-24 mb-2"></i>
-												<p class="mb-0">No active schemes available</p>
-											</div>
-										<?php else: ?>
-											<?php foreach ($schemes as $scheme): ?>
-												<div class="scheme-card-compact bg-gradient-purple-light border border-purple-light rounded p-2 mb-2">
-													<div class="d-flex align-items-center justify-content-between">
-														<div class="d-flex align-items-center flex-grow-1">
-															<span class="badge bg-purple text-white fs-11 fw-bold px-2 py-1 me-2">
-																<?php echo $scheme['type'] === 'percentage' ? $scheme['value'] . '%' : number_format($scheme['value'], 2); ?>
-															</span>
-															<div>
-																<h6 class="fw-bold text-purple mb-0 fs-13"><?php echo htmlspecialchars($scheme['name']); ?></h6>
-																<small class="text-muted d-block"><?php echo htmlspecialchars($scheme['description']); ?></small>
-																<small class="text-muted">Min: <?php echo number_format($scheme['min_purchase'], 2); ?></small>
-															</div>
-														</div>
-														<i class="ti ti-check-circle text-success fs-16"></i>
-													</div>
-												</div>
-											<?php endforeach; ?>
-										<?php endif; ?>
-									</div>
-								</div>
-
 								<div class="customer-info block-section">
 									<h5 class="mb-2">Customer Information <span class="text-danger">*</span></h5>
 									<div class="d-flex align-items-center gap-2">
@@ -529,6 +498,82 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
         require_once __DIR__ . '/../partials/pos-modals.php'; 
         require_once __DIR__ . '/../partials/exchange-modal.php'; 
         ?>
+
+        <!-- Schemes Modal -->
+        <div class="modal fade" id="schemes-modal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-gradient-purple text-white border-0">
+                        <h4 class="modal-title d-flex align-items-center mb-0">
+                            <div class="scheme-icon-wrapper me-3">
+                                <i class="ti ti-discount-2 fs-24"></i>
+                            </div>
+                            <div class="fw-bold">Available Discount Schemes</div>
+                        </h4>
+                        <button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" style="background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <i class="ti ti-x fs-18"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <?php if (empty($schemes)): ?>
+                            <div class="empty-state text-center py-5">
+                                <div class="empty-icon mb-4">
+                                    <i class="ti ti-discount-off"></i>
+                                </div>
+                                <h5 class="text-muted mb-2">No Active Schemes</h5>
+                                <p class="text-muted mb-0">There are currently no active discount schemes available.</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="schemes-grid">
+                                <?php foreach ($schemes as $index => $scheme): ?>
+                                    <div class="scheme-card" data-aos="fade-up" data-aos-delay="<?php echo $index * 100; ?>">
+                                        <div class="scheme-header">
+                                            <div class="discount-badge">
+                                                <span class="discount-value">
+                                                    <?php echo $scheme['type'] === 'percentage' ? $scheme['value'] . '%' : number_format($scheme['value'], 0); ?>
+                                                </span>
+                                                <span class="discount-text">OFF</span>
+                                            </div>
+                                            <div class="status-badge">
+                                                <i class="ti ti-circle-check-filled"></i>
+                                                <span>ACTIVE</span>
+                                            </div>
+                                        </div>
+                                        <div class="scheme-body">
+                                            <h5 class="scheme-title"><?php echo htmlspecialchars($scheme['name']); ?></h5>
+                                            <p class="scheme-description"><?php echo htmlspecialchars($scheme['description']); ?></p>
+                                            <div class="scheme-details">
+                                                <div class="detail-item">
+                                                    <i class="ti ti-shopping-cart"></i>
+                                                    <span>Min. Purchase: <strong><?php echo number_format($scheme['min_purchase'], 0); ?></strong></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <i class="ti ti-calendar"></i>
+                                                    <span>Valid: <?php echo date('M d', strtotime($scheme['valid_from'])); ?> - <?php echo date('M d, Y', strtotime($scheme['valid_to'])); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="scheme-footer">
+                                            <div class="auto-apply-text">
+                                                <i class="ti ti-sparkles"></i>
+                                                <span>Auto-applied at checkout</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="ti ti-x me-1"></i>Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 
 
     </div>
@@ -1447,11 +1492,11 @@ function debugProducts() {
         // Function to get cart total
         function getCartTotal() {
             const subtotal = getCartSubtotal();
-            const shipping = parseFloat(document.getElementById('shippingCost').textContent.replace('$', '')) || 0;
-            const tax = parseFloat(document.getElementById('taxAmount').textContent.replace('$', '')) || 0;
-            const coupon = parseFloat(document.getElementById('couponAmount').textContent.replace('$', '')) || 0;
-            const discount = parseFloat(document.getElementById('discountAmount').textContent.replace('$', '')) || 0;
-            const roundoff = parseFloat(document.getElementById('roundoffAmount').textContent.replace('$', '')) || 0;
+            const shipping = parseFloat(document.getElementById('shippingCost').textContent) || 0;
+            const tax = parseFloat(document.getElementById('taxAmount').textContent) || 0;
+            const coupon = parseFloat(document.getElementById('couponAmount').textContent) || 0;
+            const discount = parseFloat(document.getElementById('discountAmount').textContent) || 0;
+            const roundoff = parseFloat(document.getElementById('roundoffAmount').textContent) || 0;
             
             let total = subtotal + shipping + tax - coupon - discount + roundoff;
             
@@ -2521,6 +2566,12 @@ function finishExchange(payableAmount) {
 
 
 
+// Show schemes modal
+function showSchemesModal() {
+    const modal = new bootstrap.Modal(document.getElementById('schemes-modal'));
+    modal.show();
+}
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     const customerDetails = document.getElementById('customerDetails');
@@ -2795,93 +2846,198 @@ document.addEventListener('DOMContentLoaded', function() {
             color: #374151;
         }
         
-        /* Schemes Section Styles */
-        .schemes-info {
+        .btn-purple {
+            background-color: #8b5cf6 !important;
+            border-color: #8b5cf6 !important;
+            color: white !important;
+        }
+        
+        .btn-purple:hover {
+            background-color: #7c3aed !important;
+            border-color: #7c3aed !important;
+        }
+        
+        /* Schemes Modal Styles */
+        .bg-gradient-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        .scheme-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .empty-state .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: #f8fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .empty-state .empty-icon i {
+            font-size: 32px;
+            color: #cbd5e1;
+        }
+        
+        .schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .scheme-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .scheme-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #8b5cf6;
+        }
+        
+        .scheme-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .discount-badge {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .discount-value {
+            display: inline;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+        
+        .discount-text {
+            display: inline;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-left: 2px;
+        }
+        
+        .status-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .scheme-body {
+            padding: 24px;
+        }
+        
+        .scheme-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .scheme-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
             margin-bottom: 20px;
         }
         
-        .scheme-card-compact {
-            background: linear-gradient(135deg, #f8f4ff 0%, #f3e8ff 100%);
-            border: 1px solid #e9d5ff;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .scheme-card-compact:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
-        }
-        
-        .scheme-card-compact::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #8b5cf6, #a855f7);
-        }
-        
-        .bg-gradient-purple-light {
-            background: linear-gradient(135deg, #f8f4ff 0%, #f3e8ff 100%);
-        }
-        
-        .border-purple-light {
-            border-color: #e9d5ff !important;
-        }
-        
-        .text-purple {
-            color: #8b5cf6 !important;
-        }
-        
-        .bg-purple {
-            background-color: #8b5cf6 !important;
-        }
-        
-        .bg-success-light {
-            background-color: #dcfce7 !important;
-        }
-        
-        .text-success {
-            color: #16a34a !important;
-        }
-        
         .scheme-details {
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 6px;
-            padding: 8px 10px;
-            margin-top: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
-        .progress-bar.bg-purple {
-            background-color: #8b5cf6 !important;
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #475569;
         }
         
-        .schemes-container {
-            max-height: 200px;
-            overflow-y: auto;
-            padding-right: 5px;
+        .detail-item i {
+            width: 16px;
+            height: 16px;
+            color: #8b5cf6;
+            flex-shrink: 0;
         }
         
-        .schemes-container::-webkit-scrollbar {
-            width: 4px;
+        .scheme-footer {
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
         }
         
-        .schemes-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
-            border-radius: 2px;
+        .auto-apply-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 500;
         }
         
-        .schemes-container::-webkit-scrollbar-thumb {
-            background: #8b5cf6;
-            border-radius: 2px;
+        .auto-apply-text i {
+            font-size: 14px;
         }
         
-        .schemes-container::-webkit-scrollbar-thumb:hover {
-            background: #7c3aed;
+        /* Close button styling */
+        #schemes-modal .btn-close {
+            background: rgba(255, 255, 255, 0.3) !important;
+            border-radius: 50% !important;
+            width: 32px !important;
+            height: 32px !important;
+            opacity: 1 !important;
         }
         
+        #schemes-modal .btn-close:hover {
+            background: rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .schemes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .scheme-header {
+                padding: 16px;
+            }
+            
+            .scheme-body {
+                padding: 20px;
+            }
+        }
 
     </style>
 
