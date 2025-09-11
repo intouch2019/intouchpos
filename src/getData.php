@@ -81,7 +81,7 @@ switch ($type) {
     $custId = intval($_GET['cust_id']);
     $search = isset($_GET['search']) ? mysqli_real_escape_string($link, $_GET['search']) :'';
 
-    $query = "SELECT id, order_number FROM orders WHERE customer_id = $custId AND order_number LIKE '%$search%' ORDER BY order_number ASC";
+    $query = "SELECT id, order_number FROM orders WHERE customer_id = $custId AND order_number LIKE '%$search%' AND hold_reference is NULL ORDER BY order_number ASC";
     $result = mysqli_query($link, $query);
     $order_references = [];
     if ($result) {

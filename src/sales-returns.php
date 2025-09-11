@@ -1,93 +1,109 @@
 <?php ob_start();
 require_once __DIR__ . '/../partials/config.php';
 
-// Get filter params
-$currentCustomer = $_GET['customer'] ?? '';
-$currentStatus   = $_GET['status'] ?? '';
-$currentPayment  = $_GET['payment'] ?? '';
-$currentSort     = $_GET['sort'] ?? '';
+// Get filter parameters
+$customer_filter = $_GET['customer'] ?? '';
+$status_filter = $_GET['status'] ?? '';
+$payment_filter = $_GET['payment'] ?? '';
+$sort_by_filter = $_GET['sort_by'] ?? '';
 
-// Map filter values to readable labels
-$filterLabels = [
-	'recent'    => 'Recently Added',
-	'asc'       => 'Ascending',
-	'desc'      => 'Descending',
-	'lastmonth' => 'Last Month',
-	'last7'     => 'Last 7 Days',
-];
+// Build WHERE clause
+$where_conditions = [];
+$params = [];
+$types = '';
 
-// Default label
-$currentLabel = $filterLabels[$currentSort] ?? 'All';
-
-// Status labels
-$paymentLabels = [
-	'paid'   => 'Paid',
-	'unpaid' => 'Unpaid',
-	'overdue' => 'Overdue'
-];
-
-$currentPaymentLabel = $paymentLabels[$currentPayment] ?? 'All';
-
-// Status labels
-$statusLabels = [
-	'pending'   => 'Pending',
-	'received' => 'Received'
-];
-
-$currentStatusLabel = $statusLabels[$currentStatus] ?? 'All';
-
-// Conditions
-$where = [];
-$order = "ORDER BY s.created_at DESC";
-
-// Customer filter
-if ($currentCustomer !== '') {
-	$where[] = "s.customer_id = " . intval($currentCustomer);
+if (!empty($customer_filter)) {
+	$where_conditions[] = "c.name LIKE ?";
+	$params[] = "%$customer_filter%";
+	$types .= 's';
 }
 
-// Status filter
-if ($currentStatus == 'pending') {
-	$where[] = "s.status = 'Pending'";
-} elseif ($currentStatus == 'received') {
-	$where[] = "s.status = 'Received'";
+if (!empty($status_filter)) {
+	$where_conditions[] = "s.status LIKE ?";
+	$params[] = "%$status_filter%";
+	$types .= 's';
 }
 
-// Payment filter
-if ($currentPayment == 'paid') {
-	$where[] = "s.grand_total = 0";
-} elseif ($currentPayment == 'unpaid') {
-	$where[] = "s.grand_total > 0";
-} elseif ($currentPayment == 'overdue') {
-	$where[] = "s.due_date < NOW() AND s.grand_total > 0";
-}
-
-// Sort filter
-if ($currentSort == 'asc') {
-	$order = "ORDER BY s.created_at ASC";
-} elseif ($currentSort == 'desc') {
-	$order = "ORDER BY s.created_at DESC";
-} elseif ($currentSort == 'last7') {
-	$where[] = "s.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
-} elseif ($currentSort == 'lastmonth') {
-	$where[] = "s.created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)";
-}
-
-// Combine SQL
-$whereSQL = !empty($where) ? "WHERE " . implode(" AND ", $where) : "";
-
-// Final query
-$sql_sales = "SELECT s.*, c.name as cust_name 
-FROM sales_returns s 
-JOIN customers c ON s.customer_id = c.id 
-$whereSQL $order";
-
-$result_sales = mysqli_query($link, $sql_sales);
-$sales_returns = [];
-if ($result_sales) {
-	while ($row = mysqli_fetch_assoc($result_sales)) {
-		$sales_returns[] = $row;
+if (!empty($payment_filter)) {
+	if ($payment_filter == 'paid') {
+		$where_conditions[] = "s.grand_total = 0";
+	} elseif ($payment_filter == 'unpaid') {
+		$where_conditions[] = "s.grand_total > 0";
+	} elseif ($payment_filter == 'overdue') {
+        // adjust if you have due_date column, otherwise just example
+		$where_conditions[] = "s.grand_total > 0";
 	}
 }
+
+// Sorting
+$order_by = "s.created_at DESC"; // default
+if (!empty($sort_by_filter)) {
+	switch ($sort_by_filter) {
+		case 'today':
+		$where_conditions[] = "DATE(s.created_at) = CURDATE()";
+		break;
+		case 'last_7_days':
+		$where_conditions[] = "s.created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)";
+		break;
+		case 'last_month':
+		$where_conditions[] = "s.created_at >= DATE_SUB(NOW(), INTERVAL 1 MONTH)";
+		break;
+		case 'asc':
+		$order_by = "s.created_at ASC";
+		break;
+		case 'desc':
+		$order_by = "s.created_at DESC";
+		break;
+	}
+}
+// Get sales returns with filters
+$sales_returns = [];
+$sql_sales = "SELECT DISTINCT s.*, COALESCE(c.name, 'Walk in Customer') AS cust_name
+FROM sales_returns s
+LEFT JOIN customers c ON s.customer_id = c.id";
+
+if (!empty($where_conditions)) {
+	$sql_sales .= " WHERE " . implode(' AND ', $where_conditions);
+}
+
+$sql_sales .= " ORDER BY $order_by";
+
+if (!empty($params)) {
+	$stmt = mysqli_prepare($link, $sql_sales);
+	if ($stmt) {
+		mysqli_stmt_bind_param($stmt, $types, ...$params);
+		mysqli_stmt_execute($stmt);
+		$result = mysqli_stmt_get_result($stmt);
+		while ($row = mysqli_fetch_assoc($result)) {
+			$sales_returns[] = $row;
+		}
+		mysqli_stmt_close($stmt);
+	}
+} else {
+	$result = mysqli_query($link, $sql_sales);
+	if ($result) {
+		while ($row = mysqli_fetch_assoc($result)) {
+			$sales_returns[] = $row;
+		}
+	}
+}
+
+$payment = ['paid', 'unpaid', 'overdue'];
+$status = ['Pending', 'Received'];
+
+// Get all sales_returns with product names for JavaScript filtering
+$all_returns_sql = "SELECT DISTINCT s.*, COALESCE(c.name, 'Walk in Customer') AS cust_name 
+FROM sales_returns s
+LEFT JOIN customers c ON s.customer_id = c.id
+ORDER BY s.created_at DESC";
+$all_return_result = mysqli_query($link, $all_returns_sql);
+$all_sales_return = [];
+if ($all_return_result) {
+    while ($row = mysqli_fetch_assoc($all_return_result)) {
+        $all_sales_return[] = $row;
+    }
+}
+
 ?>
 <!-- ========================
 Start Page Content
@@ -132,48 +148,53 @@ Start Page Content
 				</div>
 				<div class="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
 					<div class="dropdown me-2">
-						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="customer-filter-btn">
 							Customer
 						</a>
 						<ul class="dropdown-menu dropdown-menu-end p-3">
-							<li><a href="sales-returns.php" class="dropdown-item <?= ($currentCustomer == '')?'active':''; ?>">All</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('customer', '')">All Customers</a></li>
 							<?php 
 							$custRes = mysqli_query($link, "SELECT id, name FROM customers ORDER BY name ASC");
-							while ($cust = mysqli_fetch_assoc($custRes)) {
-								echo '<li><a href="sales-returns.php?customer='.$cust['id'].'" class="dropdown-item '.(($currentCustomer == $cust['id'])?'active':'').'">'.htmlspecialchars($cust['name']).'</a></li>';
-							}
-							?>
+							while($cust = mysqli_fetch_assoc($custRes)): ?>
+								<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('customer', '<?= htmlspecialchars($cust['name']) ?>')"><?= htmlspecialchars($cust['name']) ?></a></li>
+							<?php endwhile; ?>
+						</ul>
+						
+					</div>
+					<div class="dropdown me-2">
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="status-filter-btn">
+							Status
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end p-3">
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('status', '')">All</a></li>
+							<?php foreach($status as $sts): ?>
+								<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('status', '<?=$sts ?>')"><?= ucfirst($sts) ?></a></li>
+							<?php endforeach; ?>
 						</ul>
 					</div>
 					<div class="dropdown me-2">
-						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-							Status : <?php echo htmlspecialchars($currentStatusLabel); ?>
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="payment-filter-btn">
+							Payment Status
 						</a>
 						<ul class="dropdown-menu dropdown-menu-end p-3">
-							<li><a href="sales-returns.php?status=pending" class="dropdown-item <?= ($currentStatus == 'pending')?'active':''; ?>">Pending</a></li>
-							<li><a href="sales-returns.php?status=received" class="dropdown-item <?= ($currentStatus == 'received')?'active':''; ?>">Received</a></li>
-						</ul>
-					</div>
-					<div class="dropdown me-2">
-						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-							Payment Status : <?php echo htmlspecialchars($currentPaymentLabel); ?>
-						</a>
-						<ul class="dropdown-menu dropdown-menu-end p-3">
-							<li><a href="sales-returns.php?payment=paid" class="dropdown-item <?= ($currentPayment == 'paid')?'active':''; ?>">Paid</a></li>
-							<li><a href="sales-returns.php?payment=unpaid" class="dropdown-item <?= ($currentPayment == 'unpaid')?'active':''; ?>">Unpaid</a></li>
-							<li><a href="sales-returns.php?payment=overdue" class="dropdown-item <?= ($currentPayment == 'overdue')?'active':''; ?>">Overdue</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('payment', '')">All</a></li>
+							<?php foreach($payment as $pt): ?>
+								<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('payment', '<?= $pt ?>')"><?= ucfirst($pt) ?></a></li>
+							<?php endforeach; ?>
 						</ul>
 					</div>
 					<div class="dropdown">
-						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-							Sort By : <?php echo htmlspecialchars($currentLabel); ?>
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="sort_by-filter-btn">
+							Sort By
 						</a>
 						<ul class="dropdown-menu dropdown-menu-end p-3">
-							<li><a href="sales-returns.php?sort=recent" class="dropdown-item <?= ($currentSort == 'recent')?'active':''; ?>">Recently Added</a></li>
-							<li><a href="sales-returns.php?sort=asc" class="dropdown-item <?= ($currentSort == 'asc')?'active':''; ?>">Ascending</a></li>
-							<li><a href="sales-returns.php?sort=desc" class="dropdown-item <?= ($currentSort == 'desc')?'active':''; ?>">Descending</a></li>
-							<li><a href="sales-returns.php?sort=lastmonth" class="dropdown-item <?= ($currentSort == 'lastmonth')?'active':''; ?>">Last Month</a></li>
-							<li><a href="sales-returns.php?sort=last7" class="dropdown-item <?= ($currentSort == 'last7')?'active':''; ?>">Last 7 Days</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', '')">All</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'today')">Recently Added</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'asc')">Ascending</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'desc')">Descending</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'last_7_days')">Last 7 Days</a>
+							</li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'last_month')">Last Month</a></li>
 						</ul>
 					</div>
 				</div>
@@ -277,51 +298,51 @@ require_once '../partials/main.php'; ?>
 	$(document).ready(function() {
 
 		// 🔹 Search on input
-	    $("#customerSearch").on("input", function () {
-	        let search = $(this).val().trim();
+		$("#customerSearch").on("input", function () {
+			let search = $(this).val().trim();
 
-	        if (search.length === 0) {
-	            $("#customerName").hide();
-	            return;
-	        }
+			if (search.length === 0) {
+				$("#customerName").hide();
+				return;
+			}
 
-	        $.ajax({
-	            url: "getData.php",
-	            method: "GET",
-	            data: {
+			$.ajax({
+				url: "getData.php",
+				method: "GET",
+				data: {
 	                type: "customers",  // ask PHP for customers
 	                search: search
 	            },
 	            dataType: "json",
 	            success: function (response) {
-	                let suggestionBox = $("#customerName");
+	            	let suggestionBox = $("#customerName");
 	                suggestionBox.empty(); // clear old suggestions
 
 	                if (response.length > 0) {
-	                    response.forEach(function (item) {
-	                        let label = item.name + " (" + item.phone + ")";
-	                        suggestionBox.append(
-	                            `<div class="suggestion-item p-2 border-bottom" 
-	                                  data-id="${item.id}" 
-	                                  data-name="${item.name}">
-	                                ${label}
-	                             </div>`
-	                        );
-	                    });
-	                    suggestionBox.show();
+	                	response.forEach(function (item) {
+	                		let label = item.name + " (" + item.phone + ")";
+	                		suggestionBox.append(
+	                			`<div class="suggestion-item p-2 border-bottom" 
+	                			data-id="${item.id}" 
+	                			data-name="${item.name}">
+	                			${label}
+	                			</div>`
+	                			);
+	                	});
+	                	suggestionBox.show();
 	                } else {
-	                    suggestionBox.hide();
+	                	suggestionBox.hide();
 	                }
 	            }
 	        });
-	    });
+		});
 
 	    // 🔹 Click on suggestion
 	    $(document).on("click", ".suggestion-item", function () {
-	        let id = $(this).data("id");
-	        let name = $(this).data("name");
+	    	let id = $(this).data("id");
+	    	let name = $(this).data("name");
 
-	        $("#customerSearch").val(name);
+	    	$("#customerSearch").val(name);
 	        $("#sales_return_customer").val(id); // hidden input with ID
 	        $("#customerName").hide();
 
@@ -331,21 +352,21 @@ require_once '../partials/main.php'; ?>
 
 	    // 🔹 Hide suggestions if clicked outside
 	    $(document).on("click", function (e) {
-	        if (!$(e.target).closest("#customerSearch, #customerName").length) {
-	            $("#customerName").hide();
-	        }
+	    	if (!$(e.target).closest("#customerSearch, #customerName").length) {
+	    		$("#customerName").hide();
+	    	}
 	    });
 
 	    // 🔹 When customer is selected, reset order no & product table
 	    $('#sales_return_customer').on('change', function () {
-	        let custId = $(this).val();
+	    	let custId = $(this).val();
 
 	        // Reset purchase_reference & product select
 	        $('#sales_return_order_no').empty().trigger('change');
 
 	        if ($.fn.select2 && $('#salesReturnProductSelect').hasClass("select2-hidden-accessible")) {
-	            $('#salesReturnProductSelect').select2('destroy');
-	            $('#salesReturnProductSelect').empty();
+	        	$('#salesReturnProductSelect').select2('destroy');
+	        	$('#salesReturnProductSelect').empty();
 	        }
 
 	        // Empty product table + reset total
@@ -356,33 +377,33 @@ require_once '../partials/main.php'; ?>
 
 	        // Initialize searchable purchase_reference dropdown
 	        $('#sales_return_order_no').select2({
-	            placeholder: "Search Order No",
-	            width: '100%',
-	            dropdownParent: $('#add-sales-return-new'),
-	            allowClear: true,
-	            ajax: {
-	                url: 'getData.php',
-	                dataType: 'json',
-	                delay: 250,
-	                data: function (params) {
-	                    return {
-	                        type: "order_references",
-	                        cust_id: custId,
-	                        search: params.term || ''
-	                    };
-	                },
-	                processResults: function (data) {
-	                    return {
-	                        results: $.map(data, function (ref) {
-	                            return {
-	                                id: ref.id,
-	                                text: ref.order_number
-	                            };
-	                        })
-	                    };
-	                },
-	                cache: true
-	            }
+	        	placeholder: "Search Order No",
+	        	width: '100%',
+	        	dropdownParent: $('#add-sales-return-new'),
+	        	allowClear: true,
+	        	ajax: {
+	        		url: 'getData.php',
+	        		dataType: 'json',
+	        		delay: 250,
+	        		data: function (params) {
+	        			return {
+	        				type: "order_references",
+	        				cust_id: custId,
+	        				search: params.term || ''
+	        			};
+	        		},
+	        		processResults: function (data) {
+	        			return {
+	        				results: $.map(data, function (ref) {
+	        					return {
+	        						id: ref.id,
+	        						text: ref.order_number
+	        					};
+	        				})
+	        			};
+	        		},
+	        		cache: true
+	        	}
 	        });
 	    });
 
@@ -548,9 +569,9 @@ require_once '../partials/main.php'; ?>
 		    updateGrandTotal();
 		    $('#salesReturnProductSelect').val(null).trigger('change');
 		});
-	});
+	}); 
 
-$(document).ready(function () {
+	$(document).ready(function () { //
 
 	    // Product select2 for edit
 	    $('#editSalesReturnProductSelect').select2({
@@ -836,6 +857,176 @@ $(document).ready(function () {
 		        }
 		    });
 		});
-
 	});
+
+let allSalesReturn = <?= json_encode($all_sales_return) ?>;
+let currentFilters = {
+	customer: '',
+	status: '',
+	payment: '',
+	sort_by: ''
+};
+
+function updateTable(orders) {
+    // Destroy existing DataTable if it exists
+    if ($.fn.DataTable.isDataTable('.datatable')) {
+    	$('.datatable').DataTable().destroy();
+    }
+
+    const tbody = document.querySelector('.datatable tbody');
+    tbody.innerHTML = '';
+
+    orders.forEach(order => {
+    	const due = order.grand_total - (order.paid_amount ?? 0);
+    	const paymentStatus = due <= 0 
+    	? '<span class="badge badge-soft-success badge-xs shadow-none">Paid</span>'
+    	: '<span class="badge badge-soft-danger badge-xs shadow-none">Unpaid</span>';
+
+    	const row = `
+    	<tr>
+    	<td>
+    	<label class="checkboxs">
+    	<input type="checkbox" name="selected[]" value="${order.id}">
+    	<span class="checkmarks"></span>
+    	</label>
+    	</td>
+    	<td>${order.order_no}</td>
+    	<td>${order.return_date ? new Date(order.return_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</td>
+    	<td>${order.cust_name}</td>
+    	<td>
+    	${order.status === 'Received' 
+    	? '<span class="badge badge-success shadow-none">Received</span>'
+    	: `<span class="badge badge-warning shadow-none">${order.status}</span>`
+    }
+    </td>
+    <td>${parseFloat(order.grand_total).toFixed(2)}</td>
+    <td>${(order.paid_amount ?? 0).toFixed(2)}</td>
+    <td>${due.toFixed(2)}</td>
+    <td>${paymentStatus}</td>
+    <td class="dflex">
+    <div class="edit-delete-action d-flex align-items-center">
+    <a class="me-2 p-2 btn-edit-sales-return" 
+    data-return-id="${order.id}" 
+    data-bs-toggle="modal" 
+    data-bs-target="#edit-sales-return-new">
+    <i data-feather="edit" class="feather-edit"></i>
+    </a>
+    <a class="p-2 d-flex align-items-center border rounded btn-delete-sales" 
+    data-del-return-id="${order.id}">
+    <i data-feather="trash-2" class="feather-trash-2"></i>
+    </a>
+    </div>
+    </td>
+    </tr>
+    `;
+    tbody.innerHTML += row;
+});
+
+    // Reinitialize DataTable with new data
+    $('.datatable').DataTable({
+    	paging: true,
+    	searching: false,
+    	info: true,
+    	lengthChange: false,
+    	pageLength: 10
+    });
+
+    // Reinitialize feather icons
+    if (typeof feather !== 'undefined') {
+    	feather.replace();
+    }
+}
+
+function filterSalesReturn() {
+	let filtered = allSalesReturn.filter(sales_return => {
+
+		if (currentFilters.customer) {
+			if (!sales_return.cust_name || !sales_return.cust_name.includes(currentFilters.customer)) {
+				return false;
+			}
+		}
+
+		if (currentFilters.status) {
+			if (!sales_return.status || sales_return.status !== currentFilters.status) {
+				return false;
+			}
+		}
+
+		if (currentFilters.payment) {
+			let gt = parseFloat(sales_return.grand_total || 0);
+
+			if (currentFilters.payment === 'paid' && gt <= 0) {
+				return false;
+			}
+			if (currentFilters.payment === 'unpaid' && gt > 0) {
+				return false;
+			}
+			if (currentFilters.payment === 'overdue') {
+				let createdDate = new Date(sales_return.created_at);
+				let thirtyDaysAgo = new Date();
+				thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+				if (!(gt > 0 && createdDate < thirtyDaysAgo)) {
+					return false;
+				}
+			}
+		}
+
+		if (currentFilters.sort_by) {
+			const orderDate = new Date(sales_return.created_at);
+			const now = new Date();
+
+			switch (currentFilters.sort_by) {
+				case 'today':
+				if (orderDate.toDateString() !== now.toDateString()) return false;
+				break;
+				case 'last_7_days':
+				const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+				if (orderDate < sevenDaysAgo) return false;
+				break;
+				case 'last_month':
+				const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+				if (orderDate < oneMonthAgo) return false;
+				break;
+			}
+		}
+
+		return true;
+	});
+
+	updateTable(filtered);
+}
+
+function getDateText(value) {
+	switch(value) {
+		case 'recent': return 'Recently Added';
+		case 'asc': return 'Ascending';
+		case 'desc': return 'Descending';
+		case 'last_7_days': return 'Last 7 Days';
+		case 'last_month': return 'Last Month';
+		default: return 'All';
+	}
+}
+
+function applyFilter(type, value) {
+	currentFilters[type] = value;
+
+	const btnTexts = {
+		customer: value || 'Customer',
+		status: value || 'Status',
+		payment: value ? value.charAt(0).toUpperCase() + value.slice(1) : 'Payment Status',
+		sort_by: getDateText(value)
+	};
+
+	if (type === 'payment') {
+		if (value === 'paid') btnTexts.payment = 'Paid';
+		else if (value === 'unpaid') btnTexts.payment = 'Unpaid';
+		else if (value === 'overdue') btnTexts.payment = 'Overdue';
+	}
+
+	if (btnTexts[type]) {
+		document.getElementById(type + '-filter-btn').textContent = btnTexts[type];
+	}
+	filterSalesReturn();
+}
 </script>

@@ -4,26 +4,6 @@ require_once __DIR__ . '/../partials/config.php';
 $currentFilter = $_GET['filter'] ?? '';
 $currentStatus = $_GET['status'] ?? ''; // status filter
 
-// Map filter values to readable labels
-$filterLabels = [
-	'recent'    => 'Recently Added',
-	'asc'       => 'Ascending',
-	'desc'      => 'Descending',
-	'lastmonth' => 'Last Month',
-	'last7'     => 'Last 7 Days',
-];
-
-// Default label
-$currentLabel = $filterLabels[$currentFilter] ?? 'All Records';
-
-// Status labels
-$statusLabels = [
-	'paid'   => 'Paid',
-	'unpaid' => 'Unpaid',
-];
-
-$currentStatusLabel = $statusLabels[$currentStatus] ?? 'All Status';
-
 $where = [];
 $order = "ORDER BY p.created_at DESC";
 
@@ -40,9 +20,9 @@ if ($currentFilter == 'last7') {
 }
 
 // Handle status filter
-if ($currentStatus == 'paid') {
+if ($currentStatus == 'Paid') {
 	$where[] = "p.total_return_amount = 0";
-} elseif ($currentStatus == 'unpaid') {
+} elseif ($currentStatus == 'Unpaid') {
 	$where[] = "p.total_return_amount > 0";
 }
 
@@ -62,6 +42,20 @@ if ($result_purchases) {
 		$purchases[] = $row;
 	}
 }
+
+$all_returns_sql = "SELECT p.*, s.name as supplier_name 
+FROM purchase_returns p
+JOIN suppliers s ON p.supplier_id = s.id 
+ORDER BY s.created_at DESC";
+$all_return_result = mysqli_query($link, $all_returns_sql);
+$all_return = [];
+if ($all_return_result) {
+    while ($row = mysqli_fetch_assoc($all_return_result)) {
+        $all_return[] = $row;
+    }
+}
+$status = ['Paid', 'Unpaid'];
+
 ?>
 
 <!-- ========================
@@ -109,134 +103,119 @@ Start Page Content
 				</div>
 				<div class="d-flex table-dropdown my-xl-auto right-content align-items-center flex-wrap row-gap-3">
 					<div class="dropdown me-2">
-						<a href="javascript:void(0);" 
-						class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" 
-						data-bs-toggle="dropdown">
-						Status : <?php echo htmlspecialchars($currentStatusLabel); ?>
-					</a>
-					<ul class="dropdown-menu dropdown-menu-end p-3">
-						<li>
-							<a href="purchase-returns.php?status=paid&filter=<?php echo $currentFilter; ?>" 
-								class="dropdown-item rounded-1 <?php echo ($currentStatus == 'paid')?'active':''; ?>">
-								Paid
-							</a>
-						</li>
-						<li>
-							<a href="purchase-returns.php?status=unpaid&filter=<?php echo $currentFilter; ?>" 
-								class="dropdown-item rounded-1 <?php echo ($currentStatus == 'unpaid')?'active':''; ?>">
-								Unpaid
-							</a>
-						</li>
-						<li>
-							<a href="purchase-returns.php?status=&filter=<?php echo $currentFilter; ?>" 
-								class="dropdown-item rounded-1 <?php echo ($currentStatus == '')?'active':''; ?>">
-								All Status
-							</a>
-						</li>
-					</ul>
-				</div>
-				<div class="dropdown">
-					<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown">
-						Sort By : <?php echo htmlspecialchars($currentLabel); ?>
-					</a>
-					<ul class="dropdown-menu dropdown-menu-end p-3">
-						<li><a href="purchase-returns.php?filter=recent&status=<?php echo $currentStatus; ?>" class="dropdown-item <?php echo ($currentFilter=='recent')?'active':''; ?>">Recently Added</a></li>
-						<li><a href="purchase-returns.php?filter=asc&status=<?php echo $currentStatus; ?>" class="dropdown-item <?php echo ($currentFilter=='asc')?'active':''; ?>">Ascending</a></li>
-						<li><a href="purchase-returns.php?filter=desc&status=<?php echo $currentStatus; ?>" class="dropdown-item <?php echo ($currentFilter=='desc')?'active':''; ?>">Descending</a></li>
-						<li><a href="purchase-returns.php?filter=lastmonth&status=<?php echo $currentStatus; ?>" class="dropdown-item <?php echo ($currentFilter=='lastmonth')?'active':''; ?>">Last Month</a></li>
-						<li><a href="purchase-returns.php?filter=last7&status=<?php echo $currentStatus; ?>" class="dropdown-item <?php echo ($currentFilter=='last7')?'active':''; ?>">Last 7 Days</a></li>
-						<li><a href="purchase-returns.php?filter=&status=<?php echo $currentStatus; ?>" class="dropdown-item <?php echo ($currentFilter=='')?'active':''; ?>">All Records</a></li>
-					</ul>
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="status-filter-btn">
+							Status
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end p-3">
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('status', '')">All</a></li>
+							<?php foreach($status as $sts): ?>
+								<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('status', '<?=$sts ?>')"><?= ucfirst($sts) ?></a></li>
+							<?php endforeach; ?>
+						</ul>
+					</div>
+					<div class="dropdown">
+						<a href="javascript:void(0);" class="dropdown-toggle btn btn-white btn-md d-inline-flex align-items-center" data-bs-toggle="dropdown" id="sort_by-filter-btn">
+							Sort By
+						</a>
+						<ul class="dropdown-menu dropdown-menu-end p-3">
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', '')">All</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'today')">Recently Added</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'asc')">Ascending</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'desc')">Descending</a></li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'last_7_days')">Last 7 Days</a>
+							</li>
+							<li><a href="javascript:void(0);" class="dropdown-item rounded-1" onclick="applyFilter('sort_by', 'last_month')">Last Month</a></li>
+						</ul>
+					</div>
 				</div>
 			</div>
-		</div>
-		<div class="card-body p-0">
-			<div class="table-responsive">
-				<table class="table datatable">
-					<thead class="thead-light">
-						<tr>
-							<th>
-								<label class="checkboxs">
-									<input type="checkbox" id="select-all">
-									<span class="checkmarks"></span>
-								</label>
-							</th>
-							<th>Return Date</th>
-							<th>Supplier Name</th>
-							<th>Purchase No</th>
-							<th>Status</th>
-							<th>Total</th>
-							<th>Paid</th>
-							<th>Due</th>
-							<th>Payment Status</th>
-							<th class="no-sort"></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php 
-						if (!empty($purchases)):
-							foreach ($purchases as $purchase): ?>
-								<tr>
-									<td>
-										<label class="checkboxs">
-											<input type="checkbox" class="select-row">
-											<span class="checkmarks"></span>
-										</label>
-									</td>
+			<div class="card-body p-0">
+				<div class="table-responsive">
+					<table class="table datatable">
+						<thead class="thead-light">
+							<tr>
+								<th>
+									<label class="checkboxs">
+										<input type="checkbox" id="select-all">
+										<span class="checkmarks"></span>
+									</label>
+								</th>
+								<th>Return Date</th>
+								<th>Supplier Name</th>
+								<th>Purchase No</th>
+								<th>Status</th>
+								<th>Total</th>
+								<th>Paid</th>
+								<th>Due</th>
+								<th>Payment Status</th>
+								<th class="no-sort"></th>
+							</tr>
+						</thead>
+						<tbody>
+							<?php 
+							if (!empty($purchases)):
+								foreach ($purchases as $purchase): ?>
+									<tr>
+										<td>
+											<label class="checkboxs">
+												<input type="checkbox" class="select-row">
+												<span class="checkmarks"></span>
+											</label>
+										</td>
 
-									<td><?php echo date("d-m-Y", strtotime($purchase['return_date'])); ?></td>
-									<td><?php echo htmlspecialchars($purchase['supplier_name']); ?></td>
-									<td><?php echo htmlspecialchars($purchase['purchase_no'] ?? 'N/A'); ?></td>
-									<td>
-										<?php if ($purchase['status'] == 'Returned'): ?>
-											<span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span>
-											<?php 
-										elseif ($purchase['status'] == 'Pending'): 
-											?>
-											<span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span>
-										<?php else: 
-											?>
-											<span class="badges status-badge bg-warning fs-10 p-1 px-2 rounded-1"><?php echo htmlspecialchars($purchase['status']); ?></span>
-										<?php endif; ?>
-									</td>
-									<td><?php echo number_format($purchase['total_return_amount'], 2); ?></td>
-									<td>0.00</td>
-									<td><?php echo number_format($purchase['total_return_amount'], 2); ?></td>
-									<td>
-										<?php if ($purchase['total_return_amount'] == 0): ?>
-											<span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span>
-											<?php 
-										else: 
-											?>
-											<span class="p-1 pe-2 rounded-1 text-danger bg-danger-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Unpaid</span>
-										<?php endif; ?>
-									</td>
-									<td class="action-table-data">
-										<div class="edit-delete-action">
-											<!-- Actions -->
-											<a class="me-2 p-2 btn-edit-purchase" data-purchase-id="<?php echo $purchase['id']; ?>" data-bs-toggle="modal" data-bs-target="#edit-sales-new">
-												<i data-feather="edit" class="feather-edit"></i>
-											</a>
-											<a class="p-2 d-flex align-items-center border rounded btn-delete-purchase" data-del-purchase-id="<?php echo $purchase['id']; ?>">
-												<i data-feather="trash-2" class="feather-trash-2"></i>
-											</a>
-										</div>
-									</td>
-								</tr>
-								<?php 
-							endforeach; 
-						endif; 
-						?>
-					</tbody>
-				</table>
+										<td><?php echo date("d-m-Y", strtotime($purchase['return_date'])); ?></td>
+										<td><?php echo htmlspecialchars($purchase['supplier_name']); ?></td>
+										<td><?php echo htmlspecialchars($purchase['purchase_no'] ?? 'N/A'); ?></td>
+										<td>
+											<?php if ($purchase['status'] == 'Returned'): ?>
+												<span class="badges status-badge fs-10 p-1 px-2 rounded-1">Received</span>
+												<?php 
+											elseif ($purchase['status'] == 'Pending'): 
+												?>
+												<span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span>
+											<?php else: 
+												?>
+												<span class="badges status-badge bg-warning fs-10 p-1 px-2 rounded-1"><?php echo htmlspecialchars($purchase['status']); ?></span>
+											<?php endif; ?>
+										</td>
+										<td><?php echo number_format($purchase['total_return_amount'], 2); ?></td>
+										<td>0.00</td>
+										<td><?php echo number_format($purchase['total_return_amount'], 2); ?></td>
+										<td>
+											<?php if ($purchase['total_return_amount'] == 0): ?>
+												<span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span>
+												<?php 
+											else: 
+												?>
+												<span class="p-1 pe-2 rounded-1 text-danger bg-danger-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Unpaid</span>
+											<?php endif; ?>
+										</td>
+										<td class="action-table-data">
+											<div class="edit-delete-action">
+												<!-- Actions -->
+												<a class="me-2 p-2 btn-edit-purchase" data-purchase-id="<?php echo $purchase['id']; ?>" data-bs-toggle="modal" data-bs-target="#edit-sales-new">
+													<i data-feather="edit" class="feather-edit"></i>
+												</a>
+												<a class="p-2 d-flex align-items-center border rounded btn-delete-purchase" data-del-purchase-id="<?php echo $purchase['id']; ?>">
+													<i data-feather="trash-2" class="feather-trash-2"></i>
+												</a>
+											</div>
+										</td>
+									</tr>
+									<?php 
+								endforeach; 
+							endif; 
+							?>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
+		<!-- /product list -->
 	</div>
-	<!-- /product list -->
-</div>
-<!-- End Content -->
+	<!-- End Content -->
 
-<?php require_once '../partials/footer.php'; ?>
+	<?php require_once '../partials/footer.php'; ?>
 
 </div>
 
@@ -356,10 +335,10 @@ require_once '../partials/main.php'; ?>
 							let label = item.name + (item.phone ? " (" + item.phone + ")" : "");
 							suggestionBox.append(
 								`<div class="suggestion-item p-2 border-bottom"
-									data-id="${item.id}" data-name="${item.name}">
-									${label}
+								data-id="${item.id}" data-name="${item.name}">
+								${label}
 								</div>`
-							);
+								);
 						});
 						suggestionBox.show();
 					} else {
@@ -905,6 +884,151 @@ require_once '../partials/main.php'; ?>
 		    });
 		});
 	});
+
+let allReturn = <?= json_encode($all_return) ?>;
+let currentFilters = {
+	status: '',
+	sort_by: ''
+};
+
+function updateTable(orders) {
+    // Destroy DataTable if exists
+    if ($.fn.DataTable.isDataTable('.datatable')) {
+        $('.datatable').DataTable().destroy();
+    }
+
+    const tbody = document.querySelector('.datatable tbody');
+    tbody.innerHTML = '';
+
+    orders.forEach(order => {
+        const paid = parseFloat(order.paid_amount ?? 0);
+        const total = parseFloat(order.total_return_amount ?? 0);
+        const due = total - paid;
+
+        // Status badge
+        let statusBadge = '';
+        if (order.status === 'Returned') {
+            statusBadge = `<span class="badge badge-success shadow-none fs-10 p-1 px-2 rounded-1">Received</span>`;
+        } else if (order.status === 'Pending') {
+            statusBadge = `<span class="badges status-badge badge-pending fs-10 p-1 px-2 rounded-1">Pending</span>`;
+        } else {
+            statusBadge = `<span class="badges status-badge bg-warning fs-10 p-1 px-2 rounded-1">${order.status}</span>`;
+        }
+
+        // Payment status
+        const paymentStatus = due <= 0
+            ? `<span class="p-1 pe-2 rounded-1 text-success bg-success-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Paid</span>`
+            : `<span class="p-1 pe-2 rounded-1 text-danger bg-danger-transparent fs-10"><i class="ti ti-point-filled me-1 fs-11"></i>Unpaid</span>`;
+
+        // Row HTML
+        const row = `
+        <tr>
+            <td>
+                <label class="checkboxs">
+                    <input type="checkbox" name="selected[]" value="${order.id}">
+                    <span class="checkmarks"></span>
+                </label>
+            </td>
+            <td>${order.return_date ? new Date(order.return_date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : ''}</td>
+            <td>${order.supplier_name ?? ''}</td>
+            <td>${order.purchase_no ?? 'N/A'}</td>
+            <td>${statusBadge}</td>
+            <td>${total.toFixed(2)}</td>
+            <td>${paid.toFixed(2)}</td>
+            <td>${due.toFixed(2)}</td>
+            <td>${paymentStatus}</td>
+            <td class="action-table-data">
+                <div class="edit-delete-action">
+                    <a class="me-2 p-2 btn-edit-purchase" data-purchase-id="${order.id}" data-bs-toggle="modal" data-bs-target="#edit-sales-new">
+                        <i data-feather="edit" class="feather-edit"></i>
+                    </a>
+                    <a class="p-2 d-flex align-items-center border rounded btn-delete-purchase" data-del-purchase-id="${order.id}">
+                        <i data-feather="trash-2" class="feather-trash-2"></i>
+                    </a>
+                </div>
+            </td>
+        </tr>
+        `;
+
+        tbody.innerHTML += row;
+    });
+
+    // Reinit DataTable
+    $('.datatable').DataTable({
+        paging: true,
+        searching: false,
+        info: true,
+        lengthChange: false,
+        pageLength: 10
+    });
+
+    // Reinit feather icons
+    if (typeof feather !== 'undefined') {
+        feather.replace();
+    }
+}
+
+function filterSalesReturn() {
+	let filtered = allReturn.filter(purchase_return => {
+
+		if (currentFilters.status) {
+			let gt = parseFloat(purchase_return.grand_total || 0);
+
+			if (currentFilters.status === 'Paid' && gt <= 0) {
+				return false;
+			}
+			if (currentFilters.status === 'Unpaid' && gt > 0) {
+				return false;
+			}
+		}
+
+		if (currentFilters.sort_by) {
+			const orderDate = new Date(purchase_return.created_at);
+			const now = new Date();
+
+			switch (currentFilters.sort_by) {
+				case 'today':
+				if (orderDate.toDateString() !== now.toDateString()) return false;
+				break;
+				case 'last_7_days':
+				const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+				if (orderDate < sevenDaysAgo) return false;
+				break;
+				case 'last_month':
+				const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+				if (orderDate < oneMonthAgo) return false;
+				break;
+			}
+		}
+		return true;
+	});
+	updateTable(filtered);
+}
+
+function getDateText(value) {
+	switch(value) {
+		case 'recent': return 'Recently Added';
+		case 'asc': return 'Ascending';
+		case 'desc': return 'Descending';
+		case 'last_7_days': return 'Last 7 Days';
+		case 'last_month': return 'Last Month';
+		default: return 'All';
+	}
+}
+
+function applyFilter(type, value) {
+	currentFilters[type] = value;
+
+	const btnTexts = {
+		status: value || 'Status',
+		sort_by: getDateText(value)
+	};
+
+	if (btnTexts[type]) {
+		document.getElementById(type + '-filter-btn').textContent = btnTexts[type];
+	}
+	filterSalesReturn();
+}
 
 </script>
 <style type="text/css">
