@@ -16906,11 +16906,11 @@ $page = end( $link_array );
 								<i class="ti ti-check"></i>
 							</div>
 							<h3 class="mb-2">Payment Completed</h3>
-<!--							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
+							<p class="mb-3">Do you want to Print Receipt for the Completed Order</p>
 							<div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
 								<button type="button" class="btn btn-md btn-secondary" data-bs-toggle="modal" data-bs-target="#print-receipt">Print Receipt<i class="feather-arrow-right-circle icon-me-5"></i></button>
 								<button type="submit" class="btn btn-md btn-primary">Next Order</button>
-                                                        </div>-->
+                            </div>
 						</form>
 					</div>
 				</div>
@@ -16926,24 +16926,24 @@ $page = end( $link_array );
 				<div class="modal-body">
 					<div class="icon-head text-center">
 						<a href="javascript:void(0);">
-							<img src="assets/img/TTK_PRESTIGE_LTD_LOGO_Jpeg.svg" width="100" height="30" alt="Receipt Logo">
+							<img src="assets/img/logo.svg" width="100" height="30" alt="Receipt Logo">
 						</a>
 					</div>
 					<div class="text-center info text-center">
-						<h6>Dreamguys Technologies Pvt Ltd.,</h6>
-						<p class="mb-0">Phone Number: +1 5656665656</p>
-						<p class="mb-0">Email: <a href="mailto:example@gmail.com">example@gmail.com</a></p>
+						<h6 id="receipt-company-name">InTouch POS</h6>
+						<p class="mb-0">Phone Number: <span id="receipt-company-phone">+1 234 567 8900</span></p>
+						<p class="mb-0">Email: <a href="mailto:info@intouchpos.com" id="receipt-company-email">info@intouchpos.com</a></p>
 					</div>
 					<div class="tax-invoice">
 						<h6 class="text-center">Tax Invoice</h6>
 						<div class="row">
 							<div class="col-sm-12 col-md-6">
-								<div class="invoice-user-name"><span>Name: </span>John Doe</div>
-								<div class="invoice-user-name"><span>Invoice No: </span>CS132453</div>
+								<div class="invoice-user-name"><span>Name: </span><span id="receipt-customer-name"></span></div>
+								<div class="invoice-user-name"><span>Invoice No: </span><span id="receipt-invoice-no"></span></div>
 							</div>
 							<div class="col-sm-12 col-md-6">
-								<div class="invoice-user-name"><span>Customer Id: </span>#LL93784</div>
-								<div class="invoice-user-name"><span>Date: </span>01.07.2022</div>
+								<div class="invoice-user-name"><span>Customer Id: </span><span id="receipt-customer-id"></span></div>
+								<div class="invoice-user-name"><span>Date: </span><span id="receipt-date"></span></div>
 							</div>
 						</div>
 					</div>
@@ -16956,60 +16956,45 @@ $page = end( $link_array );
 								<th class="text-end">Total</th>
 							</tr>
 						</thead>
-						<tbody>
-							<tr>
-								<td>1. Red Nike Laser</td>
-								<td>50</td>
-								<td>3</td>
-								<td class="text-end">150</td>
-							</tr>
-							<tr>
-								<td>2. Iphone 14</td>
-								<td>50</td>
-								<td>2</td>
-								<td class="text-end">100</td>
-							</tr>
-							<tr>
-								<td>3. Apple Series 8</td>
-								<td>50</td>
-								<td>3</td>
-								<td class="text-end">150</td>
-							</tr>
+						<tbody id="receipt-items">
+							<!-- Dynamic items will be inserted here -->
+						</tbody>
+						<tfoot>
 							<tr>
 								<td colspan="4">
 									<table class="table-borderless w-100 table-fit">
 										<tr>
 											<td class="fw-bold">Sub Total :</td>
-											<td class="text-end">700.00</td>
+											<td class="text-end" id="receipt-subtotal">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Discount :</td>
-											<td class="text-end">-50.00</td>
+											<td class="text-end" id="receipt-discount">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Shipping :</td>
-											<td class="text-end">0.00</td>
+											<td class="text-end" id="receipt-shipping">0.00</td>
 										</tr>
 										<tr>
-											<td class="fw-bold">Tax (5%) :</td>
-											<td class="text-end">5.00</td>
+											<td class="fw-bold">Tax <span id="receipt-tax-percentage">(5%)</span> :</td>
+											<td class="text-end" id="receipt-tax">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Bill :</td>
-											<td class="text-end">655.00</td>
+											<td class="text-end" id="receipt-total-bill">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Due :</td>
-											<td class="text-end">0.00</td>
+											<td class="text-end" id="receipt-due">0.00</td>
 										</tr>
 										<tr>
 											<td class="fw-bold">Total Payable :</td>
-											<td class="text-end">655.00</td>
+											<td class="text-end" id="receipt-total-payable">0.00</td>
 										</tr>
 									</table>
 								</td>
 							</tr>
-						</tbody>
+						</tfoot>
 					</table>
 					<div class="text-center invoice-bar">
 						<div class="border-bottom border-dashed">
@@ -17020,7 +17005,27 @@ $page = end( $link_array );
 						</a>
 						<p class="text-dark fw-bold">Sale 31</p>
 						<p>Thank You For Shopping With Us. Please Come Again</p>
-						<a href="javascript:void(0);" class="btn btn-md btn-primary">Print Receipt</a>
+						<a href="javascript:void(0);" class="btn btn-md btn-primary" onclick="printReceipt()">Print Receipt</a>
+						<button type="button" class="btn btn-md btn-danger" data-bs-dismiss="modal">Cancel</button>
+						<script>
+							// Auto-load receipt data when modal opens
+							document.getElementById('print-receipt').addEventListener('shown.bs.modal', function() {
+								if (typeof showPrintReceiptFromCart === 'function') {
+									showPrintReceiptFromCart();
+								} else {
+									// Fallback with sample data
+									document.getElementById('receipt-customer-name').textContent = 'Walk in Customer';
+									document.getElementById('receipt-invoice-no').textContent = 'INV' + Date.now();
+									document.getElementById('receipt-customer-id').textContent = '#WALKIN';
+									document.getElementById('receipt-date').textContent = new Date().toLocaleDateString();
+									document.getElementById('receipt-subtotal').textContent = '25.00';
+									document.getElementById('receipt-tax').textContent = '0.00';
+									document.getElementById('receipt-total-bill').textContent = '25.00';
+									document.getElementById('receipt-total-payable').textContent = '25.00';
+									document.getElementById('receipt-items').innerHTML = '<tr><td>1. Sample Product</td><td>25.00</td><td>1</td><td class="text-end">25.00</td></tr>';
+								}
+							});
+						</script>
 					</div>
 				</div>
 			</div>
@@ -17085,48 +17090,48 @@ $page = end( $link_array );
 		<div class="modal-dialog modal-lg modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" >Create</h5>
+					<h5 class="modal-title">Create</h5>
 					<button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">×</span>
 					</button>
 				</div>
-				<form action="pos-5.php">
+				<form action="save_customer_pos5.php" method="POST">
 					<div class="modal-body pb-1">
 						<div class="row">
 							<div class="col-lg-6 col-sm-12 col-12">
 								<div class="mb-3">
 									<label class="form-label">Customer Name <span class="text-danger">*</span></label>
-									<input type="text" class="form-control">
+									<input type="text" name="customer_name" class="form-control" required>
 								</div>
 							</div>
 							<div class="col-lg-6 col-sm-12 col-12">
 								<div class="mb-3">
 									<label class="form-label">Phone <span class="text-danger">*</span></label>
-									<input type="text" class="form-control">
+									<input type="text" name="phone" class="form-control">
 								</div>
 							</div>
 							<div class="col-lg-12">
 								<div class="mb-3">
 									<label class="form-label">Email</label>
-									<input type="email" class="form-control">
+									<input type="email" name="email" class="form-control">
 								</div>
 							</div>
 							<div class="col-lg-12">
 								<div class="mb-3">
 									<label class="form-label">Address</label>
-									<input type="text" class="form-control">
+									<input type="text" name="address" class="form-control">
 								</div>
 							</div>
 							<div class="col-lg-6 col-sm-12 col-12">
 								<div class="mb-3">
 									<label class="form-label">City</label>
-									<input type="text" class="form-control">
+									<input type="text" name="city" class="form-control">
 								</div>
 							</div>
 							<div class="col-lg-6 col-sm-12 col-12">
 								<div class="mb-3">
 									<label class="form-label">Country</label>
-									<input type="text" class="form-control">
+									<input type="text" name="country" class="form-control">
 								</div>
 							</div>
 						</div>
@@ -17135,12 +17140,12 @@ $page = end( $link_array );
 						<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">Cancel</button>
 						<button type="submit" class="btn btn-md btn-primary">Submit</button>
 					</div>
-				</form>					
+				</form>						
 			</div>
 		</div>
 	</div>
 
-	<!-- Hold -->
+	<!-- POS-5 Hold -->
 	<div class="modal fade modal-default pos-modal" id="hold-order" aria-labelledby="hold-order">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
@@ -17150,21 +17155,21 @@ $page = end( $link_array );
 						<span aria-hidden="true">×</span>
 					</button>
 				</div>
-				<form action="pos-5.php">
+				<form id="holdOrderForm">
 					<div class="modal-body">
 						<div class="bg-light br-10 p-4 text-center mb-3">
-							<h2 class="display-1">4500.00</h2>
+						    <h2 class="display-1" id="holdOrderTotal">0.00</h2>
 						</div>
 						<div class="mb-3">
 							<label class="form-label">Order Reference <span class="text-danger">*</span></label>
-							<input class="form-control" type="text" value="" placeholder="">
+							<input id="holdOrderRef" class="form-control" type="text" placeholder="Enter reference">
 						</div>
 						<p>The current order will be set on hold. You can retreive this order from the pending order button. Providing a reference to it might help you to identify the order more quickly.</p>
 					</div>
 					<div class="modal-footer d-flex justify-content-end gap-2">
-						<button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-md btn-primary">Confirm</button>
-					</div>
+				        <button type="button" class="btn btn-md btn-secondary" data-bs-dismiss="modal">Cancel</button>
+				        <button type="submit" class="btn btn-md btn-primary">Confirm</button>
+				    </div>
 				</form>
 			</div>
 		</div>
@@ -18326,7 +18331,7 @@ $page = end( $link_array );
 	</div>
 	<!-- /Discount -->
 
-	<!-- Payment Cash -->
+	<!-- POS-5 Payment Cash -->
 	<div class="modal fade modal-default" id="payment-cash">
 		<div class="modal-dialog modal-dialog-centered modal-lg">
 			<div class="modal-content">
@@ -18344,9 +18349,8 @@ $page = end( $link_array );
 									<label class="form-label">Received Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
-										<input type="text" class="form-control" value="1800">
+										<input type="number" class="form-control" id="cash-received" placeholder="0.00" step="0.01" min="0" oninput="calculateCashChange()">
 									</div>
 								</div>
 							</div>
@@ -18355,9 +18359,8 @@ $page = end( $link_array );
 									<label class="form-label">Paying Amount <span class="text-danger">*</span></label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
-										<input type="text" class="form-control" value="0">
+										<input type="text" class="form-control" id="cash-received" value="0.00">
 									</div>
 								</div>
 							</div>
@@ -18366,7 +18369,6 @@ $page = end( $link_array );
 									<label class="form-label">Change</label>
 									<div class="input-icon-start position-relative">
 										<span class="input-icon-addon text-gray-9">
-<!--											<i class="ti ti-currency-dollar"></i>-->
 										</span>
 										<input type="text" class="form-control" value="0.00">
 									</div>
@@ -21806,7 +21808,7 @@ $page = end( $link_array );
 	</div>
 	<!-- /Split Payment -->
 
-	<!-- Payment Cash -->
+	<!-- POS Payment Cash -->
 	<div class="modal fade modal-default" id="payment-cash">
 		<div class="modal-dialog modal-dialog-centered modal-lg">
 			<div class="modal-content">
@@ -23468,7 +23470,7 @@ $page = end( $link_array );
 									<label class="form-label">Supplier Name<span class="text-danger ms-1">*</span></label>
 									<div class="row">
 										<div class="col-lg-10 col-sm-10 col-10">
-											<input type="text" id="supplierSearch" class="form-control" placeholder="Search supplier by name or mobile">
+											<input type="text" id="supplierSearch" class="form-control" placeholder="Search supplier by name">
 										    <div id="supplierSuggestions" class="customer-suggestions" style="display:none; position:absolute; z-index:999; background:rgb(207 204 204);; border:1px solid #ddd; width:25.5%; max-height:200px; overflow-y:auto;"></div>
 										    <input type="hidden" name="supplier_id" id="supplier_id">
 											<!-- <select class="form-control" name="supplier_id" id="supplier_id" required>
@@ -23920,7 +23922,7 @@ $page = end( $link_array );
 								<label class="form-label">Supplier<span class="text-danger ms-1">*</span></label>
 								<div class="row">
 									<div class="col-lg-10 col-sm-10 col-10">
-										<input type="text" id="supplierReturnSearch" class="form-control" placeholder="Search supplier by name or mobile">
+										<input type="text" id="supplierReturnSearch" class="form-control" placeholder="Search supplier by name" autocomplete="off">
 										<div id="supplierRteurnSuggestions" class="customer-suggestions" style="display:none; position:absolute; z-index:999; background:rgb(207 204 204);; border:1px solid #ddd; width:25.5%; max-height:200px; overflow-y:auto;"></div>
 										<input type="hidden" name="return_supplier_id" id="return_supplier_id">
 									</div>
@@ -25147,7 +25149,7 @@ $page = end( $link_array );
 										<label class="form-label">Customer Name<span class="text-danger ms-1">*</span></label>
 										<div class="row">
 											<div class="col-lg-12 col-sm-12 col-12">
-												<input type="text" id="customerSearch" class="form-control" placeholder="Search by name or mobile">
+												<input type="text" id="customerSearch" class="form-control" placeholder="Search by name or mobile" autocomplete="off">
 											    <div id="customerName" class="customer-suggestions" style="display:none; position:absolute; z-index:999; background:rgb(207 204 204);; border:1px solid #ddd; width:31%; max-height:200px; overflow-y:auto;"></div>
 											    <input type="hidden" name="customer_id" id="sales_return_customer">
 											</div>
