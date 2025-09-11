@@ -177,6 +177,12 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 										</div>
 										<a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
 										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
+<!--                                                                                <div class="form-check form-check-inline mb-2 me-2">
+                                                                                  <input class="btn-check" type="checkbox" id="exchangeCheckbox" autocomplete="off" onchange="toggleExchangeMode(this)">
+                                                                                  <label class="btn btn-outline-warning btn-sm d-flex align-items-center" for="exchangeCheckbox">
+                                                                                    <i class="ti ti-refresh me-2"></i> Exchange
+                                                                                  </label>
+                                                                                </div>-->
 									</div>
 								</div>
 								<div class="pos-products">
@@ -192,19 +198,20 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 														</a>
 														<h6 class="product-name"><a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a></h6>
 														<p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
-														<div class="d-flex align-items-center justify-content-between price">
-															<p class="text-gray-9 mb-0"><?php echo number_format($product['price'], 2); ?></p>
-															<p class="text-gray-9 mb-0">QTY: <?php echo $product['stock_quantity']; ?></p>
-                                                                                                                        <div class="qty-item m-0" style="display:none">
+														<div class="d-flex flex-column align-items-start w-100">
+                                                                                                                    <p class="text-dark fw-bold fs-16 mb-1">₹<?php echo number_format($product['price'], 2); ?></p>
+                                                                                                                    <span class="badge <?php echo ($product['stock_quantity'] > 5) ? 'bg-success' : (($product['stock_quantity'] > 0) ? 'bg-warning text-dark' : 'bg-danger'); ?>">
+                                                                                                                        Available Stock: <?php echo $product['stock_quantity']; ?>
+    </span>                                                                                                                <div class="qty-item m-0" style="display:none">
 																<a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus" onclick="decreaseQuantity(this)"><i class="ti ti-minus"></i></a>
 																<input type="text" class="form-control text-center product-qty" name="qty" value="1" min="1" max="<?php echo $product['stock_quantity']; ?>">
 																<a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseQuantity(this)"><i class="ti ti-plus"></i></a>
 															</div>
 														</div>
 														<?php if ($product['stock_quantity'] <= $product['min_stock_level']): ?>
-														<div class="stock-warning">
-															<small class="text-danger">Low Stock: <?php echo $product['stock_quantity']; ?> left</small>
-														</div>
+<!--														<div class="stock-warning">
+															<small class="text-danger">Low Stock: <?php // echo $product['stock_quantity']; ?> left</small>
+														</div>-->
 														<?php endif; ?>
 													</div>
 												</div>
@@ -765,6 +772,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 calculatedSubtotal += itemTotal;
                 
                 if (cartItemsList) {
+                    const exchangeLabel = item.is_exchange ? '<span class="badge bg-warning text-dark ms-2">Exchange</span>' : '';
                     cartItemsList.innerHTML += `
                         <tr>
                             <td>
@@ -772,7 +780,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                                     <a class="delete-icon" href="javascript:void(0);" onclick="removeFromCart(${item.id})">
                                         <i class="ti ti-trash-x-filled"></i>
                                     </a>
-                                    <h6 class="fs-13 fw-normal">${item.name}</h6>
+                                    <h6 class="fs-13 fw-normal">${item.name}${exchangeLabel}</h6>
                                 </div>
                             </td>
                             <td>
@@ -2152,12 +2160,67 @@ function loadOrders(type) {
 // Track revived order
 let revivedOrderId = null;
 
-// Revive order function
-function reviveOrder(orderId) {
-    if (!confirm('Are you sure you want to revive this order?')) {
-        return;
+function clearCartForRevive(callback) {
+    fetch('cart_api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=clear'
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadCart();
+            if (callback) {
+                callback();
+            }
+        } else {
+            showModal('error', 'Error', data.message || 'Failed to clear cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showModal('error', 'Connection Error', 'Failed to clear cart. Please check your connection.');
+    });
+}
+
+function addItemToCart(productId, productName, price, quantity) {
+    const exchangeCheckbox = document.getElementById('exchange-checkbox');
+    const isExchange = exchangeCheckbox.checked;
+
+    let action = 'add';
+    let body = `action=${action}&product_id=${productId}&quantity=${quantity}`;
+
+    if (isExchange) {
+        action = 'add_exchange';
+        const finalPrice = -Math.abs(price);
+        body = `action=${action}&product_id=${productId}&quantity=${quantity}&price=${finalPrice}&name=${productName} (Exchange)`;
     }
-    
+
+    fetch('cart_api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadCart();
+            showToast('success', 'Success!', `${productName} added to cart!`);
+        } else {
+            showToast('error', 'Error', data.message || 'Failed to add item to cart');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('error', 'Connection Error', 'Failed to add item to cart');
+    });
+}
+
+function proceedReviveOrder(orderId) {
     fetch('revive_order.php', {
         method: 'POST',
         headers: {
@@ -2168,17 +2231,14 @@ function reviveOrder(orderId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Clear current cart
-            clearCart();
-            
             // Track revived order ID
             revivedOrderId = data.revived_order_id;
-            
+
             // Load order items into cart
             data.order_items.forEach(item => {
-                addToCart(item.product_id, item.quantity, item.price);
+                addItemToCart(item.product_id, item.product_name, item.price, item.quantity);
             });
-            
+
             // Select customer if order has one
             if (data.order.customer_id) {
                 const customerSelect = document.getElementById('customerSelect');
@@ -2187,16 +2247,16 @@ function reviveOrder(orderId) {
                     updateCustomerInfo();
                 }
             }
-            
+
             // Close orders modal
             const ordersModal = bootstrap.Modal.getInstance(document.getElementById('orders'));
             if (ordersModal) {
                 ordersModal.hide();
             }
-            
+
             // Refresh hold orders list
             loadOrders('hold');
-            
+
             showModal('success', 'Order Revived', 'Order has been loaded into your cart successfully!');
         } else {
             showModal('error', 'Error', data.message || 'Failed to revive order');
@@ -2206,6 +2266,24 @@ function reviveOrder(orderId) {
         console.error('Error:', error);
         showModal('error', 'Error', 'Failed to revive order');
     });
+}
+
+// Revive order function
+function reviveOrder(orderId) {
+    if (cart.length > 0) {
+        showConfirmModal(
+            'Revive Order',
+            'Your cart is not empty. Do you want to clear it and revive the selected order?',
+            function() {
+                // On confirm
+                clearCartForRevive(function() {
+                    proceedReviveOrder(orderId);
+                });
+            }
+        );
+    } else {
+        proceedReviveOrder(orderId);
+    }
 }
 
 // Restore order function
@@ -2262,12 +2340,12 @@ function openExchange() {
     exchangeItems = [];
     
     // Load return items and exchange products
-    loadReturnItems();
-    loadExchangeProducts();
+//    loadReturnItems();
+//    loadExchangeProducts();
     
     // Show modal
-    const exchangeModal = new bootstrap.Modal(document.getElementById('exchange-modal'));
-    exchangeModal.show();
+//    const exchangeModal = new bootstrap.Modal(document.getElementById('exchange-modal'));
+//    exchangeModal.show();
 }
 
 // Load current cart items (what customer is exchanging)
@@ -3025,6 +3103,13 @@ document.addEventListener('DOMContentLoaded', function() {
             background: rgba(255, 255, 255, 0.5) !important;
         }
         
+        /* Product stock badge styling */
+        .product-info .badge {
+            border-radius: 6px !important;
+            font-size: 11px !important;
+            padding: 4px 8px !important;
+        }
+        
         @media (max-width: 768px) {
             .schemes-grid {
                 grid-template-columns: 1fr;
@@ -3038,6 +3123,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 padding: 20px;
             }
         }
+
+        .product-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .product-info {
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .product-info .price p {
+            font-size: 18px;
+            color: #222;
+        }
+        .badge {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+        .stock-warning small {
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        #exchangeCheckbox:checked + label {
+  background-color: #198754 !important; /* Bootstrap success green */
+  border-color: #198754 !important;
+  color: #fff !important;
+}
 
     </style>
 
