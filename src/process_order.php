@@ -128,7 +128,17 @@ try {
         $unit_price = (float)$item['price'];
         $total_price = $unit_price * $quantity;
         
-        // Validate product exists and has sufficient stock
+        // Skip validation and stock update for exchange items
+        if (isset($item['is_exchange']) && $item['is_exchange']) {
+            // Insert order item for exchange item
+            mysqli_stmt_bind_param($item_stmt, 'iiidd', $order_id, $product_id, $quantity, $unit_price, $total_price);
+            if (!mysqli_stmt_execute($item_stmt)) {
+                throw new Exception('Failed to insert exchange order item: ' . mysqli_stmt_error($item_stmt));
+            }
+            continue;
+        }
+        
+        // Validate product exists and has sufficient stock for regular products
         $check_sql = "SELECT stock_quantity FROM products WHERE id = ? AND is_active = 1";
         $check_stmt = mysqli_prepare($link, $check_sql);
         mysqli_stmt_bind_param($check_stmt, 'i', $product_id);

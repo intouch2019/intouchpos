@@ -39,10 +39,22 @@ $order_result = mysqli_stmt_get_result($order_stmt);
 if (mysqli_num_rows($order_result) > 0) {
     $order = mysqli_fetch_assoc($order_result);
     
-    // Get order items with product details
-    $items_sql = "SELECT oi.*, p.name as product_name, p.description as product_description
+    // Get order items with product details (including exchange items)
+    $items_sql = "SELECT oi.*, 
+                         CASE 
+                             WHEN oi.product_id > 0 THEN p.name 
+                             ELSE 'Exchange Discount' 
+                         END as product_name,
+                         CASE 
+                             WHEN oi.product_id > 0 THEN p.description 
+                             ELSE 'Exchange discount applied' 
+                         END as product_description,
+                         CASE 
+                             WHEN oi.unit_price < 0 THEN 1 
+                             ELSE 0 
+                         END as is_exchange
                   FROM order_items oi
-                  JOIN products p ON oi.product_id = p.id
+                  LEFT JOIN products p ON oi.product_id = p.id AND oi.product_id > 0
                   WHERE oi.order_id = ?
                   ORDER BY oi.id";
     $items_stmt = mysqli_prepare($link, $items_sql);
@@ -203,7 +215,7 @@ function numberToWords($number) {
                                     <?php foreach ($order_items as $item): ?>
                                     <tr>
                                         <td>
-                                            <h6><?php echo htmlspecialchars($item['product_name']); ?></h6>
+                                            <h6><?php echo htmlspecialchars($item['product_name']) . ($item['is_exchange'] ? ' (Exchange)' : ''); ?></h6>
                                             <?php if (!empty($item['product_description'])): ?>
                                             <small class="text-muted"><?php echo htmlspecialchars($item['product_description']); ?></small>
                                             <?php endif; ?>

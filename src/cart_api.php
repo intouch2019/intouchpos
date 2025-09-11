@@ -26,6 +26,12 @@ switch ($action) {
     case 'get':
         getCart($link, $user_id);
         break;
+    case 'add_exchange':
+        addExchangeToCart($link, $user_id);
+        break;
+    case 'remove_exchange':
+        removeExchangeFromCart($link, $user_id);
+        break;
     default:
         echo json_encode(['success' => false, 'message' => 'Invalid action']);
 }
@@ -179,10 +185,11 @@ function clearCart($link, $user_id) {
 }
 
 function getCart($link, $user_id) {
+    // Get regular products
     $sql = "SELECT c.*, p.name, p.price, p.image, p.stock_quantity 
             FROM cart c 
             JOIN products p ON c.product_id = p.id 
-            WHERE c.user_id = ? AND p.is_active = 1 
+            WHERE c.user_id = ? AND c.exchange_name IS NULL AND p.is_active = 1 
             ORDER BY c.created_at ASC";
     
     $stmt = mysqli_prepare($link, $sql);
@@ -202,6 +209,69 @@ function getCart($link, $user_id) {
         ];
     }
     
+    // Get exchange items
+    $exchange_sql = "SELECT * FROM cart WHERE user_id = ? AND exchange_name IS NOT NULL ORDER BY created_at ASC";
+    $stmt = mysqli_prepare($link, $exchange_sql);
+    mysqli_stmt_bind_param($stmt, "i", $user_id);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    while ($row = mysqli_fetch_assoc($result)) {
+        $cart_items[] = [
+            'id' => $row['product_id'],
+            'name' => $row['exchange_name'],
+            'price' => floatval($row['exchange_price']),
+            'quantity' => intval($row['quantity']),
+            'image' => 'exchange.png',
+            'stock_quantity' => 999,
+            'is_exchange' => true
+        ];
+    }
+    
     echo json_encode(['success' => true, 'cart' => $cart_items]);
+}
+
+function addExchangeToCart($link, $user_id) {
+    $product_id = intval($_POST['product_id'] ?? 0);
+    $quantity = intval($_POST['quantity'] ?? 1);
+    $price = floatval($_POST['price'] ?? 0);
+    $name = $_POST['name'] ?? '';
+    
+    if (empty($name)) {
+        echo json_encode(['success' => false, 'message' => 'Invalid exchange item']);
+        return;
+    }
+    
+    // For exchange discount, use product_id 0, for exchange products use actual product_id
+    $exchange_product_id = $product_id;
+    
+    $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, exchange_name, exchange_price) VALUES (?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($link, $insert_sql);
+    mysqli_stmt_bind_param($stmt, "iiisd", $user_id, $exchange_product_id, $quantity, $name, $price);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        echo json_encode(['success' => true, 'message' => 'Exchange item added']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to add exchange item: ' . mysqli_error($link)]);
+    }
+}
+
+function removeExchangeFromCart($link, $user_id) {
+    $product_id = intval($_POST['product_id'] ?? 0);
+    
+    if ($product_id >= 0) {
+        echo json_encode(['success' => false, 'message' => 'Invalid exchange item ID']);
+        return;
+    }
+    
+    $delete_sql = "DELETE FROM cart WHERE user_id = ? AND product_id = ?";
+    $stmt = mysqli_prepare($link, $delete_sql);
+    mysqli_stmt_bind_param($stmt, "ii", $user_id, $product_id);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        echo json_encode(['success' => true, 'message' => 'Exchange item removed']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to remove exchange item']);
+    }
 }
 ?>

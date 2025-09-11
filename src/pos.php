@@ -194,7 +194,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 														<p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
 														<div class="d-flex align-items-center justify-content-between price">
 															<p class="text-gray-9 mb-0"><?php echo number_format($product['price'], 2); ?></p>
-															<div class="qty-item m-0">
+															<p class="text-gray-9 mb-0">QTY: <?php echo $product['stock_quantity']; ?></p>
+                                                                                                                        <div class="qty-item m-0" style="display:none">
 																<a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus" onclick="decreaseQuantity(this)"><i class="ti ti-minus"></i></a>
 																<input type="text" class="form-control text-center product-qty" name="qty" value="1" min="1" max="<?php echo $product['stock_quantity']; ?>">
 																<a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseQuantity(this)"><i class="ti ti-plus"></i></a>
@@ -232,6 +233,40 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 										<a class="link-danger fs-16" href="javascript:void(0);"><i class="ti ti-trash-x-filled"></i></a>
 									</div>
 								</div>
+								<!-- Available Schemes Section -->
+								<div class="schemes-info block-section">
+									<h5 class="mb-3 d-flex align-items-center">
+										<i class="ti ti-discount-2 me-2 text-purple"></i>
+										Available Schemes
+									</h5>
+									<div class="schemes-container">
+										<?php if (empty($schemes)): ?>
+											<div class="text-center text-muted p-3">
+												<i class="ti ti-discount-off fs-24 mb-2"></i>
+												<p class="mb-0">No active schemes available</p>
+											</div>
+										<?php else: ?>
+											<?php foreach ($schemes as $scheme): ?>
+												<div class="scheme-card-compact bg-gradient-purple-light border border-purple-light rounded p-2 mb-2">
+													<div class="d-flex align-items-center justify-content-between">
+														<div class="d-flex align-items-center flex-grow-1">
+															<span class="badge bg-purple text-white fs-11 fw-bold px-2 py-1 me-2">
+																<?php echo $scheme['type'] === 'percentage' ? $scheme['value'] . '%' : number_format($scheme['value'], 2); ?>
+															</span>
+															<div>
+																<h6 class="fw-bold text-purple mb-0 fs-13"><?php echo htmlspecialchars($scheme['name']); ?></h6>
+																<small class="text-muted d-block"><?php echo htmlspecialchars($scheme['description']); ?></small>
+																<small class="text-muted">Min: <?php echo number_format($scheme['min_purchase'], 2); ?></small>
+															</div>
+														</div>
+														<i class="ti ti-check-circle text-success fs-16"></i>
+													</div>
+												</div>
+											<?php endforeach; ?>
+										<?php endif; ?>
+									</div>
+								</div>
+
 								<div class="customer-info block-section">
 									<h5 class="mb-2">Customer Information <span class="text-danger">*</span></h5>
 									<div class="d-flex align-items-center gap-2">
@@ -453,6 +488,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 				<div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
 					<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>
 					<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>
+					<a href="javascript:void(0);" class="btn btn-warning d-inline-flex align-items-center justify-content-center" onclick="openExchange()"><i  class="ti ti-refresh me-2"></i>Exchange</a>
 					<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completedd"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>
 					<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
 					<!--<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
@@ -491,6 +527,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
         require_once __DIR__ . '/../partials/modal-popup.php'; 
         require_once __DIR__ . '/../partials/modal-popup-new.php'; 
         require_once __DIR__ . '/../partials/pos-modals.php'; 
+        require_once __DIR__ . '/../partials/exchange-modal.php'; 
         ?>
 
 
@@ -676,11 +713,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 cartItemsList.innerHTML = '';
             }
             
-            let total = 0;
+            let calculatedSubtotal = 0;
             
             cart.forEach((item, index) => {
                 const itemTotal = item.price * item.quantity;
-                total += itemTotal;
+                calculatedSubtotal += itemTotal;
                 
                 if (cartItemsList) {
                     cartItemsList.innerHTML += `
@@ -706,8 +743,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 }
             });
             
-            // Update subtotal
-            document.getElementById('cartSubtotal').textContent =  total.toFixed(2);
+            // Update subtotal using calculated value
+            document.getElementById('cartSubtotal').textContent = calculatedSubtotal.toFixed(2);
             
             // Apply or remove discount based on subtotal
             applyDiscount();
@@ -722,12 +759,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
         
         // Function to remove item from cart
         function removeFromCart(productId) {
+            const action = productId < 0 ? 'remove_exchange' : 'remove';
+            
             fetch('cart_api.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `action=remove&product_id=${productId}`
+                body: `action=${action}&product_id=${productId}`
             })
             .then(response => response.json())
             .then(data => {
@@ -1403,10 +1442,7 @@ function debugProducts() {
             });
         }
         
-        // Function to get cart subtotal
-        function getCartSubtotal() {
-            return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-        }
+
         
         // Function to get cart total
         function getCartTotal() {
@@ -1437,6 +1473,14 @@ function debugProducts() {
             }
             
             return Math.max(0, total);
+        }
+        
+        // Function to get cart subtotal (includes exchange calculations)
+        function getCartSubtotal() {
+            return cart.reduce((total, item) => {
+                // Include all items - regular products and exchange items (including negative prices)
+                return total + (item.price * item.quantity);
+            }, 0);
         }
         
         // Function to reset payment modals
@@ -2147,6 +2191,336 @@ function clearCartWithRestore() {
     clearCart();
 }
 
+// Exchange functionality
+let returnItems = [];
+let exchangeItems = [];
+
+// Open exchange modal
+function openExchange() {
+    if (cart.length === 0) {
+        showModal('error', 'Empty Cart', 'Add items to cart first to exchange');
+        return;
+    }
+    
+    // Check if customer is selected
+    const customerSelect = document.getElementById('customerSelect');
+    if (!customerSelect || !customerSelect.value) {
+        showModal('error', 'Customer Required', 'Please select a customer before exchange.');
+        if (customerSelect) {
+            customerSelect.focus();
+        }
+        return;
+    }
+    
+    // Reset exchange data
+    returnItems = [];
+    exchangeItems = [];
+    
+    // Load return items and exchange products
+    loadReturnItems();
+    loadExchangeProducts();
+    
+    // Show modal
+    const exchangeModal = new bootstrap.Modal(document.getElementById('exchange-modal'));
+    exchangeModal.show();
+}
+
+// Load current cart items (what customer is exchanging)
+function loadReturnItems() {
+    const container = document.getElementById('return-items-list');
+    let html = '';
+    
+    cart.forEach(item => {
+        html += `
+            <div class="p-2 border rounded mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>Qty: ${item.quantity} × ${item.price.toFixed(2)}</small>
+                    </div>
+                    <span class="fw-bold">${(item.quantity * item.price).toFixed(2)}</span>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+    updateReturnTotal();
+}
+
+// Load all products for exchange selection
+function loadExchangeProducts() {
+    fetch('get_all_products.php')
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            displayExchangeProducts(data.products);
+        } else {
+            showModal('error', 'Error', 'Failed to load products');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showModal('error', 'Error', 'Failed to load products');
+    });
+}
+
+// Display exchange products
+function displayExchangeProducts(products) {
+    const container = document.getElementById('exchange-products-grid');
+    let html = '';
+    
+    products.forEach(product => {
+        html += `
+            <div class="card mb-2">
+                <div class="card-body p-2">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/img/products/${product.image || 'images(1).jpg'}" alt="${product.name}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${product.name}</h6>
+                            <small class="text-muted">Price: ${parseFloat(product.price).toFixed(2)}</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" class="form-control form-control-sm" style="width: 60px;" min="0" value="0" id="exchange-qty-${product.id}" onchange="updateExchangeSelection()">
+                            <button class="btn btn-sm btn-primary" onclick="addToExchange(${product.id}, '${product.name}', ${product.price})">
+                                <i class="ti ti-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Add product to exchange list
+function addToExchange(productId, productName, price) {
+    const qtyInput = document.getElementById(`exchange-qty-${productId}`);
+    const quantity = parseInt(qtyInput.value) || 0;
+    
+    if (quantity <= 0) {
+        showModal('error', 'Invalid Quantity', 'Please enter a valid quantity');
+        return;
+    }
+    
+    // Calculate current cart total (what customer is paying for)
+    const cartTotal = getCartTotal();
+    
+    if (cartTotal === 0) {
+        showModal('error', 'Empty Cart', 'Please add items to cart first');
+        return;
+    }
+    
+    // Calculate new exchange total if this item is added
+    const currentExchangeTotal = exchangeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const newItemTotal = price * quantity;
+    const newExchangeTotal = currentExchangeTotal + newItemTotal;
+    
+    // Check if new exchange total exceeds cart total
+    if (newExchangeTotal > cartTotal) {
+        const maxAllowed = cartTotal - currentExchangeTotal;
+        showModal('error', 'Exchange Limit Exceeded', `Exchange total cannot exceed cart total.\nCart Total: ${cartTotal.toFixed(2)}\nCurrent Exchange: ${currentExchangeTotal.toFixed(2)}\nMax Additional: ${maxAllowed.toFixed(2)}`);
+        return;
+    }
+    
+    // Check if item already exists in exchange list
+    const existingIndex = exchangeItems.findIndex(item => item.product_id === productId);
+    
+    if (existingIndex >= 0) {
+        exchangeItems[existingIndex].quantity += quantity;
+    } else {
+        exchangeItems.push({
+            product_id: productId,
+            name: productName,
+            price: price,
+            quantity: quantity
+        });
+    }
+    
+    qtyInput.value = 0;
+    updateExchangeTotal();
+    updateExchangeBalance();
+    updateSelectedExchangeList();
+}
+
+// Set all cart items as return items (since we're exchanging the whole cart)
+function updateReturnSelection() {
+    returnItems = cart.map(item => ({
+        product_id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+    }));
+    
+    updateReturnTotal();
+    updateExchangeBalance();
+}
+
+// Update exchange selection
+function updateExchangeSelection() {
+    updateExchangeTotal();
+    updateExchangeBalance();
+}
+
+// Update return total
+function updateReturnTotal() {
+    const total = getCartTotal();
+    document.getElementById('return-total').textContent = total.toFixed(2);
+}
+
+// Update exchange total
+function updateExchangeTotal() {
+    const total = exchangeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    document.getElementById('exchange-total').textContent = total.toFixed(2);
+}
+
+// Update selected exchange products list
+function updateSelectedExchangeList() {
+    const container = document.getElementById('selected-exchange-list');
+    
+    if (exchangeItems.length === 0) {
+        container.innerHTML = `
+            <div class="text-center text-muted p-3">
+                <i class="ti ti-package fs-24 mb-2"></i>
+                <p class="mb-0">No exchange products selected</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    exchangeItems.forEach((item, index) => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-2">
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-success me-2">
+                        <i class="ti ti-refresh"></i>
+                    </span>
+                    <div>
+                        <h6 class="mb-1">${item.name}</h6>
+                        <small class="text-muted">Qty: ${item.quantity} × ${item.price.toFixed(2)}</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-success">${(item.price * item.quantity).toFixed(2)}</span>
+                    <button class="btn btn-sm btn-outline-danger" onclick="removeExchangeItem(${index})">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+// Remove exchange item
+function removeExchangeItem(index) {
+    exchangeItems.splice(index, 1);
+    updateExchangeTotal();
+    updateExchangeBalance();
+    updateSelectedExchangeList();
+}
+
+// Clear all exchange selections
+function clearExchangeSelection() {
+    exchangeItems = [];
+    updateExchangeTotal();
+    updateExchangeBalance();
+    updateSelectedExchangeList();
+}
+
+// Update exchange balance
+function updateExchangeBalance() {
+    const cartTotal = getCartTotal();
+    const exchangeTotal = exchangeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const balance = cartTotal - exchangeTotal;
+    
+    const balanceElement = document.getElementById('exchange-balance');
+    
+    if (balance > 0) {
+        balanceElement.innerHTML = `<span class="text-success">Customer Pays: ${balance.toFixed(2)}</span>`;
+    } else if (balance === 0) {
+        balanceElement.innerHTML = `<span class="text-info">Even Exchange</span>`;
+    } else {
+        balanceElement.innerHTML = `<span class="text-danger">Exchange Exceeds Cart Value</span>`;
+    }
+}
+
+// Process exchange
+function processExchange() {
+    if (cart.length === 0) {
+        showModal('error', 'Empty Cart', 'Please add items to cart first');
+        return;
+    }
+    
+    if (exchangeItems.length === 0) {
+        showModal('error', 'No Exchange Items', 'Please select items to exchange');
+        return;
+    }
+    
+    const cartTotal = getCartTotal();
+    const exchangeTotal = exchangeItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const payableAmount = cartTotal - exchangeTotal;
+    
+    if (payableAmount < 0) {
+        showModal('error', 'Invalid Exchange', 'Exchange total cannot exceed cart total');
+        return;
+    }
+    
+    // Add only exchange discount (negative amount) with the first exchange product's ID
+    const firstExchangeProduct = exchangeItems[0];
+    
+    fetch('cart_api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=add_exchange&product_id=${firstExchangeProduct.product_id}&quantity=1&price=-${exchangeTotal}&name=Exchange Discount`
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            finishExchange(payableAmount);
+        } else {
+            showModal('error', 'Error', 'Failed to process exchange: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showModal('error', 'Error', 'Failed to process exchange');
+    });
+}
+
+// Finish exchange process
+function finishExchange(payableAmount) {
+    // Close modal
+    const exchangeModal = bootstrap.Modal.getInstance(document.getElementById('exchange-modal'));
+    exchangeModal.hide();
+    
+    // Reload cart and wait for completion
+    setTimeout(() => {
+        loadCart();
+        
+        // Show success message after cart is loaded
+        setTimeout(() => {
+            let message = 'Cart updated with exchange items.';
+            if (payableAmount > 0) {
+                message += ` Customer pays: ${payableAmount.toFixed(2)}`;
+            } else {
+                message += ' Even exchange.';
+            }
+            message += ' Please proceed with payment.';
+            
+            showModal('success', 'Exchange Ready', message);
+        }, 500);
+    }, 200);
+}
+
+
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function() {
     const customerDetails = document.getElementById('customerDetails');
@@ -2175,6 +2549,24 @@ document.addEventListener('DOMContentLoaded', function() {
     if (ordersModal) {
         ordersModal.addEventListener('show.bs.modal', function() {
             loadOrders('hold'); // Load hold orders by default
+        });
+    }
+    
+    // Add search functionality for exchange products
+    const exchangeSearch = document.getElementById('exchange-search');
+    if (exchangeSearch) {
+        exchangeSearch.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const productCards = document.querySelectorAll('#exchange-products-grid .card');
+            
+            productCards.forEach(card => {
+                const productName = card.querySelector('h6').textContent.toLowerCase();
+                if (productName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         });
     }
 });
@@ -2401,6 +2793,93 @@ document.addEventListener('DOMContentLoaded', function() {
         h2 {
             margin-top: 0;
             color: #374151;
+        }
+        
+        /* Schemes Section Styles */
+        .schemes-info {
+            margin-bottom: 20px;
+        }
+        
+        .scheme-card-compact {
+            background: linear-gradient(135deg, #f8f4ff 0%, #f3e8ff 100%);
+            border: 1px solid #e9d5ff;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scheme-card-compact:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);
+        }
+        
+        .scheme-card-compact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8b5cf6, #a855f7);
+        }
+        
+        .bg-gradient-purple-light {
+            background: linear-gradient(135deg, #f8f4ff 0%, #f3e8ff 100%);
+        }
+        
+        .border-purple-light {
+            border-color: #e9d5ff !important;
+        }
+        
+        .text-purple {
+            color: #8b5cf6 !important;
+        }
+        
+        .bg-purple {
+            background-color: #8b5cf6 !important;
+        }
+        
+        .bg-success-light {
+            background-color: #dcfce7 !important;
+        }
+        
+        .text-success {
+            color: #16a34a !important;
+        }
+        
+        .scheme-details {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-top: 8px;
+        }
+        
+        .progress-bar.bg-purple {
+            background-color: #8b5cf6 !important;
+        }
+        
+        .schemes-container {
+            max-height: 200px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .schemes-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        .schemes-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 2px;
+        }
+        
+        .schemes-container::-webkit-scrollbar-thumb {
+            background: #8b5cf6;
+            border-radius: 2px;
+        }
+        
+        .schemes-container::-webkit-scrollbar-thumb:hover {
+            background: #7c3aed;
         }
         
 
