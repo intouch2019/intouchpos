@@ -177,10 +177,10 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 										</div>
 										<a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
 										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
-<div class="custom-checkbox">
-  <input type="checkbox" id="exchangeCheckbox" />
-  <span class="checkmark"></span>
-  <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>
+                                                                                <div class="custom-checkbox">
+                                                                                  <input type="checkbox" id="exchangeCheckbox" />
+                                                                                  <span class="checkmark"></span>
+                                                                                  <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>
 </div>
 									</div>
 								</div>
@@ -192,14 +192,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 												<div class="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3 product-item" data-category="<?php echo $product['category_id']; ?>" data-sku="<?php echo htmlspecialchars($product['sku']); ?>" style="display: block;">
 													<div class="product-info card mb-0<?php echo ($product['stock_quantity'] <= 0) ? ' out-of-stock' : ''; ?>">
 														<a href="javascript:void(0);" class="pro-img"
-   <?php echo ($product['stock_quantity'] > 0) 
-      ? ' onclick="addToCart(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' 
-      : ''; ?>>
-    <img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" 
-         alt="<?php echo htmlspecialchars($product['name']); ?>" 
-         onerror="this.src='assets/img/products/images(1).png'">
-    <span><i class="ti ti-circle-check-filled"></i></span>
-</a>
+                                                                                                                    <?php echo ($product['stock_quantity'] > 0)
+                                                                                                                             ? ' onclick="addToCart(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' 
+                                                                                                                       : ''; ?>>
+                                                                                                                     <img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" 
+                                                                                                                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
+                                                                                                                          onerror="this.src='assets/img/products/images(1).png'">
+                                                                                                                     <span><i class="ti ti-circle-check-filled"></i></span>
+                                                                                                                 </a>
 														<h6 class="product-name"><a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a></h6>
 														<p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
 														<div class="d-flex flex-column align-items-start w-100">
@@ -583,6 +583,33 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 </div>
             </div>
         </div>
+<!--
+         Batch Selection Modal 
+        <div class="modal fade" id="batch-selection-modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Select Batch for <span id="batch-product-name"></span></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="batch-product-id">
+                        <input type="hidden" id="batch-product-price">
+                        <div class="mb-3">
+                            <label for="batch-select" class="form-label">Available Batches</label>
+                            <select id="batch-select" class="form-select">
+                                 Batch options will be loaded here dynamically 
+                            </select>
+                        </div>
+                        <div id="batch-stock-info" class="text-muted"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-primary" onclick="confirmAddToCart()">Add to Cart</button>
+                    </div>
+                </div>
+            </div>
+        </div>-->
 
 
 
@@ -694,7 +721,56 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             }
         });
 
+        // Function to open batch selection modal
+//        function openBatchModal(productId, productName, price) {
+//            const batchModal = new bootstrap.Modal(document.getElementById('batch-selection-modal'));
+//            
+//            // Set product info in the modal
+//            document.getElementById('batch-product-name').textContent = productName;
+//            document.getElementById('batch-product-id').value = productId;
+//            document.getElementById('batch-product-price').value = price;
+//
+//            const batchSelect = document.getElementById('batch-select');
+//            const batchStockInfo = document.getElementById('batch-stock-info');
+//            batchSelect.innerHTML = '<option>Loading batches...</option>';
+//            batchStockInfo.textContent = '';
+//
+//            // Fetch batches for the product
+//            fetch(`get_batches.php?product_id=${productId}`)
+//                .then(response => response.json())
+//                .then(data => {
+//                    if (data.success && data.batches.length > 0) {
+//                        batchSelect.innerHTML = '';
+//                        data.batches.forEach(batch => {
+//                            const option = document.createElement('option');
+//                            option.value = batch.batch_no;
+//                            option.textContent = `${batch.batch_no} (Stock: ${batch.stock})`;
+//                            option.dataset.stock = batch.stock;
+//                            batchSelect.appendChild(option);
+//                        });
+//                        // Show stock for the first batch
+//                        if(data.batches[0]) {
+//                            batchStockInfo.textContent = `Available stock for this batch: ${data.batches[0].stock}`;
+//                        }
+//                    } else {
+//                        batchSelect.innerHTML = '<option>No batches available</option>';
+//                    }
+//                })
+//                .catch(error => {
+//                    console.error('Error fetching batches:', error);
+//                    batchSelect.innerHTML = '<option>Error loading batches</option>';
+//                });
+//
+//            batchSelect.onchange = function() {
+//                const selectedOption = this.options[this.selectedIndex];
+//                batchStockInfo.textContent = `Available stock for this batch: ${selectedOption.dataset.stock || 0}`;
+//            };
+//
+//            batchModal.show();
+//        }
+
         // Your updated addToCart function
+//        function addToCart(productId, productName, price, batch = null) {
         function addToCart(productId, productName, price) {
             const exchangeChecked = document.getElementById('exchangeCheckbox')?.checked;
 
@@ -707,6 +783,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             const quantityInput = productElement?.querySelector('.product-qty');
             const quantity = parseInt(quantityInput?.value) || 1;
 
+//            // If a batch is provided, open the modal flow. Otherwise, add directly.
+//            if (batch) {
+//                // This part is for adding from the main product grid
+//                const quantity = 1; // Always add 1 unit when using the batch modal
+//                // The rest of the logic for batch-based adding is in confirmAddToCart
+//            }
+//
+//            const quantity = 1; // Always add 1 unit when using the batch modal
             // Add to database
             fetch('cart_api.php', {
                 method: 'POST',
@@ -720,7 +804,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 if (data.success) {
                     loadCart();
                     if (quantityInput) quantityInput.value = 1;
-
+                    
                     showToast('success', 'Success!', `${productName} added to cart!`);
                 } else {
                     showToast('error', 'Error', data.message || 'Failed to add item to cart');
@@ -733,6 +817,23 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                 loadCart();
             });
         }
+
+        // Function to handle adding to cart from the batch modal
+//        function confirmAddToCart() {
+//            const productId = document.getElementById('batch-product-id').value;
+//            const productName = document.getElementById('batch-product-name').textContent;
+//            const price = document.getElementById('batch-product-price').value;
+//            const batchSelect = document.getElementById('batch-select');
+//            const selectedBatch = batchSelect.value;
+//
+//            if (selectedBatch && selectedBatch !== 'No batches available' && selectedBatch !== 'Loading batches...') {
+//                addToCart(productId, productName, price, selectedBatch);
+//                const batchModal = bootstrap.Modal.getInstance(document.getElementById('batch-selection-modal'));
+//                batchModal.hide();
+//            } else {
+//                showToast('error', 'Error', 'Please select a valid batch.');
+//            }
+//        }
 
     // Assuming your API returns items with a property indicating exchange
     // Example for loading cart:
@@ -1847,71 +1948,6 @@ function debugProducts() {
             });
         }
         
-        // Function to load orders by status
-        function loadOrders(status) {
-            const containerId = status + '-orders';
-            const container = document.getElementById(containerId);
-            
-            if (!container) return;
-            
-            container.innerHTML = '<div class="text-center p-3"><p>Loading orders...</p></div>';
-            
-            fetch(`orders_api.php?status=${status}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    displayOrders(data.orders, containerId);
-                } else {
-                    container.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading orders</p></div>';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                container.innerHTML = '<div class="text-center p-3"><p class="text-danger">Error loading orders</p></div>';
-            });
-        }
-        
-        // Function to display orders
-        function displayOrders(orders, containerId) {
-            const container = document.getElementById(containerId);
-            
-            if (orders.length === 0) {
-                container.innerHTML = '<div class="text-center p-3"><p>No orders found</p></div>';
-                return;
-            }
-            
-            let html = '';
-            orders.forEach(order => {
-                const date = new Date(order.created_at).toLocaleString();
-                const notes = order.notes ? `<div class="bg-info-transparent p-1 rounded text-center my-3"><p class="text-info fw-medium">${order.notes}</p></div>` : '';
-                
-                html += `
-                    <div class="card bg-light mb-3">
-                        <div class="card-body">
-                            <span class="badge bg-dark fs-12 mb-2">Order ID : ${order.order_number || '#' + order.id}</span>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> ${order.cashier_name || 'N/A'}</p>
-                                    <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> ${parseFloat(order.total_amount).toFixed(2)}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span> ${order.customer_name || 'Walk-in'}</p>
-                                    <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Date :</span> ${date}</p>
-                                </div>
-                            </div>
-                            ${notes}
-                            <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-                                <a href="javascript:void(0);" class="btn btn-md btn-teal" onclick="viewOrderProducts(${order.id})">View Products</a>
-                                <a href="javascript:void(0);" class="btn btn-md btn-indigo" onclick="printOrder(${order.id})">Print</a>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-        
         // Function to open order (restore to cart)
         function openOrder(orderId) {
             // Implementation for opening/restoring order to cart
@@ -2286,7 +2322,7 @@ function clearCartForRevive(callback) {
 }
 
 function addItemToCart(productId, productName, price, quantity) {
-    const exchangeCheckbox = document.getElementById('exchange-checkbox');
+    const exchangeCheckbox = document.getElementById('exchangeCheckbox');
     const isExchange = exchangeCheckbox.checked;
 
     let action = 'add';
@@ -2301,7 +2337,7 @@ function addItemToCart(productId, productName, price, quantity) {
     fetch('cart_api.php', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
+            'Content-Type': 'application/x-www-form-urlencoded'
         },
         body: body
     })
@@ -2336,7 +2372,7 @@ function proceedReviveOrder(orderId) {
 
             // Load order items into cart
             data.order_items.forEach(item => {
-                addItemToCart(item.product_id, item.product_name, item.price, item.quantity);
+                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity);
             });
 
             // Select customer if order has one
@@ -2359,14 +2395,103 @@ function proceedReviveOrder(orderId) {
 
             showModal('success', 'Order Revived', 'Order has been loaded into your cart successfully!');
         } else {
-            showModal('error', 'Error', data.message || 'Failed to revive order');
+            showModal('error', 'Error', data.message || 'Failed to revive order1');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showModal('error', 'Error', 'Failed to revive order');
+        showModal('error', 'Error', 'Failed to revive orders');
     });
 }
+
+// Revive order function
+//function addItemToCart(productId, productName, price, batch = null, quantity = 1) {
+//    const exchangeCheckbox = document.getElementById('exchangeCheckbox');
+//    const isExchange = exchangeCheckbox ? exchangeCheckbox.checked : false;
+//
+//    let action = 'add';
+//    let body = `action=${action}&product_id=${productId}&quantity=${quantity}`;
+//
+//    if (isExchange) {
+//        action = 'add_exchange';
+//        const finalPrice = -Math.abs(price);
+//        body = `action=${action}&product_id=${productId}&quantity=${quantity}&price=${finalPrice}&name=${encodeURIComponent(productName)} (Exchange)`;
+//    } else if (batch) {
+//        body += `&batch=${batch}`;
+//    }
+//}
+
+// Restore order function
+//function restoreOrder(orderId) {
+//    fetch('restore_order.php', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: body
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        if (data.success) {
+//            loadCart();
+//            showToast('success', 'Success!', `${productName} added to cart!`);
+//        } else {
+//            showToast('error', 'Error', data.message || 'Failed to add item to cart');
+//        }
+//    })
+//    .catch(error => {
+//        console.error('Error:', error);
+//        showToast('error', 'Connection Error', 'Failed to add item to cart');
+//    });
+//}
+//
+//function proceedReviveOrder(orderId) {
+//    fetch('revive_order.php', {
+//        method: 'POST',
+//        headers: {
+//            'Content-Type': 'application/json'
+//        },
+//        body: JSON.stringify({ order_id: orderId })
+//    })
+//    .then(response => response.json())
+//    .then(data => {
+//        if (data.success) {
+//            // Track revived order ID
+//            revivedOrderId = data.revived_order_id;
+//
+//            // Load order items into cart
+//            data.order_items.forEach(item => {
+//                addItemToCart(item.product_id, item.product_name, item.unit_price, null, item.quantity);
+//            });
+//
+//            // Select customer if order has one
+//            if (data.order.customer_id) {
+//                const customerSelect = document.getElementById('customerSelect');
+//                if (customerSelect) {
+//                    customerSelect.value = data.order.customer_id;
+//                    updateCustomerInfo();
+//                }
+//            }
+//
+//            // Close orders modal
+//            const ordersModal = bootstrap.Modal.getInstance(document.getElementById('orders'));
+//            if (ordersModal) {
+//                ordersModal.hide();
+//            }
+//
+//            // Refresh hold orders list
+//            loadOrders('hold');
+//
+//            showModal('success', 'Order Revived', 'Order has been loaded into your cart successfully!');
+//        } else {
+//            showModal('error', 'Error', data.message || 'Failed to revive order');
+//        }
+//    })
+//    .catch(error => {
+//        console.error('Error:', error);
+//        showModal('error', 'Error', 'Failed to revive order');
+//    });
+//}
 
 // Revive order function
 function reviveOrder(orderId) {
