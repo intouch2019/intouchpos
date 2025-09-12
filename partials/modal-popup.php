@@ -21374,6 +21374,42 @@ $page = end( $link_array );
 	</div>
 	<!-- /Orders -->
 
+	<!--POS online Orders -->
+	<div class="modal fade pos-modal" id="onlineorders" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-md modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h5 class="modal-title">Online Orders</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">×</span>
+					</button>
+      </div>
+
+      <!-- Body -->
+      <div class="modal-body">
+
+        <!-- Search -->
+        <div class="input-icon-start pos-search position-relative mb-3">
+          <span class="input-icon-addon"><i class="ti ti-search"></i></span>
+          <input type="text" id="onlineOrderSearch" class="form-control" placeholder="Search Orders" onkeyup="filterOnlineOrders()">
+        </div>
+
+        <!-- Orders List -->
+        <div class="order-body" id="online-orders">
+          <div class="text-center p-3">
+            <p>Loading orders...</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+						
+	<!-- /POS Online Orders -->
+
 	<!-- Scan -->
 	<div class="modal fade modal-default" id="scan-payment">
 		<div class="modal-dialog modal-dialog-centered">
