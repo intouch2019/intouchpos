@@ -23,8 +23,8 @@ if ($cat_result) {
 // Get products
 $products = [];
 $prod_sql = "SELECT p.*, c.name as category_name FROM products p 
-LEFT JOIN categories c ON p.category_id = c.id 
-WHERE p.is_active = 1 ORDER BY p.name";
+             LEFT JOIN categories c ON p.category_id = c.id 
+             WHERE p.is_active = 1 ORDER BY p.name";
 $prod_result = mysqli_query($link, $prod_sql);
 if ($prod_result) {
     while ($row = mysqli_fetch_assoc($prod_result)) {
@@ -45,9 +45,9 @@ if ($cust_result) {
 // Get active discount schemes
 $schemes = [];
 $scheme_sql = "SELECT name, value, type, min_purchase, valid_from, valid_to, description 
-FROM schemes 
-WHERE is_active = 1 
-AND NOW() BETWEEN valid_from AND valid_to";
+               FROM schemes 
+               WHERE is_active = 1 
+               AND NOW() BETWEEN valid_from AND valid_to";
 $scheme_result = mysqli_query($link, $scheme_sql);
 if ($scheme_result) {
     while ($row = mysqli_fetch_assoc($scheme_result)) {
@@ -83,14 +83,14 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 
     // Query order items joined with products
     $sql = "
-    SELECT 
-    oi.quantity,
-    oi.unit_price,
-    p.name AS product_name,
-    p.image AS product_image
-    FROM order_items oi
-    JOIN products p ON p.id = oi.product_id
-    WHERE oi.order_id = $orderId
+        SELECT 
+            oi.quantity,
+            oi.unit_price,
+            p.name AS product_name,
+            p.image AS product_image
+        FROM order_items oi
+        JOIN products p ON p.id = oi.product_id
+        WHERE oi.order_id = $orderId
     ";
     $result = mysqli_query($link, $sql);
 
@@ -122,354 +122,354 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 }
 
 ?>
-<!-- ========================
-Start Page Content
-========================= -->
+    <!-- ========================
+        Start Page Content
+    ========================= -->
 
-<div class="page-wrapper pos-pg-wrapper ms-0">
-    <!-- Start Content -->
-    <div class="content pos-design p-0">
-        <div class="row pos-wrapper">
-            <!-- Products -->
-            <div class="col-md-12 col-lg-7 col-xl-8 d-flex">
-                <div class="pos-categories tabs_wrapper p-0 flex-fill">
-                    <div class="content-wrap">
-                        <div class="tab-wrap">
-                            <ul class="tabs owl-carousel pos-category5" id="categoryTabs">
-                                <?php foreach ($categories as $index => $category): ?>
-                                    <li id="category_<?php echo $category['id']; ?>" data-id="<?php echo $category['id']; ?>" <?php echo $index === 0 ? 'class="active"' : ''; ?>>
-                                        <a href="javascript:void(0);">
-                                            <img src="assets/img/products/<?php echo $category['image'] ? $category['image'] : 'images(1).jpg'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>" onerror="this.src='assets/img/products/images(1).jpg'">
-                                        </a>
-                                        <h6><a href="javascript:void(0);"><?php echo htmlspecialchars($category['name']); ?></a></h6>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                        <div class="tab-content-wrap">
-                            <div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
-                                <div class="mb-3">
-                                    <h5 class="mb-1">Welcome, <?php echo htmlspecialchars($current_user['full_name']); ?></h5>
-                                    <p><?php echo date('F d, Y'); ?></p>
-                                    <?php if (isset($_SESSION['success'])): ?>
-                                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                    </div>
-                                <?php endif; ?>
-                                <?php if (isset($_SESSION['error'])): ?>
-                                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                                </div>
-                            <?php endif; ?>
-                        </div>
-                        <div class="d-flex align-items-center flex-wrap mb-2">
-                            <div class="input-icon-start search-pos position-relative mb-2 me-3">
-                                <span class="input-icon-addon">
-                                    <i class="ti ti-search"></i>
-                                </span>
-                                <input type="text" id="searchProduct" class="form-control" placeholder="Search Product" onkeyup="searchProducts()">
-                            </div>
-                            <a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
-                            <a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
-                            <div class="custom-checkbox">
-                                <input type="checkbox" id="exchangeCheckbox" />
-                                <span class="checkmark"></span>
-                                <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="pos-products">
-                        <div class="tabs_container">
-                            <div class="tab_content active" data-tab="all">
-                                <div class="row g-3" id="productsContainer">
-                                    <?php foreach ($products as $product): ?>
-                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3 product-item" data-category="<?php echo $product['category_id']; ?>" data-sku="<?php echo htmlspecialchars($product['sku']); ?>" style="display: block;">
-                                            <div class="product-info card mb-0<?php echo ($product['stock_quantity'] <= 0) ? ' out-of-stock' : ''; ?>">
-                                                <a href="javascript:void(0);" class="pro-img"
-                                                <?php echo ($product['stock_quantity'] > 0)
-                                                ? ' onclick="addToCart(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' 
-                                                : ''; ?>>
-                                                <img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" 
-                                                alt="<?php echo htmlspecialchars($product['name']); ?>" 
-                                                onerror="this.src='assets/img/products/images(1).png'">
-                                                <span><i class="ti ti-circle-check-filled"></i></span>
-                                            </a>
-                                            <h6 class="product-name"><a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a></h6>
-                                            <p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
-                                            <div class="d-flex flex-column align-items-start w-100">
-                                                <p class="text-dark fw-bold fs-16 mb-1">₹<?php echo number_format($product['price'], 2); ?></p>
-                                                <span class="badge <?php echo ($product['stock_quantity'] > 5) ? 'bg-success' : (($product['stock_quantity'] > 0) ? 'bg-warning text-dark' : 'bg-danger'); ?>">
-                                                    Available Stock: <?php echo $product['stock_quantity']; ?>
-                                                </span>                                                                                                                <div class="qty-item m-0" style="display:none">
-                                                    <a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus" onclick="decreaseQuantity(this)"><i class="ti ti-minus"></i></a>
-                                                    <input type="text" class="form-control text-center product-qty" name="qty" value="1" min="1" max="<?php echo $product['stock_quantity']; ?>">
-                                                    <a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseQuantity(this)"><i class="ti ti-plus"></i></a>
-                                                </div>
-                                            </div>
-                                            <?php if ($product['stock_quantity'] <= $product['min_stock_level']): ?>
+    <div class="page-wrapper pos-pg-wrapper ms-0">
+        <!-- Start Content -->
+		<div class="content pos-design p-0">
+			<div class="row pos-wrapper">
+				<!-- Products -->
+				<div class="col-md-12 col-lg-7 col-xl-8 d-flex">
+					<div class="pos-categories tabs_wrapper p-0 flex-fill">
+						<div class="content-wrap">
+							<div class="tab-wrap">
+								<ul class="tabs owl-carousel pos-category5" id="categoryTabs">
+                                                                    <?php foreach ($categories as $index => $category): ?>
+                                                                        <li id="category_<?php echo $category['id']; ?>" data-id="<?php echo $category['id']; ?>" <?php echo $index === 0 ? 'class="active"' : ''; ?>>
+                                                                            <a href="javascript:void(0);">
+                                                                                <img src="assets/img/products/<?php echo $category['image'] ? $category['image'] : 'images(1).jpg'; ?>" alt="<?php echo htmlspecialchars($category['name']); ?>" onerror="this.src='assets/img/products/images(1).jpg'">
+                                                                            </a>
+                                                                            <h6><a href="javascript:void(0);"><?php echo htmlspecialchars($category['name']); ?></a></h6>
+                                                                        </li>
+                                                                    <?php endforeach; ?>
+                                                                </ul>
+							</div>
+							<div class="tab-content-wrap">
+								<div class="d-flex align-items-center justify-content-between flex-wrap mb-2">
+									<div class="mb-3">
+										<h5 class="mb-1">Welcome, <?php echo htmlspecialchars($current_user['full_name']); ?></h5>
+										<p><?php echo date('F d, Y'); ?></p>
+										<?php if (isset($_SESSION['success'])): ?>
+											<div class="alert alert-success alert-dismissible fade show" role="alert">
+												<?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+												<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+											</div>
+										<?php endif; ?>
+										<?php if (isset($_SESSION['error'])): ?>
+											<div class="alert alert-danger alert-dismissible fade show" role="alert">
+												<?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+												<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+											</div>
+										<?php endif; ?>
+									</div>
+									<div class="d-flex align-items-center flex-wrap mb-2">
+										<div class="input-icon-start search-pos position-relative mb-2 me-3">
+											<span class="input-icon-addon">
+												<i class="ti ti-search"></i>
+											</span>
+											<input type="text" id="searchProduct" class="form-control" placeholder="Search Product" onkeyup="searchProducts()">
+										</div>
+										<a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
+										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
+                                                                                <div class="custom-checkbox">
+                                                                                  <input type="checkbox" id="exchangeCheckbox" />
+                                                                                  <span class="checkmark"></span>
+                                                                                  <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>
+</div>
+									</div>
+								</div>
+								<div class="pos-products">
+									<div class="tabs_container">
+										<div class="tab_content active" data-tab="all">
+											<div class="row g-3" id="productsContainer">
+												<?php foreach ($products as $product): ?>
+												<div class="col-sm-6 col-md-6 col-lg-6 col-xl-4 col-xxl-3 product-item" data-category="<?php echo $product['category_id']; ?>" data-sku="<?php echo htmlspecialchars($product['sku']); ?>" style="display: block;">
+													<div class="product-info card mb-0<?php echo ($product['stock_quantity'] <= 0) ? ' out-of-stock' : ''; ?>">
+														<a href="javascript:void(0);" class="pro-img"
+                                                                                                                    <?php echo ($product['stock_quantity'] > 0)
+                                                                                                                             ? ' onclick="openBatchModal(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' 
+                                                                                                                       : ''; ?>>
+                                                                                                                     <img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" 
+                                                                                                                          alt="<?php echo htmlspecialchars($product['name']); ?>" 
+                                                                                                                          onerror="this.src='assets/img/products/images(1).png'">
+                                                                                                                     <span><i class="ti ti-circle-check-filled"></i></span>
+                                                                                                                 </a>
+														<h6 class="product-name"><a href="javascript:void(0);"><?php echo htmlspecialchars($product['name']); ?></a></h6>
+														<p class="product-sku text-muted mb-2">SKU: <?php echo htmlspecialchars($product['sku']); ?></p>
+														<div class="d-flex flex-column align-items-start w-100">
+                                                                                                                    <p class="text-dark fw-bold fs-16 mb-1">₹<?php echo number_format($product['price'], 2); ?></p>
+                                                                                                                    <span class="badge <?php echo ($product['stock_quantity'] > 5) ? 'bg-success' : (($product['stock_quantity'] > 0) ? 'bg-warning text-dark' : 'bg-danger'); ?>">
+                                                                                                                        Available Stock: <?php echo $product['stock_quantity']; ?>
+    </span>                                                                                                                <div class="qty-item m-0" style="display:none">
+																<a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus" onclick="decreaseQuantity(this)"><i class="ti ti-minus"></i></a>
+																<input type="text" class="form-control text-center product-qty" name="qty" value="1" min="1" max="<?php echo $product['stock_quantity']; ?>">
+																<a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseQuantity(this)"><i class="ti ti-plus"></i></a>
+															</div>
+														</div>
+														<?php if ($product['stock_quantity'] <= $product['min_stock_level']): ?>
                                                 <!--<div class="stock-warning">
-													<small class="text-danger">Low Stock: <?php // echo $product['stock_quantity']; ?> left</small>
-												</div>-->
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
-                                <?php endforeach; ?>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- /Products -->
+															<small class="text-danger">Low Stock: <?php // echo $product['stock_quantity']; ?> left</small>
+														</div>-->
+														<?php endif; ?>
+													</div>
+												</div>
+												<?php endforeach; ?>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /Products -->
 
-<!-- Order Details -->
-<div class="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar d-lg-flex">
-    <aside class="product-order-list bg-secondary-transparent flex-fill">
-        <div class="mb-3">
-            <button class="btn btn-purple w-100" onclick="showSchemesModal()"><i class="ti ti-discount-2 me-1"></i>Available Schemes</button>
-        </div>
-        <div class="card">
-            <div class="card-body">
-                <div class="order-head d-flex align-items-center justify-content-between w-100">
-                    <div>
-                        <h3>Order List</h3>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="badge badge-dark fs-10 fw-medium badge-xs">#ORD123</span>
-                        <a class="link-danger fs-16" href="javascript:void(0);"><i class="ti ti-trash-x-filled"></i></a>
-                    </div>
-                </div>
-                <div class="customer-info block-section">
-                    <h5 class="mb-2">Customer Information <span class="text-danger">*</span></h5>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="flex-grow-1">
-                            <select class="select" id="customerSelect" required onchange="updateCustomerInfo()">
-                                <option value="">Select Customer</option>
-                                <option value="walkin">Walk in Customer</option>
-                                <?php foreach ($customers as $customer): ?>
-                                <!--                                                                                    
-                                <option value="<?php echo $customer['id']; ?>" data-name="<?php // echo htmlspecialchars($customer['name']); ?>" data-phone="<?php // echo htmlspecialchars($customer['phone']); ?>" data-bonus="<?php // echo isset($customer['bonus_points']) ? $customer['bonus_points'] : 0; ?>" data-loyalty="<?php // echo isset($customer['loyalty_amount']) ? number_format($customer['loyalty_amount'], 2) : '0.00'; ?>">
-                                    <?php // echo htmlspecialchars($customer['name']); ?> - <?php // echo htmlspecialchars($customer['phone']); ?></option>-->
-                                    <option value="<?php echo $customer['id']; ?>" data-name="<?php echo htmlspecialchars($customer['name']); ?>" data-phone="<?php echo htmlspecialchars($customer['phone']); ?>" data-bonus=" 100 "data-loyalty="10.0">
-                                        <?php echo htmlspecialchars($customer['name']); ?> - <?php echo htmlspecialchars($customer['phone']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <a href="#" class="btn btn-teal btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#create">
-                            <i class="ti ti-user-plus"></i>
-                        </a>
-                        <a href="#" class="btn btn-info btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#barcode">
-                            <i class="ti ti-scan"></i>
-                        </a>
-                    </div>
-                    <!-- Dynamic Customer Info Display -->
-                    <div class="customer-item border border-orange bg-orange-100 d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3" 
-                    id="customerDetails" style="display: none;">
-                    <div>
-                        <h6 class="fs-16 fw-bold mb-1" id="customerName"></h6>
-                        <div class="d-inline-flex align-items-center gap-2 customer-bonus">
-                            <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
-                                Bonus: <span class="badge bg-cyan fs-13 fw-bold p-1" id="customerBonus">0</span>
-                            </p>
-                            <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
-                                Loyalty: <span class="badge bg-teal fs-13 fw-bold p-1" id="customerLoyalty">0.00</span>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a href="javascript:void(0);" class="btn btn-orange btn-sm" >Apply</a>
-                        <!--<a href="javascript:void(0);" class="btn btn-orange btn-sm" onclick="applyCustomer()">Apply</a>-->
-                        <a href="javascript:void(0);" class="close-icon" onclick="clearCustomer()">
-                            <i class="ti ti-x"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-            <div class="product-added block-section">
-                <div class="head-text d-flex align-items-center justify-content-between mb-3">
-                    <div class="d-flex align-items-center">
-                        <h5 class="me-2">Order Details</h5>
-                        <div class="badge bg-light text-gray-9 fs-12 fw-semibold py-2 border rounded">Items : <span class="text-teal" id="cartItemCount">0</span></div>
-                    </div>
-                    <a href="javascript:void(0);" onclick="clearCartWithRestore()" class="d-flex align-items-center clear-icon fs-10 fw-medium">Clear all</a>
-                </div>
-                <div class="product-wrap">
-                    <div class="empty-cart" id="emptyCart">
-                        <div class="fs-24 mb-1">
-                            <i class="ti ti-shopping-cart"></i>
-                        </div>
-                        <p class="fw-bold">No Products Selected</p>
-                    </div>
-                    <div class="product-list border-0 p-0" id="cartItems" style="display: none;">
-                        <div class="table-responsive">
-                            <table class="table table-borderless">
-                                <thead>
-                                    <tr>
-                                        <th class="fw-bold bg-light">Item</th>
-                                        <th class="fw-bold bg-light">QTY</th>
-                                        <th class="fw-bold bg-light text-end">Cost</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="cartItemsList">
-                                    <!-- Cart items will be dynamically inserted here -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- Dynamic Discount Item -->
-                <div id="discount-item-container">
-                    <!-- Discount item will be injected here by JavaScript -->
-                </div>
-            </div>
-            <div class="order-total bg-total bg-white p-0">
-                <h5 class="mb-3">Payment Summary</h5>
-                <table class="table table-responsive table-borderless">
-                    <tr>
-                        <td>Shipping<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#shipping-cost">
-                            <!--<i class="ti ti-edit"></i>-->
-                        </a></td>
-                        <td class="text-gray-9 text-end" id="shippingCost">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Tax<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#order-tax">
-                            <!--<i class="ti ti-edit"></i>-->
-                        </a></td>
-                        <td class="text-gray-9 text-end" id="taxAmount">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Coupon<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#coupon-code">
-                            <!--<i class="ti ti-edit"></i>-->
-                        </a></td>
-                        <td class="text-gray-9 text-end" id="couponAmount">0.00</td>
-                    </tr>
-                    <tr>												
-                        <td><span class="text-danger">Discount</span><a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#discount">
-                            <!--<i class="ti ti-edit"></i>-->
-                        </a></td>
-                        <td class="text-danger text-end" id="discountAmount">0.00</td>
-                    </tr>
-                    <tr>												
-                        <td>
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="round" checked>
-                                <label class="form-check-label" for="round">Roundoff</label>
-                            </div>
-                        </td>
-                        <td class="text-gray-9 text-end" id="roundoffAmount">0.00</td>
-                    </tr>
-                    <tr>
-                        <td>Sub Total</td>
-                        <td class="text-gray-9 text-end" id="cartSubtotal">0.00</td>
-                    </tr>
-                    <tr>
-                        <td class="fw-bold border-top border-dashed">Total Payable</td>
-                        <td class="text-gray-9 fw-bold text-end border-top border-dashed" id="cartTotal">0.00</td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="card payment-method">
-        <div class="card-body">
-            <h5 class="mb-3">Select Payment</h5>
-            <div class="row align-items-center methods g-2">
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('cash')">
-                        <img src="assets/img/icons/cash-icon.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Cash</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('card')">
-                        <img src="assets/img/icons/card.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Card</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('points')">
-                        <img src="assets/img/icons/points.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Points</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('deposit')">
-                        <img src="assets/img/icons/deposit.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Deposit</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('cheque')">
-                        <img src="assets/img/icons/cheque.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Cheque</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('gift_card')">
-                        <img src="assets/img/icons/giftcard.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Gift Card</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('scan')">
-                        <img src="assets/img/icons/scan-icon.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Scan</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('pay_later')">
-                        <img src="assets/img/icons/paylater.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Pay Later</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('external')">
-                        <img src="assets/img/icons/external.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">External</p>
-                    </a>
-                </div>
-                <div class="col-sm-6 col-md-4 d-flex">
-                    <a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('split')">
-                        <img src="assets/img/icons/split-bill.svg" class="me-2" alt="img">
-                        <p class="fs-14 fw-medium">Split Bill</p>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="btn-row d-flex align-items-center justify-content-between gap-3">
-        <a href="javascript:void(0);" class="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-printer me-2"></i>Print Order</a>
-        <a href="javascript:void(0);" class="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0" onclick="showPaymentOptions()"><i  class="ti ti-shopping-cart me-2"></i>Place Order</a>
-    </div>
-</aside>
-</div>
-<!-- /Order Details -->
+				<!-- Order Details -->
+				<div class="col-md-12 col-lg-5 col-xl-4 ps-0 theiaStickySidebar d-lg-flex">
+					<aside class="product-order-list bg-secondary-transparent flex-fill">
+						<div class="mb-3">
+							<button class="btn btn-purple w-100" onclick="showSchemesModal()"><i class="ti ti-discount-2 me-1"></i>Available Schemes</button>
+						</div>
+						<div class="card">
+							<div class="card-body">
+								<div class="order-head d-flex align-items-center justify-content-between w-100">
+									<div>
+										<h3>Order List</h3>
+									</div>
+									<div class="d-flex align-items-center gap-2">
+										<span class="badge badge-dark fs-10 fw-medium badge-xs">#ORD123</span>
+										<a class="link-danger fs-16" href="javascript:void(0);"><i class="ti ti-trash-x-filled"></i></a>
+									</div>
+								</div>
+								<div class="customer-info block-section">
+									<h5 class="mb-2">Customer Information <span class="text-danger">*</span></h5>
+									<div class="d-flex align-items-center gap-2">
+                                                                            <div class="flex-grow-1">
+                                                                                <select class="select" id="customerSelect" required onchange="updateCustomerInfo()">
+                                                                                    <option value="">Select Customer</option>
+                                                                                    <option value="walkin">Walk in Customer</option>
+                                                                                    <?php foreach ($customers as $customer): ?>
+                                                                                    <!--                                                                                    
+                                                                                    <option value="<?php echo $customer['id']; ?>" data-name="<?php // echo htmlspecialchars($customer['name']); ?>" data-phone="<?php // echo htmlspecialchars($customer['phone']); ?>" data-bonus="<?php // echo isset($customer['bonus_points']) ? $customer['bonus_points'] : 0; ?>" data-loyalty="<?php // echo isset($customer['loyalty_amount']) ? number_format($customer['loyalty_amount'], 2) : '0.00'; ?>">
+                                                                                        <?php // echo htmlspecialchars($customer['name']); ?> - <?php // echo htmlspecialchars($customer['phone']); ?></option>-->
+                                                                                        <option value="<?php echo $customer['id']; ?>" data-name="<?php echo htmlspecialchars($customer['name']); ?>" data-phone="<?php echo htmlspecialchars($customer['phone']); ?>" data-bonus=" 100 "data-loyalty="10.0">
+                                                                                        <?php echo htmlspecialchars($customer['name']); ?> - <?php echo htmlspecialchars($customer['phone']); ?>
+                                                                                    </option>
+                                                                                    <?php endforeach; ?>
+                                                                                </select>
+                                                                            </div>
+                                                                            <a href="#" class="btn btn-teal btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#create">
+                                                                                <i class="ti ti-user-plus"></i>
+                                                                            </a>
+                                                                            <a href="#" class="btn btn-info btn-icon fs-20" data-bs-toggle="modal" data-bs-target="#barcode">
+                                                                                <i class="ti ti-scan"></i>
+                                                                            </a>
+                                                                        </div>
+                                                                        <!-- Dynamic Customer Info Display -->
+                                                                        <div class="customer-item border border-orange bg-orange-100 d-flex align-items-center justify-content-between flex-wrap gap-2 mt-3" 
+                                                                             id="customerDetails" style="display: none;">
+                                                                            <div>
+                                                                                <h6 class="fs-16 fw-bold mb-1" id="customerName"></h6>
+                                                                                <div class="d-inline-flex align-items-center gap-2 customer-bonus">
+                                                                                    <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
+                                                                                        Bonus: <span class="badge bg-cyan fs-13 fw-bold p-1" id="customerBonus">0</span>
+                                                                                    </p>
+                                                                                    <p class="fs-13 d-inline-flex align-items-center gap-1 mb-0">
+                                                                                        Loyalty: <span class="badge bg-teal fs-13 fw-bold p-1" id="customerLoyalty">0.00</span>
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="d-flex gap-2">
+                                                                                <a href="javascript:void(0);" class="btn btn-orange btn-sm" >Apply</a>
+                                                                                <!--<a href="javascript:void(0);" class="btn btn-orange btn-sm" onclick="applyCustomer()">Apply</a>-->
+                                                                                <a href="javascript:void(0);" class="close-icon" onclick="clearCustomer()">
+                                                                                    <i class="ti ti-x"></i>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+								</div>
+								<div class="product-added block-section">
+									<div class="head-text d-flex align-items-center justify-content-between mb-3">
+										<div class="d-flex align-items-center">
+											<h5 class="me-2">Order Details</h5>
+											<div class="badge bg-light text-gray-9 fs-12 fw-semibold py-2 border rounded">Items : <span class="text-teal" id="cartItemCount">0</span></div>
+										</div>
+										<a href="javascript:void(0);" onclick="clearCartWithRestore()" class="d-flex align-items-center clear-icon fs-10 fw-medium">Clear all</a>
+									</div>
+									<div class="product-wrap">
+										<div class="empty-cart" id="emptyCart">
+											<div class="fs-24 mb-1">
+												<i class="ti ti-shopping-cart"></i>
+											</div>
+											<p class="fw-bold">No Products Selected</p>
+										</div>
+										<div class="product-list border-0 p-0" id="cartItems" style="display: none;">
+											<div class="table-responsive">
+												<table class="table table-borderless">
+													<thead>
+														<tr>
+															<th class="fw-bold bg-light">Item</th>
+															<th class="fw-bold bg-light">QTY</th>
+															<th class="fw-bold bg-light text-end">Cost</th>
+														</tr>
+													</thead>
+													<tbody id="cartItemsList">
+														<!-- Cart items will be dynamically inserted here -->
+													</tbody>
+												</table>
+											</div>
+								</div>
+								</div>
+								<!-- Dynamic Discount Item -->
+								<div id="discount-item-container">
+									<!-- Discount item will be injected here by JavaScript -->
+								</div>
+								</div>
+								<div class="order-total bg-total bg-white p-0">
+									<h5 class="mb-3">Payment Summary</h5>
+									<table class="table table-responsive table-borderless">
+										<tr>
+											<td>Shipping<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#shipping-cost">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-gray-9 text-end" id="shippingCost">0.00</td>
+										</tr>
+										<tr>
+											<td>Tax<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#order-tax">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-gray-9 text-end" id="taxAmount">0.00</td>
+										</tr>
+										<tr>
+											<td>Coupon<a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#coupon-code">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-gray-9 text-end" id="couponAmount">0.00</td>
+										</tr>
+										<tr>												
+											<td><span class="text-danger">Discount</span><a href="#" class="ms-3 link-default" data-bs-toggle="modal" data-bs-target="#discount">
+                                                                                                <!--<i class="ti ti-edit"></i>-->
+                                                                                            </a></td>
+											<td class="text-danger text-end" id="discountAmount">0.00</td>
+										</tr>
+										<tr>												
+											<td>
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="round" checked>
+													<label class="form-check-label" for="round">Roundoff</label>
+												</div>
+											</td>
+											<td class="text-gray-9 text-end" id="roundoffAmount">0.00</td>
+										</tr>
+										<tr>
+											<td>Sub Total</td>
+											<td class="text-gray-9 text-end" id="cartSubtotal">0.00</td>
+										</tr>
+										<tr>
+											<td class="fw-bold border-top border-dashed">Total Payable</td>
+											<td class="text-gray-9 fw-bold text-end border-top border-dashed" id="cartTotal">0.00</td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>
+						<div class="card payment-method">
+							<div class="card-body">
+								<h5 class="mb-3">Select Payment</h5>
+								<div class="row align-items-center methods g-2">
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('cash')">
+											<img src="assets/img/icons/cash-icon.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Cash</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('card')">
+											<img src="assets/img/icons/card.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Card</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('points')">
+											<img src="assets/img/icons/points.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Points</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('deposit')">
+											<img src="assets/img/icons/deposit.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Deposit</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('cheque')">
+											<img src="assets/img/icons/cheque.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Cheque</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('gift_card')">
+											<img src="assets/img/icons/giftcard.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Gift Card</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('scan')">
+											<img src="assets/img/icons/scan-icon.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Scan</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('pay_later')">
+											<img src="assets/img/icons/paylater.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Pay Later</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('external')">
+											<img src="assets/img/icons/external.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">External</p>
+										</a>
+									</div>
+									<div class="col-sm-6 col-md-4 d-flex">
+										<a href="javascript:void(0);" class="payment-item d-flex align-items-center justify-content-center p-2 flex-fill" onclick="selectPaymentMethod('split')">
+											<img src="assets/img/icons/split-bill.svg" class="me-2" alt="img">
+											<p class="fs-14 fw-medium">Split Bill</p>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="btn-row d-flex align-items-center justify-content-between gap-3">
+							<a href="javascript:void(0);" class="btn btn-white d-flex align-items-center justify-content-center flex-fill m-0" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-printer me-2"></i>Print Order</a>
+							<a href="javascript:void(0);" class="btn btn-secondary d-flex align-items-center justify-content-center flex-fill m-0" onclick="showPaymentOptions()"><i  class="ti ti-shopping-cart me-2"></i>Place Order</a>
+						</div>
+					</aside>
+				</div>
+				<!-- /Order Details -->
 
-</div>
+			</div>
 
-<div class="pos-footer bg-white p-3 border-top">
-    <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-       <a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>
-       <a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>
-       <!--<a href="javascript:void(0);" class="btn btn-warning d-inline-flex align-items-center justify-content-center" onclick="openExchange()"><i  class="ti ti-refresh me-2"></i>Exchange</a>-->
-       <a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completedd"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>
-       <a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
-       <a href="javascript:void(0);" class="btn btn-purple d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#onlineorders" onclick="loadOnlineOrders()"><i class="ti ti-shopping-cart me-2"></i>Online Orders</a>
-
-       <!--<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
-       <a href="javascript:void(0);" class="btn btn-indigo d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#reset"><i class="ti ti-reload me-2"></i>Reset</a>
-       <a href="javascript:void(0);" class="btn btn-danger d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#recents"><i class="ti ti-refresh-dot me-2"></i>Transaction</a>
-   </div>
-</div>
-</div>
-<!-- End Content -->
-
-<div id="modal-overlay" class="modal-overlay">
+			<div class="pos-footer bg-white p-3 border-top">
+				<div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
+					<a href="javascript:void(0);" class="btn btn-orange d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#hold-order"><i  class="ti ti-player-pause me-2"></i>Hold</a>
+					<a href="javascript:void(0);" class="btn btn-info d-inline-flex align-items-center justify-content-center"><i  class="ti ti-trash me-2"></i>Void</a>
+					<!--<a href="javascript:void(0);" class="btn btn-warning d-inline-flex align-items-center justify-content-center" onclick="openExchange()"><i  class="ti ti-refresh me-2"></i>Exchange</a>-->
+					<a href="javascript:void(0);" class="btn btn-cyan d-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#payment-completedd"><i  class="ti ti-cash-banknote me-2"></i>Payment</a>
+					<a href="javascript:void(0);" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#orders"><i class="ti ti-shopping-cart me-2"></i>View Orders</a>
+                                        <a href="javascript:void(0);" class="btn btn-purple d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#onlineorders" onclick="loadOnlineOrders()"><i class="ti ti-shopping-cart me-2"></i>Online Orders</a>
+    
+                                        <!--<a href="orders.php" class="btn btn-secondary d-inline-flex align-items-center justify-content-center" ><i class="ti ti-shopping-cart me-2"></i>View Orders</a>-->
+					<a href="javascript:void(0);" class="btn btn-indigo d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#reset"><i class="ti ti-reload me-2"></i>Reset</a>
+					<a href="javascript:void(0);" class="btn btn-danger d-inline-flex align-items-center justify-content-center" data-bs-toggle="modal" data-bs-target="#recents"><i class="ti ti-refresh-dot me-2"></i>Transaction</a>
+				</div>
+			</div>
+		</div>
+        <!-- End Content -->
+        
+        <div id="modal-overlay" class="modal-overlay">
     <div class="custom-modal">
         <div class="modal-header">
             <div id="modal-icon" class="modal-icon">
@@ -489,92 +489,92 @@ Start Page Content
 
 <!-- Toast Container -->
 <div id="toast-container" class="toast-container"></div>
-
-<?php 
+    
+        <?php 
         // Set page variable for modal conditions
-$page = 'pos.php';
-require_once __DIR__ . '/../partials/footer.php'; 
-require_once __DIR__ . '/../partials/modal-popup.php'; 
-require_once __DIR__ . '/../partials/modal-popup-new.php'; 
-require_once __DIR__ . '/../partials/pos-modals.php'; 
-require_once __DIR__ . '/../partials/exchange-modal.php'; 
-?>
+        $page = 'pos.php';
+        require_once __DIR__ . '/../partials/footer.php'; 
+        require_once __DIR__ . '/../partials/modal-popup.php'; 
+        require_once __DIR__ . '/../partials/modal-popup-new.php'; 
+        require_once __DIR__ . '/../partials/pos-modals.php'; 
+        require_once __DIR__ . '/../partials/exchange-modal.php'; 
+        ?>
 
-<!-- Schemes Modal -->
-<div class="modal fade" id="schemes-modal" tabindex="-1">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-gradient-purple text-white border-0">
-                <h4 class="modal-title d-flex align-items-center mb-0">
-                    <div class="scheme-icon-wrapper me-3">
-                        <i class="ti ti-discount-2 fs-24"></i>
+        <!-- Schemes Modal -->
+        <div class="modal fade" id="schemes-modal" tabindex="-1">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content border-0 shadow-lg">
+                    <div class="modal-header bg-gradient-purple text-white border-0">
+                        <h4 class="modal-title d-flex align-items-center mb-0">
+                            <div class="scheme-icon-wrapper me-3">
+                                <i class="ti ti-discount-2 fs-24"></i>
+                            </div>
+                            <div class="fw-bold">Available Discount Schemes</div>
+                        </h4>
+                        <button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" style="background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
+                            <i class="ti ti-x fs-18"></i>
+                        </button>
                     </div>
-                    <div class="fw-bold">Available Discount Schemes</div>
-                </h4>
-                <button type="button" class="btn btn-sm text-white" data-bs-dismiss="modal" style="background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">
-                    <i class="ti ti-x fs-18"></i>
-                </button>
-            </div>
-            <div class="modal-body p-4">
-                <?php if (empty($schemes)): ?>
-                    <div class="empty-state text-center py-5">
-                        <div class="empty-icon mb-4">
-                            <i class="ti ti-discount-off"></i>
-                        </div>
-                        <h5 class="text-muted mb-2">No Active Schemes</h5>
-                        <p class="text-muted mb-0">There are currently no active discount schemes available.</p>
-                    </div>
-                    <?php else: ?>
-                        <div class="schemes-grid">
-                            <?php foreach ($schemes as $index => $scheme): ?>
-                                <div class="scheme-card" data-aos="fade-up" data-aos-delay="<?php echo $index * 100; ?>">
-                                    <div class="scheme-header">
-                                        <div class="discount-badge">
-                                            <span class="discount-value">
-                                                <?php echo $scheme['type'] === 'percentage' ? $scheme['value'] . '%' : number_format($scheme['value'], 0); ?>
-                                            </span>
-                                            <span class="discount-text">OFF</span>
-                                        </div>
-                                        <div class="status-badge">
-                                            <i class="ti ti-circle-check-filled"></i>
-                                            <span>ACTIVE</span>
-                                        </div>
-                                    </div>
-                                    <div class="scheme-body">
-                                        <h5 class="scheme-title"><?php echo htmlspecialchars($scheme['name']); ?></h5>
-                                        <p class="scheme-description"><?php echo htmlspecialchars($scheme['description']); ?></p>
-                                        <div class="scheme-details">
-                                            <div class="detail-item">
-                                                <i class="ti ti-shopping-cart"></i>
-                                                <span>Min. Purchase: <strong><?php echo number_format($scheme['min_purchase'], 0); ?></strong></span>
-                                            </div>
-                                            <div class="detail-item">
-                                                <i class="ti ti-calendar"></i>
-                                                <span>Valid: <?php echo date('M d', strtotime($scheme['valid_from'])); ?> - <?php echo date('M d, Y', strtotime($scheme['valid_to'])); ?></span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="scheme-footer">
-                                        <div class="auto-apply-text">
-                                            <i class="ti ti-sparkles"></i>
-                                            <span>Auto-applied at checkout</span>
-                                        </div>
-                                    </div>
+                    <div class="modal-body p-4">
+                        <?php if (empty($schemes)): ?>
+                            <div class="empty-state text-center py-5">
+                                <div class="empty-icon mb-4">
+                                    <i class="ti ti-discount-off"></i>
                                 </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-                <div class="modal-footer border-0 bg-light">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <i class="ti ti-x me-1"></i>Close
-                    </button>
+                                <h5 class="text-muted mb-2">No Active Schemes</h5>
+                                <p class="text-muted mb-0">There are currently no active discount schemes available.</p>
+                            </div>
+                        <?php else: ?>
+                            <div class="schemes-grid">
+                                <?php foreach ($schemes as $index => $scheme): ?>
+                                    <div class="scheme-card" data-aos="fade-up" data-aos-delay="<?php echo $index * 100; ?>">
+                                        <div class="scheme-header">
+                                            <div class="discount-badge">
+                                                <span class="discount-value">
+                                                    <?php echo $scheme['type'] === 'percentage' ? $scheme['value'] . '%' : number_format($scheme['value'], 0); ?>
+                                                </span>
+                                                <span class="discount-text">OFF</span>
+                                            </div>
+                                            <div class="status-badge">
+                                                <i class="ti ti-circle-check-filled"></i>
+                                                <span>ACTIVE</span>
+                                            </div>
+                                        </div>
+                                        <div class="scheme-body">
+                                            <h5 class="scheme-title"><?php echo htmlspecialchars($scheme['name']); ?></h5>
+                                            <p class="scheme-description"><?php echo htmlspecialchars($scheme['description']); ?></p>
+                                            <div class="scheme-details">
+                                                <div class="detail-item">
+                                                    <i class="ti ti-shopping-cart"></i>
+                                                    <span>Min. Purchase: <strong><?php echo number_format($scheme['min_purchase'], 0); ?></strong></span>
+                                                </div>
+                                                <div class="detail-item">
+                                                    <i class="ti ti-calendar"></i>
+                                                    <span>Valid: <?php echo date('M d', strtotime($scheme['valid_from'])); ?> - <?php echo date('M d, Y', strtotime($scheme['valid_to'])); ?></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="scheme-footer">
+                                            <div class="auto-apply-text">
+                                                <i class="ti ti-sparkles"></i>
+                                                <span>Auto-applied at checkout</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <div class="modal-footer border-0 bg-light">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <i class="ti ti-x me-1"></i>Close
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-<!--
-         Batch Selection Modal 
+
+         <!--Batch Selection Modal--> 
         <div class="modal fade" id="batch-selection-modal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -599,18 +599,14 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
                     </div>
                 </div>
             </div>
-        </div>-->
-
-
-
-
+        </div>
     </div>
 
     <!-- ========================
         End Page Content
-        ========================= -->
+    ========================= -->
 
-        <script>
+    <script>
         // Global cart variable
         let cart = [];
         
@@ -651,20 +647,20 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
             toast.className = `toast ${type}`;
 
             const iconSvg = type === 'success' 
-            ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="#10b981"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
-            : '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+                ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="#10b981"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>'
+                : '<svg width="20" height="20" viewBox="0 0 24 24" fill="#ef4444"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
 
             toast.innerHTML = `
-            <div class="toast-icon">${iconSvg}</div>
-            <div class="toast-content">
-            <div class="toast-title">${title}</div>
-            <div class="toast-message">${message}</div>
-            </div>
-            <button class="toast-close" onclick="removeToast(this)">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
-            </svg>
-            </button>
+                <div class="toast-icon">${iconSvg}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast(this)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
             `;
 
             container.appendChild(toast);
@@ -712,118 +708,122 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
         });
 
         // Function to open batch selection modal
-//        function openBatchModal(productId, productName, price) {
-//            const batchModal = new bootstrap.Modal(document.getElementById('batch-selection-modal'));
-//            
-//            // Set product info in the modal
-//            document.getElementById('batch-product-name').textContent = productName;
-//            document.getElementById('batch-product-id').value = productId;
-//            document.getElementById('batch-product-price').value = price;
-//
-//            const batchSelect = document.getElementById('batch-select');
-//            const batchStockInfo = document.getElementById('batch-stock-info');
-//            batchSelect.innerHTML = '<option>Loading batches...</option>';
-//            batchStockInfo.textContent = '';
-//
-//            // Fetch batches for the product
-//            fetch(`get_batches.php?product_id=${productId}`)
-//                .then(response => response.json())
-//                .then(data => {
-//                    if (data.success && data.batches.length > 0) {
-//                        batchSelect.innerHTML = '';
-//                        data.batches.forEach(batch => {
-//                            const option = document.createElement('option');
-//                            option.value = batch.batch_no;
-//                            option.textContent = `${batch.batch_no} (Stock: ${batch.stock})`;
-//                            option.dataset.stock = batch.stock;
-//                            batchSelect.appendChild(option);
-//                        });
-//                        // Show stock for the first batch
-//                        if(data.batches[0]) {
-//                            batchStockInfo.textContent = `Available stock for this batch: ${data.batches[0].stock}`;
-//                        }
-//                    } else {
-//                        batchSelect.innerHTML = '<option>No batches available</option>';
-//                    }
-//                })
-//                .catch(error => {
-//                    console.error('Error fetching batches:', error);
-//                    batchSelect.innerHTML = '<option>Error loading batches</option>';
-//                });
-//
-//            batchSelect.onchange = function() {
-//                const selectedOption = this.options[this.selectedIndex];
-//                batchStockInfo.textContent = `Available stock for this batch: ${selectedOption.dataset.stock || 0}`;
-//            };
-//
-//            batchModal.show();
-//        }
+        function openBatchModal(productId, productName, price) {
+            const batchModal = new bootstrap.Modal(document.getElementById('batch-selection-modal'));
+            
+            // Set product info in the modal
+            document.getElementById('batch-product-name').textContent = productName;
+            document.getElementById('batch-product-id').value = productId;
+            document.getElementById('batch-product-price').value = price;
 
-        // Your updated addToCart function
+            const batchSelect = document.getElementById('batch-select');
+            const batchStockInfo = document.getElementById('batch-stock-info');
+            batchSelect.innerHTML = '<option>Loading batches...</option>';
+            batchStockInfo.textContent = '';
+
+            // Fetch batches for the product
+            fetch(`get_batches.php?product_id=${productId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.batches.length > 0) {
+                        batchSelect.innerHTML = '';
+                        data.batches.forEach(batch => {
+                            const option = document.createElement('option');
+                            option.value = batch.batch_no;
+                            option.textContent = `${batch.batch_no} (Stock: ${batch.stock})`;
+                            option.dataset.stock = batch.stock;
+                            batchSelect.appendChild(option);
+                        });
+                        // Show stock for the first batch
+                        if(data.batches[0]) {
+                            batchStockInfo.textContent = `Available stock for this batch: ${data.batches[0].stock}`;
+                        }
+                    } else {
+                        batchSelect.innerHTML = '<option>No batches available</option>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching batches:', error);
+                    batchSelect.innerHTML = '<option>Error loading batches</option>';
+                });
+
+            batchSelect.onchange = function() {
+                const selectedOption = this.options[this.selectedIndex];
+                batchStockInfo.textContent = `Available stock for this batch: ${selectedOption.dataset.stock || 0}`;
+            };
+
+            batchModal.show();
+        }
+
 //        function addToCart(productId, productName, price, batch = null) {
-    function addToCart(productId, productName, price) {
-        const exchangeChecked = document.getElementById('exchangeCheckbox')?.checked;
+        function addToCart(productId, productName, price, batch = null) {
+    const exchangeChecked = document.getElementById('exchangeCheckbox')?.checked;
 
-        if (exchangeChecked) {
-            addExchangeToCart(productId, productName, price);
-            return;
-        }
-            // Get quantity from product input
-            const productElement = document.querySelector(`[onclick*="addToCart(${productId}"]`).closest('.product-item');
-            const quantityInput = productElement?.querySelector('.product-qty');
-            const quantity = parseInt(quantityInput?.value) || 1;
+    if (exchangeChecked) {
+        addExchangeToCart(productId, productName, price);
+        return;
+    }
 
-//            // If a batch is provided, open the modal flow. Otherwise, add directly.
-//            if (batch) {
-//                // This part is for adding from the main product grid
-//                const quantity = 1; // Always add 1 unit when using the batch modal
-//                // The rest of the logic for batch-based adding is in confirmAddToCart
-//            }
-//
-//            const quantity = 1; // Always add 1 unit when using the batch modal
-            // Add to database
-            fetch('cart_api.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `action=add&product_id=${productId}&quantity=${quantity}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    loadCart();
-                    if (quantityInput) quantityInput.value = 1;
-                    
-                    showToast('success', 'Success!', `${productName} added to cart!`);
-                } else {
-                    showToast('error', 'Error', data.message || 'Failed to add item to cart');
-                    loadCart();
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('error', 'Connection Error', 'Failed to add item to cart');
-                loadCart();
-            });
+    let quantity = 1;
+
+    // If adding from product grid (not batch modal)
+    if (!batch) {
+        const productElement = document.querySelector(`[onclick*="openBatchModal(${productId}"]`)?.closest('.product-item')
+                          || document.querySelector(`[onclick*="addToCart(${productId}"]`)?.closest('.product-item');
+
+        if (productElement) {
+            const quantityInput = productElement.querySelector('.product-qty');
+            quantity = parseInt(quantityInput?.value) || 1;
         }
+    }
+
+    // Build request body
+    let body = `action=add&product_id=${productId}&quantity=${quantity}`;
+    if (batch) {
+        body += `&batch=${encodeURIComponent(batch)}`;
+    }
+
+    // Add to database
+    fetch('cart_api.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: body
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadCart();
+            showToast('success', 'Success!', `${productName} added to cart!`);
+        } else {
+            showToast('error', 'Error', data.message || 'Failed to add item to cart');
+            loadCart();
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showToast('error', 'Connection Error', 'Failed to add item to cart');
+        loadCart();
+    });
+}
 
         // Function to handle adding to cart from the batch modal
-//        function confirmAddToCart() {
-//            const productId = document.getElementById('batch-product-id').value;
-//            const productName = document.getElementById('batch-product-name').textContent;
-//            const price = document.getElementById('batch-product-price').value;
-//            const batchSelect = document.getElementById('batch-select');
-//            const selectedBatch = batchSelect.value;
-//
-//            if (selectedBatch && selectedBatch !== 'No batches available' && selectedBatch !== 'Loading batches...') {
-//                addToCart(productId, productName, price, selectedBatch);
-//                const batchModal = bootstrap.Modal.getInstance(document.getElementById('batch-selection-modal'));
-//                batchModal.hide();
-//            } else {
-//                showToast('error', 'Error', 'Please select a valid batch.');
-//            }
-//        }
+        function confirmAddToCart() {
+            const productId = document.getElementById('batch-product-id').value;
+            const productName = document.getElementById('batch-product-name').textContent;
+            const price = document.getElementById('batch-product-price').value;
+            const batchSelect = document.getElementById('batch-select');
+            const selectedBatch = batchSelect.value;
+
+            if (selectedBatch && selectedBatch !== 'No batches available' && selectedBatch !== 'Loading batches...') {
+                addToCart(productId, productName, price, selectedBatch);
+                const batchModal = bootstrap.Modal.getInstance(document.getElementById('batch-selection-modal'));
+                batchModal.hide();
+            } else {
+                showToast('error', 'Error', 'Please select a valid batch.');
+            }
+        }
 
     // Assuming your API returns items with a property indicating exchange
     // Example for loading cart:
@@ -916,7 +916,7 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
             showToast('error', 'Connection Error', 'Failed to add exchange product');
         });
     }
-
+        
         // Function to update cart display
         function updateCartDisplay() {
             const cartContainer = document.getElementById('cartItems');
@@ -965,24 +965,24 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
                 if (cartItemsList) {
                     const exchangeLabel = item.is_exchange ? '' : '';
                     cartItemsList.innerHTML += `
-                    <tr>
-                    <td>
-                    <div class="d-flex align-items-center">
-                    <a class="delete-icon" href="javascript:void(0);" onclick="removeFromCart(${item.id})">
-                    <i class="ti ti-trash-x-filled"></i>
-                    </a>
-                    <h6 class="fs-13 fw-normal">${item.name}</h6>
-                    </div>
-                    </td>
-                    <td>
-                    <div class="qty-item m-0">
-                    <a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus" onclick="decreaseCartQuantity(${item.id})"><i class="ti ti-minus"></i></a>
-                    <input type="text" class="form-control text-center" name="qty" value="${item.quantity}" readonly>
-                    <a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseCartQuantity(${item.id})"><i class="ti ti-plus"></i></a>
-                    </div>
-                    </td>
-                    <td class="fs-13 fw-semibold text-gray-9 text-end">${itemTotal.toFixed(2)}</td>
-                    </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <a class="delete-icon" href="javascript:void(0);" onclick="removeFromCart(${item.id})">
+                                        <i class="ti ti-trash-x-filled"></i>
+                                    </a>
+                                    <h6 class="fs-13 fw-normal">${item.name}(${item.batch_code})</h6>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="qty-item m-0">
+                                    <a href="javascript:void(0);" class="dec d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="minus" onclick="decreaseCartQuantity(${item.id})"><i class="ti ti-minus"></i></a>
+                                    <input type="text" class="form-control text-center" name="qty" value="${item.quantity}" readonly>
+                                    <a href="javascript:void(0);" class="inc d-flex justify-content-center align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" title="plus" onclick="increaseCartQuantity(${item.id})"><i class="ti ti-plus"></i></a>
+                                </div>
+                            </td>
+                            <td class="fs-13 fw-semibold text-gray-9 text-end">${itemTotal.toFixed(2)}</td>
+                        </tr>
                     `;
                 }
             });
@@ -1095,26 +1095,26 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
                         discountValue = subtotal * (scheme.value / 100);
                         discountText = `${scheme.description}`;
                     } else { // Assuming 'flat'
-                    discountValue = scheme.value;
-                    discountText = `${scheme.description}`;
-                }
+                        discountValue = scheme.value;
+                        discountText = `${scheme.description}`;
+                    }
 
-                discountAmountEl.textContent = `-${discountValue.toFixed(2)}`;
+                    discountAmountEl.textContent = `-${discountValue.toFixed(2)}`;
 
                     // Show the discount item in the cart
                     discountContainer.innerHTML = `
-                    <div class="discount-item d-flex align-items-center justify-content-between bg-purple-transparent mt-3 flex-nowrap gap-2">
-                    <div class="d-flex align-items-center flex-grow-1 overflow-hidden">
-                    <span class="bg-purple discount-icon br-5 flex-shrink-0 me-2">
-                    <img src="assets/img/icons/discount-icon.svg" alt="img">
-                    </span>
-                    <div>
-                    <h6 class="fs-14 fw-bold text-purple mb-1">${discountText}</h6>
-                    <p class="mb-0">${scheme.name}</p>
-                    </div>
-                    </div>
-                    <a href="javascript:void(0);" class="close-icon" onclick="removeDiscount()"><i class="ti ti-trash"></i></a>
-                    </div>
+                        <div class="discount-item d-flex align-items-center justify-content-between bg-purple-transparent mt-3 flex-nowrap gap-2">
+                            <div class="d-flex align-items-center flex-grow-1 overflow-hidden">
+                                <span class="bg-purple discount-icon br-5 flex-shrink-0 me-2">
+                                    <img src="assets/img/icons/discount-icon.svg" alt="img">
+                                </span>
+                                <div>
+                                    <h6 class="fs-14 fw-bold text-purple mb-1">${discountText}</h6>
+                                    <p class="mb-0">${scheme.name}</p>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0);" class="close-icon" onclick="removeDiscount()"><i class="ti ti-trash"></i></a>
+                        </div>
                     `;
                     appliedDiscount = true;
                     break; // Apply only the first matching scheme
@@ -1149,8 +1149,8 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
 
             // Update buttons for confirmation
             buttonsEl.innerHTML = `
-            <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-            <button class="btn btn-danger" onclick="confirmAction()">Confirm</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmAction()">Confirm</button>
             `;
 
             // Store callback
@@ -1170,10 +1170,10 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
 
         // Function to clear cart
         function clearCart() {
-            showConfirmModal(
-                'Clear Cart',
-                'Are you sure you want to clear all items from the cart? This action cannot be undone.',
-                function() {
+    showConfirmModal(
+        'Clear Cart',
+        'Are you sure you want to clear all items from the cart? This action cannot be undone.',
+        function() {
             // On confirm
             fetch('cart_api.php', {
                 method: 'POST',
@@ -1197,12 +1197,12 @@ require_once __DIR__ . '/../partials/exchange-modal.php';
                 showModal('error', 'Connection Error', 'Failed to clear cart. Please check your connection.');
             });
         }
-        );
-        }
+    );
+}
 
-        function filterProducts(categoryId) {
-            console.log('Filtering by category:', categoryId);
-
+function filterProducts(categoryId) {
+    console.log('Filtering by category:', categoryId);
+    
     // Get all product items
     const productItems = document.querySelectorAll('.product-item');
     console.log('Total products found:', productItems.length);
@@ -1622,7 +1622,7 @@ function debugProducts() {
                 if (data.success) {
                     // Show success message
 //                    showModal('success', 'Order Placed', `Order placed successfully!\nOrder Number: ${data.order_number}\nTotal: ${data.total_amount.toFixed(2)}`);
-
+                    
                     // Clear cart from database
                     fetch('cart_api.php', {
                         method: 'POST',
@@ -1752,15 +1752,15 @@ function debugProducts() {
 
             // Update all payment modal totals
             const totalElements = [
-            'cash-total-amount',
-            'card-total-amount', 
-            'points-total-amount',
-            'deposit-total-amount',
-            'cheque-total-amount',
-            'gift-total-amount',
-            'scan-total-amount',
-            'split-total-amount',
-            'quick-total-amount'
+                'cash-total-amount',
+                'card-total-amount', 
+                'points-total-amount',
+                'deposit-total-amount',
+                'cheque-total-amount',
+                'gift-total-amount',
+                'scan-total-amount',
+                'split-total-amount',
+                'quick-total-amount'
             ];
 
             totalElements.forEach(id => {
@@ -1957,40 +1957,40 @@ function debugProducts() {
 
             // Now fetch and open the products modal
             fetch(window.location.pathname + '?action=getOrderItems&order_id=' + orderId)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok, status ' + response.status);
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data.products || data.products.length === 0) {
-                    showModal('error', 'No Products', 'No products found for this order.');
-                    return;
-                }
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok, status ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (!data.products || data.products.length === 0) {
+                        showModal('error', 'No Products', 'No products found for this order.');
+                        return;
+                    }
 
                     // Update modal header
                     document.querySelector('#products .badge').textContent =
-                    'Order ID : #' + (data.order_number || orderId);
+                        'Order ID : #' + (data.order_number || orderId);
                     document.querySelector('#products .fs-16').textContent =
-                    'Number of Products : ' + data.products.length;
+                        'Number of Products : ' + data.products.length;
 
                     // Build products HTML
                     let productsHtml = '';
                     data.products.forEach(p => {
                         productsHtml += `
-                        <div class="product-list bg-white align-items-center justify-content-between">
-                        <div class="d-flex align-items-center product-info">
-                        <a href="javascript:void(0);" class="pro-img">
-                        <img src="assets/img/products/${p.image || 'images(1).jpg'}" alt="${p.name || ''}">
-                        </a>
-                        <div class="info">
-                        <h6><a href="javascript:void(0);">${p.name || ''}</a></h6>
-                        <p>Quantity : ${p.quantity || 0}</p>
-                        </div>
-                        </div>
-                        <p class="text-teal fw-bold">${p.price !== undefined ? parseFloat(p.price).toFixed(2) : '0.00'}</p>
-                        </div>
+                            <div class="product-list bg-white align-items-center justify-content-between">
+                                <div class="d-flex align-items-center product-info">
+                                    <a href="javascript:void(0);" class="pro-img">
+                                        <img src="assets/img/products/${p.image || 'images(1).jpg'}" alt="${p.name || ''}">
+                                    </a>
+                                    <div class="info">
+                                        <h6><a href="javascript:void(0);">${p.name || ''}</a></h6>
+                                        <p>Quantity : ${p.quantity || 0}</p>
+                                    </div>
+                                </div>
+                                <p class="text-teal fw-bold">${p.price !== undefined ? parseFloat(p.price).toFixed(2) : '0.00'}</p>
+                            </div>
                         `;
                     });
 
@@ -2002,12 +2002,12 @@ function debugProducts() {
                     const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
                     setTimeout(() => modal.show(), 300); // <-- wait for animation to finish
                 })
-            .catch(err => {
-                console.error('Error loading order products:', err);
-                showModal('error', 'Load Error', 'Failed to load order products: ' + err.message);
-            });
+                .catch(err => {
+                    console.error('Error loading order products:', err);
+                    showModal('error', 'Load Error', 'Failed to load order products: ' + err.message);
+                });
         }
-
+    
         // Function to print order
         function printOrder(orderId) {
             // Implementation for printing order
@@ -2033,9 +2033,9 @@ function debugProducts() {
                 // Get customer info
                 const customerSelect = document.getElementById('customerSelect');
                 const customerName = customerSelect && customerSelect.value ? 
-                customerSelect.options[customerSelect.selectedIndex].text : 'Walk in Customer';
+                    customerSelect.options[customerSelect.selectedIndex].text : 'Walk in Customer';
                 const customerId = customerSelect && customerSelect.value ? 
-                '#' + customerSelect.value : '#WALKIN';
+                    '#' + customerSelect.value : '#WALKIN';
                 
                 // Generate invoice number
                 const invoiceNo = 'INV' + Date.now();
@@ -2055,12 +2055,12 @@ function debugProducts() {
                 
                 data.cart_items.forEach((item, index) => {
                     receiptItems.innerHTML += `
-                    <tr>
-                    <td>${index + 1}. ${item.name}</td>
-                    <td>${item.price.toFixed(2)}</td>
-                    <td>${item.quantity}</td>
-                    <td class="text-end">${item.total.toFixed(2)}</td>
-                    </tr>
+                        <tr>
+                            <td>${index + 1}. ${item.name}</td>
+                            <td>${item.price.toFixed(2)}</td>
+                            <td>${item.quantity}</td>
+                            <td class="text-end">${item.total.toFixed(2)}</td>
+                        </tr>
                     `;
                 });
                 
@@ -2135,7 +2135,7 @@ function debugProducts() {
     document.getElementById('cash-received').addEventListener('input', calculateCashChange);
     document.getElementById('split-amount-1').addEventListener('input', calculateSplitAmounts);
     
-
+            
             // Update payment modal totals when cart changes
             const observer = new MutationObserver(function(mutations) {
                 mutations.forEach(function(mutation) {
@@ -2153,14 +2153,14 @@ function debugProducts() {
         });
         
         function updateCustomerInfo() {
-            const select = document.getElementById('customerSelect');
-            const customerDetails = document.getElementById('customerDetails');
-            const customerName = document.getElementById('customerName');
-            const customerBonus = document.getElementById('customerBonus');
-            const customerLoyalty = document.getElementById('customerLoyalty');
+    const select = document.getElementById('customerSelect');
+    const customerDetails = document.getElementById('customerDetails');
+    const customerName = document.getElementById('customerName');
+    const customerBonus = document.getElementById('customerBonus');
+    const customerLoyalty = document.getElementById('customerLoyalty');
 
-            const selectedOption = select.options[select.selectedIndex];
-            const selectedValue = select.value;
+    const selectedOption = select.options[select.selectedIndex];
+    const selectedValue = select.value;
 
     // Hide details if no customer or walk-in selected
     if (selectedValue === '' || selectedValue === 'walkin') {
@@ -2228,30 +2228,30 @@ function displayOrders(orders, containerId) {
         
         // Add revive button only for hold orders (containerId === 'onhold')
         const reviveButton = containerId === 'onhold' ? 
-        `<a href="javascript:void(0);" class="btn btn-md btn-success" onclick="reviveOrder(${order.id})">Revive Order</a>` : '';
+            `<a href="javascript:void(0);" class="btn btn-md btn-success" onclick="reviveOrder(${order.id})">Revive Order</a>` : '';
         
         html += `
-        <div class="card bg-light mb-3">
-        <div class="card-body">
-        <span class="badge bg-dark fs-12 mb-2">Order ID : ${order.order_number || '#' + order.id}</span>
-        <div class="row g-3">
-        <div class="col-md-6">
-        <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> ${order.cashier_name || 'N/A'}</p>
-        <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> ${parseFloat(order.total_amount).toFixed(2)}</p>
-        </div>
-        <div class="col-md-6">
-        <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span> ${order.customer_name || 'Walk-in'}</p>
-        <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Date :</span> ${date}</p>
-        </div>
-        </div>
-        ${notes}
-        <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
-        <a href="javascript:void(0);" class="btn btn-md btn-teal" onclick="viewOrderProducts(${order.id})">View Products</a>
-        <a href="javascript:void(0);" class="btn btn-md btn-indigo" onclick="printOrder(${order.id})">Print</a>
-        ${reviveButton}
-        </div>
-        </div>
-        </div>
+            <div class="card bg-light mb-3">
+                <div class="card-body">
+                    <span class="badge bg-dark fs-12 mb-2">Order ID : ${order.order_number || '#' + order.id}</span>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Cashier :</span> ${order.cashier_name || 'N/A'}</p>
+                            <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Total :</span> ${parseFloat(order.total_amount).toFixed(2)}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="fs-15 mb-1"><span class="fs-14 fw-bold text-gray-9">Customer :</span> ${order.customer_name || 'Walk-in'}</p>
+                            <p class="fs-15"><span class="fs-14 fw-bold text-gray-9">Date :</span> ${date}</p>
+                        </div>
+                    </div>
+                    ${notes}
+                    <div class="d-flex align-items-center justify-content-center flex-wrap gap-2">
+                        <a href="javascript:void(0);" class="btn btn-md btn-teal" onclick="viewOrderProducts(${order.id})">View Products</a>
+                        <a href="javascript:void(0);" class="btn btn-md btn-indigo" onclick="printOrder(${order.id})">Print</a>
+                        ${reviveButton}
+                    </div>
+                </div>
+            </div>
         `;
     });
     
@@ -2495,7 +2495,7 @@ function reviveOrder(orderId) {
                     proceedReviveOrder(orderId);
                 });
             }
-            );
+        );
     } else {
         proceedReviveOrder(orderId);
     }
@@ -2557,7 +2557,7 @@ function openExchange() {
     // Load return items and exchange products
 //    loadReturnItems();
 //    loadExchangeProducts();
-
+    
     // Show modal
 //    const exchangeModal = new bootstrap.Modal(document.getElementById('exchange-modal'));
 //    exchangeModal.show();
@@ -2570,15 +2570,15 @@ function loadReturnItems() {
     
     cart.forEach(item => {
         html += `
-        <div class="p-2 border rounded mb-2">
-        <div class="d-flex justify-content-between align-items-center">
-        <div>
-        <strong>${item.name}</strong><br>
-        <small>Qty: ${item.quantity} × ${item.price.toFixed(2)}</small>
-        </div>
-        <span class="fw-bold">${(item.quantity * item.price).toFixed(2)}</span>
-        </div>
-        </div>
+            <div class="p-2 border rounded mb-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>Qty: ${item.quantity} × ${item.price.toFixed(2)}</small>
+                    </div>
+                    <span class="fw-bold">${(item.quantity * item.price).toFixed(2)}</span>
+                </div>
+            </div>
         `;
     });
     
@@ -2610,23 +2610,23 @@ function displayExchangeProducts(products) {
     
     products.forEach(product => {
         html += `
-        <div class="card mb-2">
-        <div class="card-body p-2">
-        <div class="d-flex align-items-center">
-        <img src="assets/img/products/${product.image || 'images(1).jpg'}" alt="${product.name}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;">
-        <div class="flex-grow-1">
-        <h6 class="mb-1">${product.name}</h6>
-        <small class="text-muted">Price: ${parseFloat(product.price).toFixed(2)}</small>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-        <input type="number" class="form-control form-control-sm" style="width: 60px;" min="0" value="0" id="exchange-qty-${product.id}" onchange="updateExchangeSelection()">
-        <button class="btn btn-sm btn-primary" onclick="addToExchange(${product.id}, '${product.name}', ${product.price})">
-        <i class="ti ti-plus"></i>
-        </button>
-        </div>
-        </div>
-        </div>
-        </div>
+            <div class="card mb-2">
+                <div class="card-body p-2">
+                    <div class="d-flex align-items-center">
+                        <img src="assets/img/products/${product.image || 'images(1).jpg'}" alt="${product.name}" class="me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${product.name}</h6>
+                            <small class="text-muted">Price: ${parseFloat(product.price).toFixed(2)}</small>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="number" class="form-control form-control-sm" style="width: 60px;" min="0" value="0" id="exchange-qty-${product.id}" onchange="updateExchangeSelection()">
+                            <button class="btn btn-sm btn-primary" onclick="addToExchange(${product.id}, '${product.name}', ${product.price})">
+                                <i class="ti ti-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `;
     });
     
@@ -2720,10 +2720,10 @@ function updateSelectedExchangeList() {
     
     if (exchangeItems.length === 0) {
         container.innerHTML = `
-        <div class="text-center text-muted p-3">
-        <i class="ti ti-package fs-24 mb-2"></i>
-        <p class="mb-0">No exchange products selected</p>
-        </div>
+            <div class="text-center text-muted p-3">
+                <i class="ti ti-package fs-24 mb-2"></i>
+                <p class="mb-0">No exchange products selected</p>
+            </div>
         `;
         return;
     }
@@ -2731,23 +2731,23 @@ function updateSelectedExchangeList() {
     let html = '';
     exchangeItems.forEach((item, index) => {
         html += `
-        <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-2">
-        <div class="d-flex align-items-center">
-        <span class="badge bg-success me-2">
-        <i class="ti ti-refresh"></i>
-        </span>
-        <div>
-        <h6 class="mb-1">${item.name}</h6>
-        <small class="text-muted">Qty: ${item.quantity} × ${item.price.toFixed(2)}</small>
-        </div>
-        </div>
-        <div class="d-flex align-items-center gap-2">
-        <span class="fw-bold text-success">${(item.price * item.quantity).toFixed(2)}</span>
-        <button class="btn btn-sm btn-outline-danger" onclick="removeExchangeItem(${index})">
-        <i class="ti ti-x"></i>
-        </button>
-        </div>
-        </div>
+            <div class="d-flex justify-content-between align-items-center p-2 border rounded mb-2">
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-success me-2">
+                        <i class="ti ti-refresh"></i>
+                    </span>
+                    <div>
+                        <h6 class="mb-1">${item.name}</h6>
+                        <small class="text-muted">Qty: ${item.quantity} × ${item.price.toFixed(2)}</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-success">${(item.price * item.quantity).toFixed(2)}</span>
+                    <button class="btn btn-sm btn-outline-danger" onclick="removeExchangeItem(${index})">
+                        <i class="ti ti-x"></i>
+                    </button>
+                </div>
+            </div>
         `;
     });
     
@@ -3000,464 +3000,464 @@ function filterOnlineOrders() {
     order.style.display = order.innerText.toLowerCase().includes(input) ? "" : "none";
 });
 }
-</script>
-<style>
-    /* Modal Styles */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        animation: fadeIn 0.3s ease;
-    }
-
-    .custom-modal {
-        background: white;
-        border-radius: 12px;
-        padding: 24px;
-        max-width: 400px;
-        width: 90%;
-        max-height: 90vh;
-        overflow-y: auto;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        animation: slideIn 0.3s ease;
-        margin: auto;
-    }
-
-    .modal-header {
-        display: flex;
-        align-items: center;
-        margin-bottom: 16px;
-    }
-
-    .modal-icon {
-        width: 24px;
-        height: 24px;
-        margin-right: 12px;
-    }
-
-    .modal-icon.success {
-        color: #10b981;
-    }
-
-    .modal-icon.error {
-        color: #ef4444;
-    }
-
-    .modal-icon.warning {
-        color: #f59e0b;
-    }
-
-    .btn-danger {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #dc2626;
-    }
-
-    .modal-title {
-        font-size: 18px;
-        font-weight: 600;
-        margin: 0;
-    }
-
-    .modal-message {
-        color: #6b7280;
-        margin-bottom: 20px;
-        line-height: 1.5;
-    }
-
-    .modal-buttons {
-        display: flex;
-        gap: 12px;
-        justify-content: flex-end;
-    }
-
-    .btn {
-        padding: 8px 16px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-
-    .btn-primary {
-        background: #3b82f6;
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: #2563eb;
-    }
-
-    .btn-secondary {
-        background: #f3f4f6;
-        color: #374151;
-    }
-
-    .btn-secondary:hover {
-        background: #e5e7eb;
-    }
-
-    /* Toast Notification Styles */
-    .toast-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 1000;
-    }
-
-    .toast {
-        background: white;
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 12px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        display: flex;
-        align-items: center;
-        min-width: 300px;
-        animation: slideInRight 0.3s ease;
-        border-left: 4px solid #10b981;
-    }
-
-    .toast.error {
-        border-left-color: #ef4444;
-    }
-
-    .toast-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 12px;
-        flex-shrink: 0;
-    }
-
-    .toast-content {
-        flex: 1;
-    }
-
-    .toast-title {
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-
-    .toast-message {
-        color: #6b7280;
-        font-size: 14px;
-    }
-
-    .toast-close {
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 4px;
-        margin-left: 12px;
-        color: #9ca3af;
-    }
-
-    .toast-close:hover {
-        color: #374151;
-    }
-
-    /* Animations */
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    @keyframes slideIn {
-        from {
-            opacity: 0;
-            transform: translateY(-20px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-
-    @keyframes slideInRight {
-        from {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slideOutRight {
-        from {
-            opacity: 1;
-            transform: translateX(0);
-        }
-        to {
-            opacity: 0;
-            transform: translateX(100%);
-        }
-    }
-
-    /* Demo styles */
-    .demo-section {
-        padding: 20px;
-        margin: 20px 0;
-        border: 1px solid #e5e7eb;
-        border-radius: 8px;
-    }
-
-    .demo-buttons {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    h2 {
-        margin-top: 0;
-        color: #374151;
-    }
-
-    .btn-purple {
-        background-color: #8b5cf6 !important;
-        border-color: #8b5cf6 !important;
-        color: white !important;
-    }
-
-    .btn-purple:hover {
-        background-color: #7c3aed !important;
-        border-color: #7c3aed !important;
-    }
-
-    /* Schemes Modal Styles */
-    .bg-gradient-purple {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-    }
-
-    .scheme-icon-wrapper {
-        width: 50px;
-        height: 50px;
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .empty-state .empty-icon {
-        width: 80px;
-        height: 80px;
-        background: #f8fafc;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-    }
-
-    .empty-state .empty-icon i {
-        font-size: 32px;
-        color: #cbd5e1;
-    }
-
-    .schemes-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 20px;
-    }
-
-    .scheme-card {
-        background: #fff;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-
-    .scheme-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        border-color: #8b5cf6;
-    }
-
-    .scheme-header {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        padding: 12px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .discount-badge {
-        background: rgba(255, 255, 255, 0.2);
-        border-radius: 8px;
-        padding: 8px 12px;
-        text-align: center;
-        backdrop-filter: blur(10px);
-    }
-
-    .discount-value {
-        display: inline;
-        font-size: 16px;
-        font-weight: 700;
-        color: white;
-        line-height: 1;
-    }
-
-    .discount-text {
-        display: inline;
-        font-size: 16px;
-        font-weight: 700;
-        color: white;
-        margin-left: 2px;
-    }
-
-    .status-badge {
-        background: rgba(16, 185, 129, 0.2);
-        color: #10b981;
-        padding: 6px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        backdrop-filter: blur(10px);
-    }
-
-    .scheme-body {
-        padding: 24px;
-    }
-
-    .scheme-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 8px;
-    }
-
-    .scheme-description {
-        color: #64748b;
-        font-size: 14px;
-        line-height: 1.5;
-        margin-bottom: 20px;
-    }
-
-    .scheme-details {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-
-    .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 13px;
-        color: #475569;
-    }
-
-    .detail-item i {
-        width: 16px;
-        height: 16px;
-        color: #8b5cf6;
-        flex-shrink: 0;
-    }
-
-    .scheme-footer {
-        padding: 16px 24px;
-        background: #f8fafc;
-        border-top: 1px solid #e2e8f0;
-    }
-
-    .auto-apply-text {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: #10b981;
-        font-weight: 500;
-    }
-
-    .auto-apply-text i {
-        font-size: 14px;
-    }
-
-    /* Close button styling */
-    #schemes-modal .btn-close {
-        background: rgba(255, 255, 255, 0.3) !important;
-        border-radius: 50% !important;
-        width: 32px !important;
-        height: 32px !important;
-        opacity: 1 !important;
-    }
-
-    #schemes-modal .btn-close:hover {
-        background: rgba(255, 255, 255, 0.5) !important;
-    }
-
-    /* Product stock badge styling */
-    .product-info .badge {
-        border-radius: 6px !important;
-        font-size: 11px !important;
-        padding: 4px 8px !important;
-    }
-
-    @media (max-width: 768px) {
-        .schemes-grid {
-            grid-template-columns: 1fr;
+    </script>
+    <style>
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeIn 0.3s ease;
         }
 
-        .scheme-header {
+        .custom-modal {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            animation: slideIn 0.3s ease;
+            margin: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+
+        .modal-icon.success {
+            color: #10b981;
+        }
+
+        .modal-icon.error {
+            color: #ef4444;
+        }
+
+        .modal-icon.warning {
+            color: #f59e0b;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-message {
+            color: #6b7280;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        /* Toast Notification Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
             padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            min-width: 300px;
+            animation: slideInRight 0.3s ease;
+            border-left: 4px solid #10b981;
         }
 
-        .scheme-body {
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .toast-message {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            margin-left: 12px;
+            color: #9ca3af;
+        }
+
+        .toast-close:hover {
+            color: #374151;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* Demo styles */
+        .demo-section {
             padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
         }
-    }
 
-    .product-item {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .product-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .product-info {
-        border-radius: 12px;
-        padding: 12px;
-    }
-    .product-info .price p {
-        font-size: 18px;
-        color: #222;
-    }
-    .badge {
-        font-size: 12px;
-        padding: 6px 10px;
-        border-radius: 20px;
-    }
-    .stock-warning small {
-        font-weight: 600;
-        display: inline-block;
-        margin-top: 4px;
-    }
+        .demo-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
 
-    #exchangeCheckbox:checked + label {
-      background-color: #198754 !important; /* Bootstrap success green */
-      border-color: #198754 !important;
-      color: #fff !important;
-  }
+        h2 {
+            margin-top: 0;
+            color: #374151;
+        }
+        
+        .btn-purple {
+            background-color: #8b5cf6 !important;
+            border-color: #8b5cf6 !important;
+            color: white !important;
+        }
+        
+        .btn-purple:hover {
+            background-color: #7c3aed !important;
+            border-color: #7c3aed !important;
+        }
+        
+        /* Schemes Modal Styles */
+        .bg-gradient-purple {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+        
+        .scheme-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .empty-state .empty-icon {
+            width: 80px;
+            height: 80px;
+            background: #f8fafc;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+        }
+        
+        .empty-state .empty-icon i {
+            font-size: 32px;
+            color: #cbd5e1;
+        }
+        
+        .schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        
+        .scheme-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .scheme-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-color: #8b5cf6;
+        }
+        
+        .scheme-header {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .discount-badge {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .discount-value {
+            display: inline;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+        
+        .discount-text {
+            display: inline;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            margin-left: 2px;
+        }
+        
+        .status-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .scheme-body {
+            padding: 24px;
+        }
+        
+        .scheme-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .scheme-description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .scheme-details {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #475569;
+        }
+        
+        .detail-item i {
+            width: 16px;
+            height: 16px;
+            color: #8b5cf6;
+            flex-shrink: 0;
+        }
+        
+        .scheme-footer {
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .auto-apply-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 500;
+        }
+        
+        .auto-apply-text i {
+            font-size: 14px;
+        }
+        
+        /* Close button styling */
+        #schemes-modal .btn-close {
+            background: rgba(255, 255, 255, 0.3) !important;
+            border-radius: 50% !important;
+            width: 32px !important;
+            height: 32px !important;
+            opacity: 1 !important;
+        }
+        
+        #schemes-modal .btn-close:hover {
+            background: rgba(255, 255, 255, 0.5) !important;
+        }
+        
+        /* Product stock badge styling */
+        .product-info .badge {
+            border-radius: 6px !important;
+            font-size: 11px !important;
+            padding: 4px 8px !important;
+        }
+        
+        @media (max-width: 768px) {
+            .schemes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .scheme-header {
+                padding: 16px;
+            }
+            
+            .scheme-body {
+                padding: 20px;
+            }
+        }
 
-  /* Order Card */
+        .product-item {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .product-info {
+            border-radius: 12px;
+            padding: 12px;
+        }
+        .product-info .price p {
+            font-size: 18px;
+            color: #222;
+        }
+        .badge {
+            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 20px;
+        }
+        .stock-warning small {
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        #exchangeCheckbox:checked + label {
+  background-color: #198754 !important; /* Bootstrap success green */
+  border-color: #198754 !important;
+  color: #fff !important;
+}
+
+/* Order Card */
   .order-card {
       transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
@@ -3499,7 +3499,7 @@ function filterOnlineOrders() {
     }
 }
 
-</style>
+    </style>
 
 <?php
 $content = ob_get_clean();

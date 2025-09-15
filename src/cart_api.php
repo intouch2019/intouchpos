@@ -38,68 +38,69 @@ switch ($action) {
 
 function addToCart($link, $user_id) {
     $product_id = intval($_POST['product_id'] ?? 0);
-    $quantity = intval($_POST['quantity'] ?? 1);
-    
-    if ($product_id <= 0 || $quantity <= 0) {
-        echo json_encode(['success' => false, 'message' => 'Invalid product or quantity']);
-        return;
-    }
-    
-    // Check if product exists and get stock
-    $product_sql = "SELECT stock_quantity FROM products WHERE id = ? AND is_active = 1";
-    $stmt = mysqli_prepare($link, $product_sql);
-    mysqli_stmt_bind_param($stmt, "i", $product_id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    
-    if (!$product = mysqli_fetch_assoc($result)) {
-        echo json_encode(['success' => false, 'message' => 'Product not found']);
+    $quantity   = intval($_POST['quantity'] ?? 1);
+    $batch_code = trim($_POST['batch'] ?? '');
+
+    if ($product_id <= 0 || $quantity <= 0 || $batch_code === '') {
+        echo json_encode(['success' => false, 'message' => 'Invalid product, quantity, or batch']);
         return;
     }
 
-    // Ensure stock_quantity is treated as number
-    $stock_quantity = (int)$product['stock_quantity'];
+    // Validate batch exists & get stock
+    $batch_sql = "SELECT stock_quantity FROM product_batches WHERE product_id = ? AND batch_code = ?";
+    $stmt = mysqli_prepare($link, $batch_sql);
+    mysqli_stmt_bind_param($stmt, "is", $product_id, $batch_code);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if (!$batch = mysqli_fetch_assoc($result)) {
+        echo json_encode(['success' => false, 'message' => 'Batch not found']);
+        return;
+    }
+
+    $stock_quantity = (int)$batch['stock_quantity'];
 
     if ($stock_quantity <= 0) {
-        echo json_encode(['success' => false, 'message' => 'Product is out of stock']);
+        echo json_encode(['success' => false, 'message' => 'Batch is out of stock']);
         return;
     }
-    
-    // Check if item already exists in cart
-    $check_sql = "SELECT quantity FROM cart WHERE user_id = ? AND product_id = ?";
+
+    // Check if item with same batch already exists in cart
+    $check_sql = "SELECT quantity FROM cart WHERE user_id = ? AND product_id = ? AND batch_code = ?";
     $stmt = mysqli_prepare($link, $check_sql);
-    mysqli_stmt_bind_param($stmt, "ii", $user_id, $product_id);
+    mysqli_stmt_bind_param($stmt, "iis", $user_id, $product_id, $batch_code);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
-    
+
     if ($existing = mysqli_fetch_assoc($result)) {
-        // Update existing item
         $new_quantity = $existing['quantity'] + $quantity;
         if ($new_quantity > $stock_quantity) {
-            echo json_encode(['success' => false, 'message' => 'Not enough stock available']);
+            echo json_encode(['success' => false, 'message' => 'Not enough stock in this batch']);
             return;
         }
-        
-        $update_sql = "UPDATE cart SET quantity = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND product_id = ?";
+
+        $update_sql = "UPDATE cart 
+                       SET quantity = ?, updated_at = CURRENT_TIMESTAMP 
+                       WHERE user_id = ? AND product_id = ? AND batch_code = ?";
         $stmt = mysqli_prepare($link, $update_sql);
-        mysqli_stmt_bind_param($stmt, "iii", $new_quantity, $user_id, $product_id);
-        
+        mysqli_stmt_bind_param($stmt, "iiis", $new_quantity, $user_id, $product_id, $batch_code);
+
         if (mysqli_stmt_execute($stmt)) {
             echo json_encode(['success' => true, 'message' => 'Cart updated']);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to update cart']);
         }
     } else {
-        // Add new item
         if ($quantity > $stock_quantity) {
-            echo json_encode(['success' => false, 'message' => 'Not enough stock available']);
+            echo json_encode(['success' => false, 'message' => 'Not enough stock in this batch']);
             return;
         }
-        
-        $insert_sql = "INSERT INTO cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
+
+        $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, batch_code) 
+                       VALUES (?, ?, ?, ?)";
         $stmt = mysqli_prepare($link, $insert_sql);
-        mysqli_stmt_bind_param($stmt, "iii", $user_id, $product_id, $quantity);
-        
+        mysqli_stmt_bind_param($stmt, "iiis", $user_id, $product_id, $quantity, $batch_code);
+
         if (mysqli_stmt_execute($stmt)) {
             echo json_encode(['success' => true, 'message' => 'Item added to cart']);
         } else {
@@ -201,7 +202,7 @@ function clearCart($link, $user_id) {
 function getCart($link, $user_id) {
     // Get regular products
 //    $sql = "SELECT c.*, p.name, p.price, p.image, p.stock_quantity, c.batch
-    $sql = "SELECT c.*, p.name, p.price, p.image, p.stock_quantity 
+    $sql = "SELECT c.*, p.name, p.price, p.image, p.stock_quantity
             FROM cart c 
             JOIN products p ON c.product_id = p.id 
             WHERE c.user_id = ? AND c.exchange_name IS NULL AND p.is_active = 1 
@@ -217,6 +218,7 @@ function getCart($link, $user_id) {
         $cart_items[] = [
             'id' => $row['product_id'],
             'name' => $row['name'],
+            'batch_code' => $row['batch_code'],
             'price' => floatval($row['price']),
             'quantity' => intval($row['quantity']),
             'image' => $row['image'],
@@ -236,6 +238,7 @@ function getCart($link, $user_id) {
         $cart_items[] = [
             'id' => $row['product_id'], // This will be negative for exchange items
             'name' => $row['exchange_name'],
+            'batch_code' => $row['batch_code'],
             'price' => floatval($row['exchange_price']),
             'quantity' => intval($row['quantity']),
             'image' => 'exchange.png',
