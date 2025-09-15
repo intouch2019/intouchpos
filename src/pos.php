@@ -2943,7 +2943,7 @@ function reviveOnlineOrder(orderId) {
             }
 
             // Close orders modal
-            const ordersModal = bootstrap.Modal.getInstance(document.getElementById('online-orders'));
+            const ordersModal = bootstrap.Modal.getInstance(document.getElementById('onlineorders'));
             if (ordersModal) {
                 ordersModal.hide();
             }
@@ -3133,7 +3133,6 @@ function filterOnlineOrders() {
         order.style.display = order.innerText.toLowerCase().includes(input) ? "" : "none";
     });
 }
-
 
 </script>
 <style>
