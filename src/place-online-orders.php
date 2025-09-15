@@ -144,7 +144,8 @@ $products = mysqli_query($link, "SELECT p.*, c.name as category_name
                     <div class="modal-body">
                         <h6 class="fw-semibold">👤 Customer Details</h6>
                         <input type="text" name="name" class="form-control mb-2" placeholder="Full Name" required>
-                        <input type="text" name="phone" class="form-control mb-2" placeholder="Phone" required>
+                        <input type="text" name="phone" id="phoneInput" class="form-control mb-2" placeholder="Phone" required>
+                        <div id="addressList"></div>
                         <input type="email" name="email" class="form-control mb-2" placeholder="Email">
                         <textarea name="address" class="form-control mb-2" placeholder="Full Address" required></textarea>
                         <div class="row">
@@ -174,6 +175,71 @@ $products = mysqli_query($link, "SELECT p.*, c.name as category_name
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+
+document.getElementById('phoneInput').addEventListener('blur', function() {
+    let phone = this.value.trim();
+    if (phone.length >= 8) {
+        fetch('get-customer.php?phone=' + phone)
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                let c = data.data;
+                document.querySelector('[name="name"]').value = c.name || '';
+                document.querySelector('[name="email"]').value = c.email || '';
+
+                let addressListDiv = document.getElementById('addressList');
+                addressListDiv.innerHTML = "";
+
+                if (c.addresses && c.addresses.length > 0) {
+                    let html = `<h6 class="fw-semibold mb-3" style="font-size:13px;">📍 Select Saved Address</h6><div class="row g-3">`;
+                    c.addresses.forEach(addr => {
+                        html += `
+                          <div class="col-md-6">
+                            <div class="card address-card shadow-sm border rounded p-3 h-100">
+                              <div class="form-check d-flex align-items-start">
+                                <input class="form-check-input me-2" type="radio" name="address_id" value="${addr.id}" id="addr${addr.id}">
+                                <label class="form-check-label w-100" for="addr${addr.id}">
+                                  <div class="fw-semibold" style="font-size:13px;">${addr.address}</div>
+                                  <small class="text-muted" style="font-size:12px;">${addr.city}, ${addr.state} - ${addr.pincode}</small>
+                                  ${addr.is_default == 1 ? '<div><span class="badge bg-success mt-2" style="font-size:10px;">Default</span></div>' : ''}
+                                </label>
+                              </div>
+                            </div>
+                          </div>`;
+                    });
+                    html += `</div>`;
+                    addressListDiv.innerHTML = html;
+
+                    let addressEdited = false;
+
+                    // When address selected → autofill form
+                    document.querySelectorAll('input[name="address_id"]').forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            if (!addressEdited) { // only autofill if not edited
+                                let selected = c.addresses.find(a => a.id == this.value);
+                                if (selected) {
+                                    document.querySelector('[name="address"]').value = selected.address || '';
+                                    document.querySelector('[name="city"]').value = selected.city || '';
+                                    document.querySelector('[name="state"]').value = selected.state || '';
+                                    document.querySelector('[name="pincode"]').value = selected.pincode || '';
+                                }
+                            }
+                        });
+                    });
+
+                    // If customer edits any field manually → deselect radio
+                    ['address','city','state','pincode'].forEach(field => {
+                        document.querySelector(`[name="${field}"]`).addEventListener('input', function() {
+                            addressEdited = true;
+                            let selectedRadio = document.querySelector('input[name="address_id"]:checked');
+                            if (selectedRadio) selectedRadio.checked = false;
+                        });
+                    });
+                }
+            }
+        });
+    }
+});
 
             // Category filter
             document.querySelectorAll('#categoryFilter button').forEach(btn=>{
