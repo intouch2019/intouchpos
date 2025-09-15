@@ -21375,6 +21375,7 @@ $page = end( $link_array );
 	<!-- /Orders -->
 
 	<!--POS online Orders -->
+
 	<div class="modal fade pos-modal" id="onlineorders" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog modal-md modal-dialog-centered" role="document">
     <div class="modal-content">

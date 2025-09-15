@@ -9,7 +9,7 @@ try {
     
     $sql = "SELECT o.*, c.name as customer_name 
             FROM online_orders o 
-            LEFT JOIN customers c ON o.customer_id = c.id  
+            LEFT JOIN customers c ON o.customer_id = c.id WHERE o.status = 'Pending'
             ORDER BY o.created_at DESC 
             LIMIT 20";
     
@@ -27,8 +27,7 @@ try {
     echo json_encode([
         'success' => true,
         'orders' => $orders,
-        'count' => count($orders),
-        'sql' => $sql
+        'count' => count($orders)
     ]);
     
 } catch (Exception $e) {
