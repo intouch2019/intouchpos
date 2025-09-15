@@ -53,7 +53,7 @@ try {
     
     // Generate order number
     $order_number = 'ORD' . date('Ymd') . sprintf('%04d', rand(1, 9999));
-    
+
     // Prepare order data
     $customer_id = $data['customer_id'] === 'walkin' ? null : (int)$data['customer_id'];
     $payment_method = mysqli_real_escape_string($link, $data['payment_method']);
@@ -133,7 +133,7 @@ foreach ($data['cart_items'] as $item) {
     $quantity    = (int)$item['quantity'];
     $unit_price  = (float)$item['price'];
     $total_price = $unit_price * $quantity;
-    $batch_code = $item['batch'] ?? null;
+    $batch_code = $item['batch_code'] ?? "";
 
     if (!$batch_code) {
     // Auto-pick earliest expiry batch with stock
@@ -156,26 +156,27 @@ foreach ($data['cart_items'] as $item) {
     $batch_code = $auto_batch['batch_code'];
 }
 
+    $real_product_id = abs($product_id);
     // Validate batch exists and has enough stock
     $check_sql = "SELECT stock_quantity FROM product_batches WHERE product_id = ? AND batch_code = ?";
     $check_stmt = mysqli_prepare($link, $check_sql);
-    mysqli_stmt_bind_param($check_stmt, 'is', $product_id, $batch_code);
+    mysqli_stmt_bind_param($check_stmt, 'is', $real_product_id, $batch_code);
     mysqli_stmt_execute($check_stmt);
     $result = mysqli_stmt_get_result($check_stmt);
     $batch = mysqli_fetch_assoc($result);
     mysqli_stmt_close($check_stmt);
 
     if (!$batch) {
-        throw new Exception("Batch $batch_code not found for product ID $product_id");
+        throw new Exception("Batch $batch_code not found for product ID $real_product_id, $batch_code");
     }
     if ($batch['stock_quantity'] < $quantity) {
-        throw new Exception("Insufficient stock in batch $batch_code for product ID $product_id. Available: {$batch['stock_quantity']}, Required: $quantity");
+        throw new Exception("Insufficient stock in batch $batch_code for product ID $real_product_id. Available: {$batch['stock_quantity']}, Required: $quantity");
     }
 
     // Insert order item
     mysqli_stmt_bind_param($item_stmt, 'iisidd', 
         $order_id, 
-        $product_id, 
+        $real_product_id, 
         $batch_code, 
         $quantity, 
         $unit_price, 
@@ -185,19 +186,31 @@ foreach ($data['cart_items'] as $item) {
         throw new Exception('Failed to insert order item: ' . mysqli_stmt_error($item_stmt));
     }
 
-    // Update stock from product_batches
-    mysqli_stmt_bind_param($batch_stock_stmt, 'iisi', 
-        $quantity, 
-        $product_id, 
-        $batch_code, 
-        $quantity
-    );
+    // Update exchange stock from product_batches
+    if (isset($item['is_exchange']) && $item['is_exchange'] == 1) {
+        $neg_qty = -$quantity;
+        // Handle exchange item
+        mysqli_stmt_bind_param($batch_stock_stmt, 'iisi', 
+            $neg_qty,
+            $real_product_id, 
+            $batch_code,
+            $quantity
+        );
+    }else{
+        // Update stock from product_batches
+        mysqli_stmt_bind_param($batch_stock_stmt, 'iisi', 
+            $quantity, 
+            $real_product_id, 
+            $batch_code, 
+            $quantity
+        );
+    }
     if (!mysqli_stmt_execute($batch_stock_stmt)) {
         throw new Exception('Failed to update batch stock: ' . mysqli_stmt_error($batch_stock_stmt));
     }
 
     if (mysqli_stmt_affected_rows($batch_stock_stmt) === 0) {
-        throw new Exception("Failed to update stock for batch $batch_code of product ID $product_id - insufficient quantity");
+        throw new Exception("Failed to update stock for batch $batch_code of product ID $real_product_id - insufficient quantity");
     }
 }
 
