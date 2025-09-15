@@ -215,7 +215,7 @@ function numberToWords($number) {
                                     <?php foreach ($order_items as $item): ?>
                                     <tr>
                                         <td>
-                                            <h6><?php echo htmlspecialchars($item['product_name']) . ($item['is_exchange'] ? ' (Exchange)' : ''); ?></h6>
+                                            <h6><?php echo htmlspecialchars($item['product_name']) . ($item['is_exchange'] ? ' (Exchange)' : ''); echo ' ('. $item['batch_code'] .') ' ;  ?></h6>
                                             <?php if (!empty($item['product_description'])): ?>
                                             <small class="text-muted"><?php echo htmlspecialchars($item['product_description']); ?></small>
                                             <?php endif; ?>
