@@ -85,12 +85,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $countToday = $row['count'] + 1;
         $order_number = "ORD-" . $datePrefix . "-" . str_pad($countToday, 5, "0", STR_PAD_LEFT);
 
+        // 🔍 Find store by pincode
+        $sqlStore = "SELECT id FROM users WHERE pincode = ? AND role = 'admin' AND is_active = 1 LIMIT 1";
+        $stmtStore = mysqli_prepare($link, $sqlStore);
+        mysqli_stmt_bind_param($stmtStore, "s", $pincode);
+        mysqli_stmt_execute($stmtStore);
+        $resultStore = mysqli_stmt_get_result($stmtStore);
+        $store = mysqli_fetch_assoc($resultStore);
+
+        if (!$store) {
+            throw new Exception("No store found for pincode: " . $pincode);
+        }
+
+        $storeId = $store['id'];
+
         // 3️⃣ Insert order with customer_id and total_amount
         $sqlOrder = "INSERT INTO online_orders 
-        (order_number, customer_id, address_id, total_amount, payment_method, channel, status, created_at) 
-        VALUES (?,?,?,?,?, ?, 'Pending', NOW())";
+        (order_number, customer_id, address_id, total_amount, payment_method, channel, status, store_id, created_at) 
+        VALUES (?,?,?,?,?, ?, 'Pending', ?, NOW())";
         $stmtOrder = mysqli_prepare($link, $sqlOrder);
-        mysqli_stmt_bind_param($stmtOrder, "siidss", $order_number, $customerId, $addressId, $totalAmount, $payment, $channel);
+        mysqli_stmt_bind_param($stmtOrder, "siidsss", $order_number, $customerId, $addressId, $totalAmount, $payment, $channel, $storeId);
         mysqli_stmt_execute($stmtOrder);
         $orderId = mysqli_insert_id($link);
 

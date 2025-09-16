@@ -2924,8 +2924,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function reviveOnlineOrder(orderId) {
-    fetch('revive_online_order.php', {
+function acceptOnlineOrder(orderId) {
+    let batch = 'NULL';
+    fetch('submit_online_order.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -2935,12 +2936,12 @@ function reviveOnlineOrder(orderId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Track revived order ID
-            revivedOrderId = data.revived_order_id;
+            // Track accepted order ID
+            acceptedOrderId = data.accepted_order_id;
 
             // Load order items into cart
             data.order_items.forEach(item => {
-                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity);
+                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity, batch);
             });
 
             // Select customer if order has one
@@ -2957,15 +2958,45 @@ function reviveOnlineOrder(orderId) {
             if (ordersModal) {
                 ordersModal.hide();
             }
-
-            showModal('success', 'Order Revived', 'Order has been loaded into your cart successfully!');
+            // Refresh orders list
+            loadOnlineOrders();
+            showModal('success', 'Order Accepted', 'Order has been loaded into your cart successfully!');
         } else {
-            showModal('error', 'Error', data.message || 'Failed to revive order1');
+            showModal('error', 'Error', data.message || 'Failed to accept order1');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showModal('error', 'Error', 'Failed to revive orders');
+        showModal('error', 'Error', 'Failed to accept orders');
+    });
+}
+
+function rejectOnlineOrder(orderId) {
+    fetch('reject_online_order.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ order_id: orderId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showModal('success', 'Order Rejected', data.message);
+
+            // Close orders modal
+            const ordersModal = bootstrap.Modal.getInstance(document.getElementById('onlineorders'));
+            if (ordersModal) {
+                ordersModal.hide();
+            }
+            
+            // Refresh orders list
+            loadOnlineOrders();
+        } else {
+            showModal('error', 'Error', data.message || 'Failed to reject order');
+        }
+    })
+    .catch(error => {
+        console.error('Error rejecting order:', error);
+        showModal('error', 'Error', 'Something went wrong while rejecting the order.');
     });
 }
 
@@ -3059,80 +3090,80 @@ function viewOnlineOrderProducts(orderId) {
 }
 
 function loadOnlineOrders() {
-  fetch('get_online_orders.php')
-  .then(response => response.json())
-  .then(data => {
-      let container = document.getElementById('online-orders');
-      container.innerHTML = "";
+    fetch('get_online_orders.php')
+    .then(response => response.json())
+    .then(data => {
+        let container = document.getElementById('online-orders');
+        container.innerHTML = "";
 
-      if (data.success && data.orders && data.orders.length > 0) {
-        data.orders.forEach(order => {
-          const date = new Date(order.created_at).toLocaleString();
+        if (data.success && data.orders && data.orders.length > 0) {
+            data.orders.forEach(order => {
+                const date = new Date(order.created_at).toLocaleString();
 
-          // Revive button (only for pending orders if needed)
-          const reviveButton = `
-                <button class="btn btn-success btn-sm px-3" onclick="reviveOnlineOrder(${order.id})">
-          <i class="ti ti-refresh me-1"></i> Revive Order
-          </button>`;
+                // Revive button (only for pending orders if needed)
+                const acceptButton = `
+                <button class="btn btn-success btn-sm px-3" onclick="acceptOnlineOrder(${order.id})">
+                <i class="ti ti-check me-1"></i> Accept Order
+                </button>`;
 
-          container.innerHTML += `
+                container.innerHTML += `
                 <div class="card shadow-sm border-0 mb-3 rounded-3 order-card" data-id="${order.id}">
-          <div class="card-body p-3">
+                <div class="card-body p-3">
 
-          <!-- Order Header -->
-          <div class="d-flex justify-content-between align-items-center mb-3">
-          <span class="order-number-badge">
-          <i class="ti ti-hash me-1"></i> ${order.order_number || '#' + order.id}
-          </span>
-          <span class="order-date">${date}</span>
-          </div>
-          
-          <!-- Order Info -->
-          <div class="row g-3 text-center text-sm-start">
-          <div class="col-6 col-sm-4">
-          <p class="mb-1 small text-muted">Payment</p>
-          <p class="mb-0 fw-semibold">${order.payment_method || 'N/A'}</p>
-          </div>
-          <div class="col-6 col-sm-4">
-          <p class="mb-1 small text-muted">Customer</p>
-          <p class="mb-0 fw-semibold">${order.customer_name || 'Walk-in'}</p>
-          </div>
-          <div class="col-6 col-sm-4">
-          <p class="mb-1 small text-muted">Total</p>
-          <p class="mb-0 fw-bold">₹${parseFloat(order.total_amount).toFixed(2)}</p>
-          </div>
-          </div>
+                <!-- Order Header -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="order-number-badge">
+                <i class="ti ti-hash me-1"></i> ${order.order_number || '#' + order.id}
+                </span>
+                <span class="order-date">${date}</span>
+                </div>
 
-          <!-- Action Buttons -->
-          <div class="d-flex align-items-center justify-content-center gap-2 mt-3 flex-wrap">
+                <!-- Order Info -->
+                <div class="row g-3 text-center text-sm-start">
+                <div class="col-6 col-sm-4">
+                <p class="mb-1 small text-muted">Payment</p>
+                <p class="mb-0 fw-semibold">${order.payment_method || 'N/A'}</p>
+                </div>
+                <div class="col-6 col-sm-4">
+                <p class="mb-1 small text-muted">Customer</p>
+                <p class="mb-0 fw-semibold">${order.customer_name || 'Walk-in'}</p>
+                </div>
+                <div class="col-6 col-sm-4">
+                <p class="mb-1 small text-muted">Total</p>
+                <p class="mb-0 fw-bold">₹${parseFloat(order.total_amount).toFixed(2)}</p>
+                </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex align-items-center justify-content-center gap-2 mt-3 flex-wrap">
                 <button class="btn btn-teal btn-sm px-3" onclick="viewOnlineOrderProducts(${order.id})">
-          <i class="ti ti-list-details me-1"></i> View Products
-          </button>
-          <button class="btn btn-secondary btn-sm px-3" onclick="printOrder(${order.id})">
-          <i class="ti ti-printer me-1"></i> Print
-          </button>
-          ${reviveButton}
-          </div>
+                <i class="ti ti-list-details me-1"></i> View Products
+                </button>
+                <button class="btn btn-danger btn-sm px-3" onclick="rejectOnlineOrder(${order.id})">
+                <i class="ti ti-x me-1"></i> Reject Order
+                </button>
+                ${acceptButton}
+                </div>
 
-          </div>
-          </div>
-          `;
-      });
-    } else {
-        container.innerHTML = `
-        <div class="text-center p-4">
-        <i class="ti ti-shopping-cart-off fs-2 text-muted"></i>
-        <p class="mt-2 text-muted">No orders found</p>
+                </div>
+                </div>
+                `;
+            });
+        } else {
+            container.innerHTML = `
+            <div class="text-center p-4">
+            <i class="ti ti-shopping-cart-off fs-2 text-muted"></i>
+            <p class="mt-2 text-muted">No orders found</p>
+            </div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Error loading orders:', error);
+        document.getElementById('online-orders').innerHTML = `
+        <div class="text-center text-danger p-3">
+        <i class="ti ti-alert-circle fs-4 me-2"></i> Error loading orders
         </div>`;
-    }
-})
-  .catch(error => {
-      console.error('Error loading orders:', error);
-      document.getElementById('online-orders').innerHTML = `
-      <div class="text-center text-danger p-3">
-      <i class="ti ti-alert-circle fs-4 me-2"></i> Error loading orders
-      </div>`;
-  });
+    });
 }
 
 function filterOnlineOrders() {

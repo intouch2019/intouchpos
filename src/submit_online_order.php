@@ -23,8 +23,8 @@ if (!$current_user) {
 
 try {
     $input = json_decode(file_get_contents('php://input'), true);
-    $order_id = $input['order_id'] ?? 0;
-    $created_by = $current_user['id'];
+    $order_id   = isset($input['order_id']) ? intval($input['order_id']) : 0;
+    $created_by = intval($current_user['id']);
 
     if (!$order_id) {
         echo json_encode(['success' => false, 'message' => 'Online Order ID required']);
@@ -44,8 +44,9 @@ try {
 
     $order = mysqli_fetch_assoc($order_result);
 
-    // --- Get online order items with product details ---
-    $items_sql = "SELECT oi.product_id, oi.qty, oi.price, p.name AS product_name
+    // --- Get online order items with product details & stock ---
+    $items_sql = "SELECT oi.product_id, oi.qty, oi.price, 
+                         p.name AS product_name, p.stock_quantity
                   FROM online_order_items oi
                   JOIN products p ON oi.product_id = p.id
                   WHERE oi.order_id = ?";
@@ -56,7 +57,15 @@ try {
 
     $order_items = [];
     while ($item = mysqli_fetch_assoc($items_result)) {
+        // ✅ Stock validation
+        if ($item['stock_quantity'] < $item['qty']) {
+            throw new Exception("Not enough stock for product: " . $item['product_name']);
+        }
         $order_items[] = $item;
+    }
+
+    if (empty($order_items)) {
+        throw new Exception("No items found in this online order.");
     }
 
     // --- Generate new order number ---
@@ -71,19 +80,20 @@ try {
     $insert_order_stmt = safePrepare($link, $insert_order_sql);
 
     $customer_id    = $order['customer_id'] ?? null;
-    $total_amount   = $order['total_amount'];
+    $total_amount   = (float)$order['total_amount'];
     $payment_method = $order['payment_method'];
 
+    // 7 params → "siidssi"
     mysqli_stmt_bind_param(
         $insert_order_stmt,
         "siidssi",
-        $order_number,   // string
-        $customer_id,    // int
-        $created_by,     // int
-        $total_amount,   // double (subtotal)
-        $total_amount,   // double (total_amount)
-        $payment_method, // string
-        $order_id        // int (online_order_id reference)
+        $order_number,   // s
+        $customer_id,    // i
+        $created_by,     // i
+        $total_amount,   // d (subtotal)
+        $total_amount,   // d (total_amount)
+        $payment_method, // s
+        $order_id        // i (online_order_id reference)
     );
 
     if (!mysqli_stmt_execute($insert_order_stmt)) {
@@ -100,10 +110,18 @@ try {
     foreach ($order_items as $item) {
         $product_id  = $item['product_id'];
         $quantity    = $item['qty'];
-        $unit_price  = $item['price'];
+        $unit_price  = (float)$item['price'];
         $total_price = $quantity * $unit_price;
 
-        mysqli_stmt_bind_param($item_stmt, "iiidd", $new_order_id, $product_id, $quantity, $unit_price, $total_price);
+        mysqli_stmt_bind_param(
+            $item_stmt,
+            "iiidd",
+            $new_order_id,
+            $product_id,
+            $quantity,
+            $unit_price,
+            $total_price
+        );
 
         if (!mysqli_stmt_execute($item_stmt)) {
             throw new Exception('Failed to add order item: ' . mysqli_error($link));
@@ -116,12 +134,27 @@ try {
     mysqli_stmt_bind_param($update_stmt, "i", $order_id);
     mysqli_stmt_execute($update_stmt);
 
+    // --- Reduce stock after inserting order items ---
+    $update_stock_sql = "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?";
+    $update_stock_stmt = safePrepare($link, $update_stock_sql);
+
+    foreach ($order_items as $item) {
+        $product_id = $item['product_id'];
+        $quantity   = $item['qty'];
+
+        mysqli_stmt_bind_param($update_stock_stmt, "ii", $quantity, $product_id);
+
+        if (!mysqli_stmt_execute($update_stock_stmt)) {
+            throw new Exception("Failed to update stock for product ID: $product_id");
+        }
+    }
+
     echo json_encode([
         'success' => true,
         'order' => $order,
         'order_items' => $order_items,
-        'message' => 'Order revived successfully',
-        'revived_order_id' => $new_order_id
+        'message' => 'Order accepted successfully',
+        'accepted_order_id' => $new_order_id
     ]);
 
 } catch (Exception $e) {
