@@ -40,7 +40,7 @@ try {
     $order_sql = "INSERT INTO orders (
         order_number, customer_id, subtotal, tax_amount, discount_amount,
         total_amount, payment_method, payment_status, order_status, notes, hold_reference, created_at
-    ) VALUES (?, ?, ?, 0, 0, ?, 'cash, 'pending', 'hold', ?, ?, NOW())";
+    ) VALUES (?, ?, ?, 0, 0, ?, 'cash', 'pending', 'hold', ?, ?, NOW())";
 
     $order_stmt = mysqli_prepare($link, $order_sql);
     if (!$order_stmt) {
