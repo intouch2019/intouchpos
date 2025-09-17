@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../partials/config.php';
 
-header('Content-Type: application/json'); // Always return JSON
+//header('Content-Type: application/json'); // Always return JSON
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = trim($_POST['name'] ?? '');

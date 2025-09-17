@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../partials/config.php';
 
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
 
 // Check if "type" is sent
 $type = isset($_GET['type']) ? $_GET['type'] : '';
