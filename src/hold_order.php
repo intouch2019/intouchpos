@@ -3,7 +3,7 @@ require_once __DIR__ . '/../auth/auth_middleware.php';
 require_once __DIR__ . '/../partials/config.php';
 requireLogin();
 
-//header('Content-Type: application/json');
+header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo json_encode(['success' => false, 'message' => 'Invalid request method']);
@@ -66,8 +66,8 @@ try {
 
     $order_id = mysqli_insert_id($link);
 
-    $item_sql = "INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price)
-                 VALUES (?, ?, ?, ?, ?)";
+    $item_sql = "INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price, batch_code)
+                 VALUES (?, ?, ?, ?, ?, ?)";
     $item_stmt = mysqli_prepare($link, $item_sql);
     if (!$item_stmt) {
         throw new Exception('Failed to prepare item statement: ' . mysqli_error($link));
@@ -77,9 +77,10 @@ try {
         $product_id = $item['id'];
         $quantity = $item['quantity'];
         $unit_price = $item['price'];
+        $batch_code = $item['batch_code'];
         $total_price = $quantity * $unit_price;
 
-        mysqli_stmt_bind_param($item_stmt, "iiidd", $order_id, $product_id, $quantity, $unit_price, $total_price);
+        mysqli_stmt_bind_param($item_stmt, "iiidds", $order_id, $product_id, $quantity, $unit_price, $total_price, $batch_code);
 
         if (!mysqli_stmt_execute($item_stmt)) {
             throw new Exception('Failed to add order item: ' . mysqli_error($link));

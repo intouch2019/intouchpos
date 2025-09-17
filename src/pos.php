@@ -1196,20 +1196,28 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
         'Clear Cart',
         'Are you sure you want to clear all items from the cart? This action cannot be undone.',
         function() {
-            // On confirm
+            // Check if we have a revived order that needs to be put back on hold
+            const shouldRehold = revivedOrderId !== null;
+            
             fetch('cart_api.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: 'action=clear'
+                body: `action=clear${shouldRehold ? '&revived_order_id=' + revivedOrderId : ''}`
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     loadCart();
-                    // Use modal instead of toast
-                    showModal('success', 'Cart Cleared', 'All items have been removed from the cart');
+                    // Reset revivedOrderId
+                    revivedOrderId = null;
+                    
+                    if (data.reheld) {
+                        showModal('success', 'Order Put Back on Hold', 'The order has been put back on hold successfully');
+                    } else {
+                        showModal('success', 'Cart Cleared', 'All items have been removed from the cart');
+                    }
                 } else {
                     showModal('error', 'Error', data.message || 'Failed to clear cart');
                 }
@@ -2376,19 +2384,24 @@ function proceedReviveOrder(orderId) {
         },
         body: JSON.stringify({ order_id: orderId })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // Let fetch handle JSON parsing
+    })
     .then(data => {
+        console.log("Parsed response:", data); // debug
+        
         if (data.success) {
-//            alert(data);
-            // Track revived order ID
+            // In your proceedReviveOrder function, add this line:
             revivedOrderId = data.revived_order_id;
-
-            // Load order items into cart
+            
+            // Load order items into cart            
             data.order_items.forEach(item => {
-                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity, item.batch);
+                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity, item.batch_code); // Fixed: batch_code instead of batch
             });
-
-            // Select customer if order has one
+            
             if (data.order.customer_id) {
                 const customerSelect = document.getElementById('customerSelect');
                 if (customerSelect) {
@@ -2396,24 +2409,18 @@ function proceedReviveOrder(orderId) {
                     updateCustomerInfo();
                 }
             }
-
-            // Close orders modal
+            
             const ordersModal = bootstrap.Modal.getInstance(document.getElementById('orders'));
-            if (ordersModal) {
-                ordersModal.hide();
-            }
-
-            // Refresh hold orders list
+            if (ordersModal) ordersModal.hide();
             loadOrders('hold');
-
             showModal('success', 'Order Revived', 'Order has been loaded into your cart successfully!');
         } else {
-            showModal('error', 'Error', data.message || 'Failed to revive order1');
+            showModal('error', 'Error', data.message || 'Failed to revive order');
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showModal('error', 'Error', 'Failed to revive orders');
+        console.error('Fetch Error:', error);
+        showModal('error', 'Error', 'Failed to revive order: ' + error.message);
     });
 }
 

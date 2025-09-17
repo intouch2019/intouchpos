@@ -21,7 +21,12 @@ switch ($action) {
         removeFromCart($link, $user_id);
         break;
     case 'clear':
-        clearCart($link, $user_id);
+        $revived_order_id = $_POST['revived_order_id'] ?? null;
+        if ($revived_order_id) {
+            clearCart($link, $user_id, $revived_order_id);
+        } else {
+            clearCart($link, $user_id);
+        }
         break;
     case 'get':
         getCart($link, $user_id);
@@ -87,7 +92,7 @@ function addToCart($link, $user_id) {
         }
     } else {
         // Insert new row
-        echo $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, batch_code, mrp) VALUES (?, ?, ?, ?, ?)";
+        $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, batch_code, mrp) VALUES (?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($link, $insert_sql);
         mysqli_stmt_bind_param($stmt, "iiisd", $user_id, $product_id, $quantity, $batch_code, $mrp);
 
@@ -175,7 +180,7 @@ function removeFromCart($link, $user_id) {
     }
 }
 
-function clearCart($link, $user_id) {
+function clearCart($link, $user_id, $revived_order_id = null) {
     $delete_sql = "DELETE FROM cart WHERE user_id = ?";
     $stmt = mysqli_prepare($link, $delete_sql);
     mysqli_stmt_bind_param($stmt, "i", $user_id);

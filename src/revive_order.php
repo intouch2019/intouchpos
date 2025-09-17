@@ -1,9 +1,19 @@
 <?php
+// Remove ALL output buffering and ensure no whitespace before <?php
+while (ob_get_level()) {
+    ob_end_clean();
+}
+
+// Add these to ensure no output before headers
+ob_start();
+header('Content-Type: application/json; charset=utf-8');
+
 require_once __DIR__ . '/../auth/auth_middleware.php';
 require_once __DIR__ . '/../partials/config.php';
 requireLogin();
 
-//header('Content-Type: application/json');
+ini_set('display_errors', 0);
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
 
 // --- helper function to prepare safely ---
 function safePrepare($link, $sql) {
@@ -37,7 +47,7 @@ try {
     $order = mysqli_fetch_assoc($order_result);
 
     // --- Get order items with product details ---
-    $items_sql = "SELECT oi.product_id, oi.quantity, oi.unit_price, 
+    $items_sql = "SELECT oi.product_id, oi.quantity, oi.unit_price, oi.batch_code,
                          p.name AS product_name, p.image AS product_image
                   FROM order_items oi
                   JOIN products p ON oi.product_id = p.id
@@ -64,18 +74,22 @@ try {
     mysqli_stmt_bind_param($update_stmt, "i", $order_id);
     mysqli_stmt_execute($update_stmt);
 
+    ob_end_clean();
+
     echo json_encode([
         'success' => true,
         'order' => $order,
         'order_items' => $order_items,
         'message' => 'Order loaded successfully',
         'revived_order_id' => $order_id
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
 
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
         'message' => $e->getMessage()
-    ]);
+    ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
 }
 ?>
