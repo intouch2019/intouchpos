@@ -2939,7 +2939,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function acceptOnlineOrder(orderId) {
-    let batch = 'NULL';
+    //let batch = 'NULL';
     fetch('submit_online_order.php', {
         method: 'POST',
         headers: {
@@ -2955,7 +2955,7 @@ function acceptOnlineOrder(orderId) {
 
             // Load order items into cart
             data.order_items.forEach(item => {
-                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity, batch);
+                addItemToCart(item.product_id, item.product_name, item.unit_price, item.quantity, item.batch_id);
             });
 
             // Select customer if order has one

@@ -108,32 +108,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         mysqli_stmt_execute($stmtOrder);
         $orderId = mysqli_insert_id($link);
 
-        // 4️⃣ Insert each item & reduce stock
+        // 4️⃣ Insert each item & reduce stock from batch
         foreach ($cartData as $item) {
             $productId = intval($item['id']);
             $qty       = intval($item['qty']);
             $price     = floatval($item['price']);
             $subtotal  = $price * $qty;
 
-            // Insert item
-            $sqlItem = "INSERT INTO online_order_items (order_id, product_id, qty, price, subtotal) 
-            VALUES (?,?,?,?,?)";
+            // 🔍 Find first active batch with enough stock
+            $sqlBatch = "SELECT id, stock_quantity 
+            FROM product_batches 
+            WHERE product_id = ? AND stock_quantity >= ? 
+            ORDER BY expiry_date ASC, id ASC 
+            LIMIT 1";
+            $stmtBatch = mysqli_prepare($link, $sqlBatch);
+            mysqli_stmt_bind_param($stmtBatch, "ii", $productId, $qty);
+            mysqli_stmt_execute($stmtBatch);
+            $resultBatch = mysqli_stmt_get_result($stmtBatch);
+            $batch = mysqli_fetch_assoc($resultBatch);
+
+            if (!$batch) {
+                throw new Exception("No available batch with enough stock for product ID: $productId");
+            }
+
+            $batchId = $batch['id'];
+
+            // Insert item with batch_id
+            $sqlItem = "INSERT INTO online_order_items (order_id, product_id, batch_id, qty, price, subtotal) 
+            VALUES (?,?,?,?,?,?)";
             $stmtItem = mysqli_prepare($link, $sqlItem);
-            mysqli_stmt_bind_param($stmtItem, "iiidd", $orderId, $productId, $qty, $price, $subtotal);
+            mysqli_stmt_bind_param($stmtItem, "iiiidd", $orderId, $productId, $batchId, $qty, $price, $subtotal);
             mysqli_stmt_execute($stmtItem);
 
-            // Reduce stock
-            $sqlStock = "UPDATE products 
+            // Reduce stock from this batch
+            $sqlStock = "UPDATE product_batches 
             SET stock_quantity = stock_quantity - ? 
             WHERE id = ? AND stock_quantity >= ?";
             $stmtStock = mysqli_prepare($link, $sqlStock);
-            mysqli_stmt_bind_param($stmtStock, "iii", $qty, $productId, $qty);
+            mysqli_stmt_bind_param($stmtStock, "iii", $qty, $batchId, $qty);
             mysqli_stmt_execute($stmtStock);
 
             if (mysqli_affected_rows($link) == 0) {
-                throw new Exception("Not enough stock for product ID: $productId");
+                throw new Exception("Not enough stock in batch ID: $batchId for product ID: $productId");
             }
+
+            $sqlUpdateProduct = "UPDATE products 
+                         SET stock_quantity = stock_quantity - ? 
+                         WHERE id = ? AND stock_quantity >= ?";
+            $stmtUpdateProduct = mysqli_prepare($link, $sqlUpdateProduct);
+            mysqli_stmt_bind_param($stmtUpdateProduct, "iii", $qty, $productId, $qty);
+            mysqli_stmt_execute($stmtUpdateProduct);
         }
+
+        // 4️⃣ Insert each item & reduce stock
+        // foreach ($cartData as $item) {
+        //     $productId = intval($item['id']);
+        //     $qty       = intval($item['qty']);
+        //     $price     = floatval($item['price']);
+        //     $subtotal  = $price * $qty;
+
+        //     // Insert item
+        //     $sqlItem = "INSERT INTO online_order_items (order_id, product_id, qty, price, subtotal) 
+        //     VALUES (?,?,?,?,?)";
+        //     $stmtItem = mysqli_prepare($link, $sqlItem);
+        //     mysqli_stmt_bind_param($stmtItem, "iiidd", $orderId, $productId, $qty, $price, $subtotal);
+        //     mysqli_stmt_execute($stmtItem);
+
+        //     // Reduce stock
+        //     $sqlStock = "UPDATE products 
+        //     SET stock_quantity = stock_quantity - ? 
+        //     WHERE id = ? AND stock_quantity >= ?";
+        //     $stmtStock = mysqli_prepare($link, $sqlStock);
+        //     mysqli_stmt_bind_param($stmtStock, "iii", $qty, $productId, $qty);
+        //     mysqli_stmt_execute($stmtStock);
+
+        //     if (mysqli_affected_rows($link) == 0) {
+        //         throw new Exception("Not enough stock for product ID: $productId");
+        //     }
+        // }
 
         mysqli_commit($link);
 
