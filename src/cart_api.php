@@ -78,7 +78,7 @@ function addToCart($link, $user_id) {
 
         $update_sql = "UPDATE cart SET quantity = ?, mrp = ? WHERE id = ?";
         $stmt = mysqli_prepare($link, $update_sql);
-        mysqli_stmt_bind_param($stmt, "ii", $new_quantity, $mrp, $existing['id']);
+        mysqli_stmt_bind_param($stmt, "idi", $new_quantity, $mrp, $existing['id']);
 
         if (mysqli_stmt_execute($stmt)) {
             echo json_encode(['success' => true, 'message' => 'Cart updated']);
