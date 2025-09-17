@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../auth/auth_middleware.php';
 require_once __DIR__ . '/../partials/config.php';
 
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
 requireLogin();
 
 $current_user = getCurrentUser();
