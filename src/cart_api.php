@@ -47,7 +47,7 @@ function addToCart($link, $user_id) {
     }
 
     // Validate batch exists & get stock
-    $batch_sql = "SELECT id, stock_quantity FROM product_batches WHERE product_id = ? AND batch_code = ?";
+    $batch_sql = "SELECT id, stock_quantity, mrp FROM product_batches WHERE product_id = ? AND batch_code = ?";
     $stmt = mysqli_prepare($link, $batch_sql);
     mysqli_stmt_bind_param($stmt, "is", $product_id, $batch_code);
     mysqli_stmt_execute($stmt);
@@ -59,6 +59,7 @@ function addToCart($link, $user_id) {
     }
 
     $stock_quantity = (int)$batch['stock_quantity'];
+    $mrp = $batch['mrp'];
 
     if ($stock_quantity <= 0) {
         echo json_encode(['success' => false, 'message' => 'Batch is out of stock']);
@@ -75,9 +76,9 @@ function addToCart($link, $user_id) {
         // Update existing quantity
         $new_quantity = $existing['quantity'] + $quantity;
 
-        $update_sql = "UPDATE cart SET quantity = ? WHERE id = ?";
+        $update_sql = "UPDATE cart SET quantity = ?, mrp = ? WHERE id = ?";
         $stmt = mysqli_prepare($link, $update_sql);
-        mysqli_stmt_bind_param($stmt, "ii", $new_quantity, $existing['id']);
+        mysqli_stmt_bind_param($stmt, "ii", $new_quantity, $mrp, $existing['id']);
 
         if (mysqli_stmt_execute($stmt)) {
             echo json_encode(['success' => true, 'message' => 'Cart updated']);
@@ -86,9 +87,9 @@ function addToCart($link, $user_id) {
         }
     } else {
         // Insert new row
-        $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, batch_code) VALUES (?, ?, ?, ?)";
+        echo $insert_sql = "INSERT INTO cart (user_id, product_id, quantity, batch_code, mrp) VALUES (?, ?, ?, ?, ?)";
         $stmt = mysqli_prepare($link, $insert_sql);
-        mysqli_stmt_bind_param($stmt, "iiis", $user_id, $product_id, $quantity, $batch_code);
+        mysqli_stmt_bind_param($stmt, "iiisd", $user_id, $product_id, $quantity, $batch_code, $mrp);
 
         if (mysqli_stmt_execute($stmt)) {
             echo json_encode(['success' => true, 'message' => 'Item added to cart']);
@@ -116,7 +117,7 @@ function updateCart($link, $user_id) {
     }
     
     // Check stock
-    $batch_sql = "SELECT pb.stock_quantity AS stock_quantity FROM product_batches pb INNER JOIN products p ON p.id = pb.product_id WHERE p.id = ? AND pb.batch_code = ?  AND is_active = 1";
+    $batch_sql = "SELECT pb.stock_quantity AS stock_quantity, pb.mrp FROM product_batches pb INNER JOIN products p ON p.id = pb.product_id WHERE p.id = ? AND pb.batch_code = ?  AND is_active = 1";
     $stmt = mysqli_prepare($link, $batch_sql);
     mysqli_stmt_bind_param($stmt, "is", $product_id, $batch);
 //    $product_sql = "SELECT stock_quantity FROM products WHERE id = ? AND is_active = 1";
@@ -139,9 +140,9 @@ function updateCart($link, $user_id) {
         return;
     }
     
-    $update_sql = "UPDATE cart SET quantity = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND product_id = ? AND batch_code = ?";
+    $update_sql = "UPDATE cart SET quantity = ?, mrp = ?, updated_at = CURRENT_TIMESTAMP WHERE user_id = ? AND product_id = ? AND batch_code = ?";
     $stmt = mysqli_prepare($link, $update_sql);
-    mysqli_stmt_bind_param($stmt, "iiis", $quantity, $user_id, $product_id, $batch);
+    mysqli_stmt_bind_param($stmt, "idiis", $quantity, $product['mrp'], $user_id, $product_id, $batch);
 
     if (mysqli_stmt_execute($stmt)) {
         echo json_encode(['success' => true, 'message' => 'Cart updated']);
@@ -206,8 +207,10 @@ function getCart($link, $user_id) {
             'id' => $row['product_id'],
             'name' => $row['name'],
             'batch_code' => $row['batch_code'],
-            'price' => floatval($row['price']),
+            'price' => floatval($row['mrp']),
+//            'price' => floatval($row['price']),
             'quantity' => intval($row['quantity']),
+//            'mrp' => $row['mrp'],
             'image' => $row['image'],
             'stock_quantity' => intval($row['stock_quantity'])
 //            'batch' => $row['batch']
@@ -226,8 +229,10 @@ function getCart($link, $user_id) {
             'id' => $row['product_id'], // This will be negative for exchange items
             'name' => $row['exchange_name'],
             'batch_code' => $row['batch_code'],
+//            'price' => floatval($row['mrp']),
             'price' => floatval($row['exchange_price']),
             'quantity' => intval($row['quantity']),
+//            'mrp' => $row['mrp'],
             'image' => 'exchange.png',
             'stock_quantity' => 999,
             'is_exchange' => true

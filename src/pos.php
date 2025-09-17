@@ -25,7 +25,7 @@ $products = [];
 $prod_sql = "
     SELECT p.*, 
            c.name AS category_name, 
-           COALESCE(SUM(pb.stock_quantity), 0) AS total_stock
+           COALESCE(SUM(pb.stock_quantity), 0) AS total_stock, pb.mrp
     FROM products p
     LEFT JOIN categories c ON p.category_id = c.id
     LEFT JOIN product_batches pb ON pb.product_id = p.id
@@ -197,7 +197,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 													<div class="product-info card mb-0<?php echo ($product['total_stock'] <= 0) ? ' out-of-stock' : ''; ?>">
 														<a href="javascript:void(0);" class="pro-img"
                                                                                                                     <?php echo ($product['total_stock'] > 0)
-                                                                                                                             ? ' onclick="openBatchModal(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['price'] . ')"' 
+                                                                                                                             ? ' onclick="openBatchModal(' . $product['id'] . ', \'' . htmlspecialchars($product['name']) . '\', ' . $product['mrp'] . ')"' 
                                                                                                                        : ''; ?>>
                                                                                                                      <img src="assets/img/products/<?php echo $product['image'] ? $product['image'] : 'images(1).jpg'; ?>" 
                                                                                                                           alt="<?php echo htmlspecialchars($product['name']); ?>" 
@@ -722,7 +722,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             // Set product info in the modal
             document.getElementById('batch-product-name').textContent = productName;
             document.getElementById('batch-product-id').value = productId;
-            document.getElementById('batch-product-price').value = price;
+//            document.getElementById('batch-product-price').value = price;
 
             const batchSelect = document.getElementById('batch-select');
             const batchStockInfo = document.getElementById('batch-stock-info');
@@ -738,14 +738,26 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                         data.batches.forEach(batch => {
                             const option = document.createElement('option');
                             option.value = batch.batch_no;
-                            option.textContent = `${batch.batch_no} (Stock: ${batch.stock})`;
+                            option.textContent = `${batch.batch_no} (Stock: ${batch.stock}) (${batch.mrp})`;
                             option.dataset.stock = batch.stock;
+                            option.dataset.mrp = batch.mrp; // <-- ADD THIS
                             batchSelect.appendChild(option);
                         });
-                        // Show stock for the first batch
-                        if(data.batches[0]) {
+                        // when user selects a batch
+                        batchSelect.addEventListener('change', function() {
+                            const selectedOption = this.options[this.selectedIndex];
+                            document.getElementById('batch-product-price').value = selectedOption.dataset.mrp;
+                        });
+
+                        if (data.batches[0]) {
                             batchStockInfo.textContent = `Available stock for this batch: ${data.batches[0].stock}`;
+                            document.getElementById('batch-product-price').value = data.batches[0].mrp; // set first batch MRP
                         }
+
+                        // Show stock for the first batch
+//                        if(data.batches[0]) {
+//                            batchStockInfo.textContent = `Available stock for this batch: ${data.batches[0].stock}`;
+//                        }
                     } else {
                         batchSelect.innerHTML = '<option>No batches available</option>';
                     }
@@ -758,6 +770,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             batchSelect.onchange = function() {
                 const selectedOption = this.options[this.selectedIndex];
                 batchStockInfo.textContent = `Available stock for this batch: ${selectedOption.dataset.stock || 0}`;
+                document.getElementById('batch-product-price').value = selectedOption.dataset.mrp || 0;
             };
 
             batchModal.show();
@@ -773,7 +786,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             }
 
             let quantity = 1;
-
+            
             // If adding from product grid (not batch modal)
             if (!batch) {
                 const productElement = document.querySelector(`[onclick*="openBatchModal(${productId}"]`)?.closest('.product-item')
@@ -821,6 +834,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             const productId = document.getElementById('batch-product-id').value;
             const productName = document.getElementById('batch-product-name').textContent;
             const price = document.getElementById('batch-product-price').value;
+//            alert(price);
             const batchSelect = document.getElementById('batch-select');
             const selectedBatch = batchSelect.value;
 
@@ -2365,7 +2379,7 @@ function proceedReviveOrder(orderId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert(data);
+//            alert(data);
             // Track revived order ID
             revivedOrderId = data.revived_order_id;
 
