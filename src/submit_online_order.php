@@ -45,7 +45,7 @@ try {
     $order = mysqli_fetch_assoc($order_result);
 
     // --- Get online order items with product details & stock ---
-    $items_sql = "SELECT oi.product_id, oi.qty, oi.price, 
+    $items_sql = "SELECT oi.product_id, oi.qty, oi.price, oi.batch_id, 
                          p.name AS product_name, p.stock_quantity
                   FROM online_order_items oi
                   JOIN products p ON oi.product_id = p.id
