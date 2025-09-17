@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../partials/config.php';
 
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
 
 $product_id = isset($_GET['product_id']) ? (int)$_GET['product_id'] : 0;
 

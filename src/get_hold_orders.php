@@ -3,7 +3,7 @@ require_once __DIR__ . '/../auth/auth_middleware.php';
 require_once __DIR__ . '/../partials/config.php';
 requireLogin();
 
-header('Content-Type: application/json');
+//header('Content-Type: application/json');
 
 $type = $_GET['type'] ?? 'hold';
 
@@ -46,7 +46,7 @@ try {
         'success' => true,
         'orders' => $orders,
         'count' => count($orders),
-        'sql' => $sql,
+//        'sql' => $sql,
         'type' => $type
     ]);
     

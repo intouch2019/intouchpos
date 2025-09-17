@@ -121,7 +121,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
         $order_number = $row_order['order_number'];
     }
 
-    header('Content-Type: application/json');
+//    header('Content-Type: application/json');
     echo json_encode([
         'order_number' => $order_number,
         'products'     => $products
