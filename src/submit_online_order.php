@@ -70,7 +70,12 @@ try {
 
     // --- Generate new order number ---
     $order_number = 'ORD-' . date('Ymd') . '-' . str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
-
+    if($order['payment_method'] == 'COD')
+    {
+        $payment_method = 'cash';
+    }else{
+        $payment_method = 'mobile_money';
+    }
     // --- Insert into orders ---
     $insert_order_sql = "INSERT INTO orders (
         order_number, customer_id, user_id, subtotal, tax_amount, discount_amount,
@@ -81,7 +86,7 @@ try {
 
     $customer_id    = $order['customer_id'] ?? null;
     $total_amount   = (float)$order['total_amount'];
-    $payment_method = $order['payment_method'];
+    //$payment_method = $order['payment_method'];
 
     // 7 params → "siidssi"
     mysqli_stmt_bind_param(
