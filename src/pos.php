@@ -182,10 +182,15 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 										<a href="products.php" class="btn btn-sm btn-dark mb-2 me-2"><i class="ti ti-tag me-1"></i>View All Products</a>
 										<a href="pos-settings.php" class="btn btn-sm btn-primary mb-2 me-2"><i class="ti ti-settings me-1"></i>POS Settings</a>
                                                                                 <div class="custom-checkbox">
-                                                                                  <input type="checkbox" id="exchangeCheckbox" />
+<!--                                                                                    <input type="checkbox" id="exchangeCheckbox" />
                                                                                   <span class="checkmark"></span>
-                                                                                  <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>
-</div>
+                                                                                  <label for="exchangeCheckbox" class="ms-2">Exchange Mode</label>-->
+                                                                                    
+                                                                                   <input type="checkbox" class="btn-check" id="exchangeCheckbox" autocomplete="off">
+                                                                                   <label class="btn btn-sm btn-cyan mb-2 me-2" for="exchangeCheckbox">
+                                                                                       <i class="ti ti-refresh me-1"></i> Exchange Mode
+                                                                                   </label>
+                                                                                </div>
 									</div>
 								</div>
 								<div class="pos-products">
@@ -3776,6 +3781,11 @@ function filterOnlineOrders() {
     }
 }
 
+.btn-check:checked + .btn {
+  background-color: #0d6efd; /* Bootstrap primary */
+  border-color: #0d6efd;
+  color: #fff;
+}
     </style>
 
 <?php
