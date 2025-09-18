@@ -2945,6 +2945,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+function showOnlineOrderModal(type, title, message, callback) {
+    const overlay = document.getElementById('modal-overlay');
+    const icon = document.getElementById('modal-icon');
+    const titleEl = document.getElementById('modal-title');
+    const messageEl = document.getElementById('modal-message');
+    const buttonsEl = document.querySelector('.modal-buttons');
+
+    // Update content
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+
+    // Update icon and style based on type
+    if (type === 'success') {
+        icon.className = 'modal-icon success';
+        icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+    } else if (type === 'error') {
+        icon.className = 'modal-icon error';
+        icon.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>';
+    }
+
+    // Create OK button
+    buttonsEl.innerHTML = '';
+    const okBtn = document.createElement('button');
+    okBtn.className = 'btn btn-primary';
+    okBtn.textContent = 'OK';
+    okBtn.onclick = () => {
+        closeModal();
+        if (typeof callback === 'function') {
+            callback(); // 🔥 redirect will happen here
+        }
+    };
+    buttonsEl.appendChild(okBtn);
+
+    overlay.style.display = 'flex';
+}
+
 function acceptOnlineOrder(orderId) {
     //let batch = 'NULL';
     fetch('submit_online_order.php', {
@@ -2981,10 +3017,10 @@ function acceptOnlineOrder(orderId) {
             }
             // Refresh orders list
             loadOnlineOrders();
-            showModal('success', 'Order Accepted', 'Order has been accepted successfully!');
-            setTimeout(() => {
-                        window.location.href = 'orders.php';
-                    }, 3000);
+            //showModal('success', 'Order Accepted', 'Order has been accepted & plased successfully!');
+            showOnlineOrderModal('success', 'Order Accepted', 'Order has been accepted & placed successfully!', () => {
+                window.location.href = 'orders.php';
+            });
         } else {
             showModal('error', 'Error', data.message || 'Failed to accept order1');
         }

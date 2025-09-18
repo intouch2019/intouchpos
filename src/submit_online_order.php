@@ -112,39 +112,82 @@ try {
                  VALUES (?, ?, ?, ?, ?, ?)";
     $item_stmt = safePrepare($link, $item_sql);
 
-    foreach ($order_items as $item) {
-        $product_id  = $item['product_id'];
-        $batch_id  = $item['batch_id'];
-        $quantity    = $item['qty'];
-        $unit_price  = (float)$item['price'];
-        $total_price = $quantity * $unit_price;
+    // --- Insert order items ---
+foreach ($order_items as $item) {
+    $product_id = $item['product_id'];
+    $quantity   = $item['qty'];
+    $unit_price = (float)$item['price'];
+    $total_price = $quantity * $unit_price;
 
-        // Get batch_code from product_batches
-        $batch_sql = "SELECT batch_code FROM product_batches WHERE id = ?";
-        $batch_stmt = safePrepare($link, $batch_sql);
-        mysqli_stmt_bind_param($batch_stmt, "i", $batch_id);
-        mysqli_stmt_execute($batch_stmt);
-        $batch_result = mysqli_stmt_get_result($batch_stmt);
+    // ✅ Get batches for this product ordered by oldest (FIFO)
+    $batch_sql = "SELECT id, batch_code, stock_quantity 
+                  FROM product_batches 
+                  WHERE product_id = ? AND stock_quantity > 0 
+                  ORDER BY expiry_date ASC, id ASC";
+    $batch_stmt = safePrepare($link, $batch_sql);
+    mysqli_stmt_bind_param($batch_stmt, "i", $product_id);
+    mysqli_stmt_execute($batch_stmt);
+    $batch_result = mysqli_stmt_get_result($batch_stmt);
 
-        $batch_row = mysqli_fetch_assoc($batch_result);
-        $batch_code = $batch_row['batch_code']; 
+    if (!$batch_result || mysqli_num_rows($batch_result) === 0) {
+        throw new Exception("No stock available for product ID: $product_id");
+    }
 
+    $remaining_qty = $quantity;
+
+    // --- Loop through batches until qty fulfilled ---
+    while ($remaining_qty > 0 && $batch_row = mysqli_fetch_assoc($batch_result)) {
+        $batch_id     = $batch_row['id'];
+        $batch_code   = $batch_row['batch_code'];
+        $batch_stock  = $batch_row['stock_quantity'];
+
+        if ($batch_stock <= 0) {
+            continue; // skip empty batch
+        }
+
+        // how much to take from this batch
+        $use_qty = min($remaining_qty, $batch_stock);
+        $line_total = $use_qty * $unit_price;
+
+        // --- Insert into order_items with actual batch_code ---
+        $item_sql = "INSERT INTO order_items 
+                        (order_id, product_id, batch_code, quantity, unit_price, total_price)
+                     VALUES (?, ?, ?, ?, ?, ?)";
+        $item_stmt = safePrepare($link, $item_sql);
         mysqli_stmt_bind_param(
             $item_stmt,
-            "iiisdd",
+            "iisidd",
             $new_order_id,
             $product_id,
             $batch_code,
-            $quantity,
+            $use_qty,
             $unit_price,
-            $total_price
+            $line_total
         );
 
         if (!mysqli_stmt_execute($item_stmt)) {
             throw new Exception('Failed to add order item: ' . mysqli_error($link));
         }
+
+        // --- Reduce stock in product_batches ---
+        $update_batch_sql = "UPDATE product_batches SET stock_quantity = stock_quantity - ? WHERE id = ?";
+        $update_batch_stmt = safePrepare($link, $update_batch_sql);
+        mysqli_stmt_bind_param($update_batch_stmt, "ii", $use_qty, $batch_id);
+
+        if (!mysqli_stmt_execute($update_batch_stmt)) {
+            throw new Exception("Failed to update stock for batch ID: $batch_id");
+        }
+
+        // reduce remaining qty
+        $remaining_qty -= $use_qty;
     }
 
+    // if still qty left after all batches → error
+    if ($remaining_qty > 0) {
+        throw new Exception("Not enough stock to fulfill product ID: $product_id");
+    }
+}
+    
     // --- Mark online order as revived ---
     $update_online_sql = "UPDATE online_orders SET status = 'Processing' WHERE id = ?";
     $update_stmt = safePrepare($link, $update_online_sql);
