@@ -2981,7 +2981,10 @@ function acceptOnlineOrder(orderId) {
             }
             // Refresh orders list
             loadOnlineOrders();
-            showModal('success', 'Order Accepted', 'Order has been loaded into your cart successfully!');
+            showModal('success', 'Order Accepted', 'Order has been accepted successfully!');
+            setTimeout(() => {
+                        window.location.href = 'orders.php';
+                    }, 3000);
         } else {
             showModal('error', 'Error', data.message || 'Failed to accept order1');
         }
