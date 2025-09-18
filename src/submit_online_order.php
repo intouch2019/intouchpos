@@ -119,12 +119,22 @@ try {
         $unit_price  = (float)$item['price'];
         $total_price = $quantity * $unit_price;
 
+        // Get batch_code from product_batches
+        $batch_sql = "SELECT batch_code FROM product_batches WHERE id = ?";
+        $batch_stmt = safePrepare($link, $batch_sql);
+        mysqli_stmt_bind_param($batch_stmt, "i", $batch_id);
+        mysqli_stmt_execute($batch_stmt);
+        $batch_result = mysqli_stmt_get_result($batch_stmt);
+
+        $batch_row = mysqli_fetch_assoc($batch_result);
+        $batch_code = $batch_row['batch_code']; 
+
         mysqli_stmt_bind_param(
             $item_stmt,
-            "iiiidd",
+            "iiisdd",
             $new_order_id,
             $product_id,
-            $batch_id,
+            $batch_code,
             $quantity,
             $unit_price,
             $total_price
