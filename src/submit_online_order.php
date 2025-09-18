@@ -109,7 +109,7 @@ try {
 
     // --- Insert order items ---
     $item_sql = "INSERT INTO order_items (order_id, product_id, batch_code, quantity, unit_price, total_price)
-                 VALUES (?, ?, ?, ?, ?)";
+                 VALUES (?, ?, ?, ?, ?, ?)";
     $item_stmt = safePrepare($link, $item_sql);
 
     foreach ($order_items as $item) {
