@@ -176,325 +176,418 @@ $products = mysqli_query($link, "SELECT p.*, c.name as category_name
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
 
-document.getElementById('phoneInput').addEventListener('blur', function() {
+        let phoneInput = document.getElementById('phoneInput');
+let addressListDiv = document.getElementById('addressList');
+
+phoneInput.addEventListener('input', function () {
     let phone = this.value.trim();
+
+    // Always clear old address list when typing
+    addressListDiv.innerHTML = "";
+
     if (phone.length >= 8) {
         fetch('get-customer.php?phone=' + phone)
-        .then(res => res.json())
-        .then(data => {
-            if (data.status === 'success') {
-                let c = data.data;
-                document.querySelector('[name="name"]').value = c.name || '';
-                document.querySelector('[name="email"]').value = c.email || '';
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    let c = data.data;
 
-                let addressListDiv = document.getElementById('addressList');
-                addressListDiv.innerHTML = "";
+                    // Fill basic details
+                    document.querySelector('[name="name"]').value = c.name || '';
+                    document.querySelector('[name="email"]').value = c.email || '';
 
-                if (c.addresses && c.addresses.length > 0) {
-                    let html = `<h6 class="fw-semibold mb-3" style="font-size:13px;">📍 Select Saved Address</h6><div class="row g-3">`;
-                    c.addresses.forEach(addr => {
-                        html += `
-                          <div class="col-md-6">
-                            <div class="card address-card shadow-sm border rounded p-3 h-100">
-                              <div class="form-check d-flex align-items-start">
-                                <input class="form-check-input me-2" type="radio" name="address_id" value="${addr.id}" id="addr${addr.id}">
-                                <label class="form-check-label w-100" for="addr${addr.id}">
-                                  <div class="fw-semibold" style="font-size:13px;">${addr.address}</div>
-                                  <small class="text-muted" style="font-size:12px;">${addr.city}, ${addr.state} - ${addr.pincode}</small>
-                                  ${addr.is_default == 1 ? '<div><span class="badge bg-success mt-2" style="font-size:10px;">Default</span></div>' : ''}
-                                </label>
-                              </div>
-                            </div>
-                          </div>`;
-                    });
-                    html += `</div>`;
-                    addressListDiv.innerHTML = html;
+                    if (c.addresses && c.addresses.length > 0) {
+                        let html = `<h6 class="fw-semibold mb-3" style="font-size:13px;">📍 Select Saved Address</h6><div class="row g-3">`;
 
-                    let addressEdited = false;
+                        c.addresses.forEach(addr => {
+                            html += `
+                              <div class="col-md-6">
+                                <div class="card address-card shadow-sm border rounded p-3 h-100">
+                                  <div class="form-check d-flex align-items-start">
+                                    <input class="form-check-input me-2" type="radio" 
+                                           name="address_id" 
+                                           value="${addr.id}" 
+                                           id="addr${addr.id}"
+                                           data-address='${JSON.stringify(addr)}'
+                                           ${addr.is_default == 1 ? 'checked' : ''}>
+                                    <label class="form-check-label w-100" for="addr${addr.id}">
+                                      <div class="fw-semibold" style="font-size:13px;">${addr.address}</div>
+                                      <small class="text-muted" style="font-size:12px;">${addr.city}, ${addr.state} - ${addr.pincode}</small>
+                                      ${addr.is_default == 1 ? '<div><span class="badge bg-success mt-2" style="font-size:10px;">Default</span></div>' : ''}
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>`;
+                        });
 
-                    // When address selected → autofill form
-                    document.querySelectorAll('input[name="address_id"]').forEach(radio => {
-                        radio.addEventListener('change', function() {
-                            if (!addressEdited) { // only autofill if not edited
-                                let selected = c.addresses.find(a => a.id == this.value);
+                        html += `</div>`;
+                        addressListDiv.innerHTML = html;
+
+                        // Attach event listeners to auto-fill form when address is selected
+                        document.querySelectorAll('[name="address_id"]').forEach(radio => {
+                            radio.addEventListener('change', function () {
+                                let selectedAddr = JSON.parse(this.getAttribute('data-address'));
+
+                                document.querySelector('[name="address"]').value = selectedAddr.address || '';
+                                document.querySelector('[name="city"]').value = selectedAddr.city || '';
+                                document.querySelector('[name="state"]').value = selectedAddr.state || '';
+                                document.querySelector('[name="pincode"]').value = selectedAddr.pincode || '';
+                                document.querySelector('[name="email"]').value = c.email || '';
+                            });
+                        });
+
+                        // Auto-fill using default address (if any)
+                        let defaultRadio = document.querySelector('[name="address_id"]:checked');
+                        if (defaultRadio) {
+                            defaultRadio.dispatchEvent(new Event('change'));
+                        }
+
+                        // If user edits any address field → deselect saved address
+                        ["address", "city", "state", "pincode"].forEach(field => {
+                            document.querySelector(`[name="${field}"]`).addEventListener("input", function () {
+                                let selected = document.querySelector('[name="address_id"]:checked');
                                 if (selected) {
-                                    document.querySelector('[name="address"]').value = selected.address || '';
-                                    document.querySelector('[name="city"]').value = selected.city || '';
-                                    document.querySelector('[name="state"]').value = selected.state || '';
-                                    document.querySelector('[name="pincode"]').value = selected.pincode || '';
+                                    selected.checked = false;
                                 }
-                            }
+                            });
                         });
-                    });
-
-                    // If customer edits any field manually → deselect radio
-                    ['address','city','state','pincode'].forEach(field => {
-                        document.querySelector(`[name="${field}"]`).addEventListener('input', function() {
-                            addressEdited = true;
-                            let selectedRadio = document.querySelector('input[name="address_id"]:checked');
-                            if (selectedRadio) selectedRadio.checked = false;
-                        });
-                    });
+                    }
+                } else {
+                    // clear details if not found
+                    clearAllFields();
                 }
-            }
-        });
+            });
+    } else {
+        clearAllFields();
     }
 });
+
+// Helper to clear fields
+function clearAllFields() {
+    ["email", "address", "city", "state", "pincode"].forEach(f => {
+        document.querySelector(`[name="${f}"]`).value = '';
+    });
+}
+
+// document.getElementById('phoneInput').addEventListener('blur', function() {
+//     let phone = this.value.trim();
+//     if (phone.length >= 8) {
+//         fetch('get-customer.php?phone=' + phone)
+//         .then(res => res.json())
+//         .then(data => {
+//             if (data.status === 'success') {
+//                 let c = data.data;
+//                 document.querySelector('[name="name"]').value = c.name || '';
+//                 document.querySelector('[name="email"]').value = c.email || '';
+
+//                 let addressListDiv = document.getElementById('addressList');
+//                 addressListDiv.innerHTML = "";
+
+//                 if (c.addresses && c.addresses.length > 0) {
+//                     let html = `<h6 class="fw-semibold mb-3" style="font-size:13px;">📍 Select Saved Address</h6><div class="row g-3">`;
+//                     c.addresses.forEach(addr => {
+//                         html += `
+//                           <div class="col-md-6">
+//                             <div class="card address-card shadow-sm border rounded p-3 h-100">
+//                               <div class="form-check d-flex align-items-start">
+//                                 <input class="form-check-input me-2" type="radio" name="address_id" value="${addr.id}" id="addr${addr.id}">
+//                                 <label class="form-check-label w-100" for="addr${addr.id}">
+//                                   <div class="fw-semibold" style="font-size:13px;">${addr.address}</div>
+//                                   <small class="text-muted" style="font-size:12px;">${addr.city}, ${addr.state} - ${addr.pincode}</small>
+//                                   ${addr.is_default == 1 ? '<div><span class="badge bg-success mt-2" style="font-size:10px;">Default</span></div>' : ''}
+//                                 </label>
+//                               </div>
+//                             </div>
+//                           </div>`;
+//                     });
+//                     html += `</div>`;
+//                     addressListDiv.innerHTML = html;
+
+//                     let addressEdited = false;
+
+//                     // When address selected → autofill form
+//                     document.querySelectorAll('input[name="address_id"]').forEach(radio => {
+//                         radio.addEventListener('change', function() {
+//                             if (!addressEdited) { // only autofill if not edited
+//                                 let selected = c.addresses.find(a => a.id == this.value);
+//                                 if (selected) {
+//                                     document.querySelector('[name="address"]').value = selected.address || '';
+//                                     document.querySelector('[name="city"]').value = selected.city || '';
+//                                     document.querySelector('[name="state"]').value = selected.state || '';
+//                                     document.querySelector('[name="pincode"]').value = selected.pincode || '';
+//                                 }
+//                             }
+//                         });
+//                     });
+
+//                     // If customer edits any field manually → deselect radio
+//                     ['address','city','state','pincode'].forEach(field => {
+//                         document.querySelector(`[name="${field}"]`).addEventListener('input', function() {
+//                             addressEdited = true;
+//                             let selectedRadio = document.querySelector('input[name="address_id"]:checked');
+//                             if (selectedRadio) selectedRadio.checked = false;
+//                         });
+//                     });
+//                 }
+//             }
+//         });
+//     }
+// });
 
             // Category filter
             document.querySelectorAll('#categoryFilter button').forEach(btn=>{
                 btn.addEventListener('click', ()=>{
-        // remove active class
-        document.querySelectorAll('#categoryFilter button').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
+                    // remove active class
+                    document.querySelectorAll('#categoryFilter button').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
 
-        let category = btn.dataset.category;
-        document.querySelectorAll('.product-item').forEach(item=>{
-            if(category === 'all' || item.dataset.category === category){
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    });
+                    let category = btn.dataset.category;
+                    document.querySelectorAll('.product-item').forEach(item=>{
+                        if(category === 'all' || item.dataset.category === category){
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
             });
 
             let cart = [];
 
-// Add to cart
-document.querySelectorAll('.addToCart').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-        let id = btn.dataset.id;
-        let name = btn.dataset.name;
-        let price = parseFloat(btn.dataset.price);
+        // Add to cart
+        document.querySelectorAll('.addToCart').forEach(btn=>{
+            btn.addEventListener('click', ()=>{
+                let id = btn.dataset.id;
+                let name = btn.dataset.name;
+                let price = parseFloat(btn.dataset.price);
 
-        // get product image
-        let imgSrc = btn.closest('.product-card').querySelector('img').getAttribute('src');
+                // get product image
+                let imgSrc = btn.closest('.product-card').querySelector('img').getAttribute('src');
 
-        // check if item already in cart
-        let item = cart.find(p=>p.id == id);
-        if(item){
-            item.qty += 1; 
-        } else { 
-            cart.push({id, name, price, qty:1, image: imgSrc}); 
+                // check if item already in cart
+                let item = cart.find(p=>p.id == id);
+                if(item){
+                    item.qty += 1; 
+                } else { 
+                    cart.push({id, name, price, qty:1, image: imgSrc}); 
 
-            // disable Add to Cart button
-            btn.disabled = true;
-            btn.innerText = "✔ Added";
-            btn.classList.remove("btn-primary");
-            btn.classList.add("btn-success");
+                    // disable Add to Cart button
+                    btn.disabled = true;
+                    btn.innerText = "✔ Added";
+                    btn.classList.remove("btn-primary");
+                    btn.classList.add("btn-success");
+                }
+
+                renderCart();
+                toggleCart(); // open cart after adding
+            });
+        });
+
+        // Render cart
+        function renderCart(){
+            let cartItemsDiv = document.getElementById('cartItems');
+            cartItemsDiv.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item,i)=>{
+                total += item.qty * item.price;
+                cartItemsDiv.innerHTML += `
+                <div class="cart-item">
+                <img src="${item.image}" alt="">
+                <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-price">₹${item.price} x ${item.qty}</div>
+                </div>
+                <div class="cart-qty">
+                <button onclick="updateQty(${i},-1)">−</button>
+                <span>${item.qty}</span>
+                <button onclick="updateQty(${i},1)">+</button>
+                </div>
+                <button class="remove-btn" onclick="removeFromCart(${i})"><i class="bi bi-trash-fill text-danger"></i></button>
+                </div>`;
+            });
+
+            // Update totals
+            document.getElementById('cartCount').innerText = cart.length;
+            document.getElementById('cartTotal').innerText = total.toFixed(2);
+
+            // Update floating cart badge
+            document.getElementById('cartCountBadge').innerText = cart.length;
         }
 
-        renderCart();
-        toggleCart(); // open cart after adding
-    });
-});
+        // Update qty in cart
+        function updateQty(i,delta){
+            cart[i].qty += delta;
+            if(cart[i].qty <= 0){
+                removeFromCart(i);
+            }
+            renderCart();
+        }
 
-// Render cart
-function renderCart(){
-    let cartItemsDiv = document.getElementById('cartItems');
-    cartItemsDiv.innerHTML = '';
-    let total = 0;
+        // Remove item
+        function removeFromCart(i){ 
+            let removed = cart.splice(i,1)[0];
+            renderCart();
 
-    cart.forEach((item,i)=>{
-        total += item.qty * item.price;
-        cartItemsDiv.innerHTML += `
-        <div class="cart-item">
-        <img src="${item.image}" alt="">
-        <div class="cart-item-info">
-        <div class="cart-item-name">${item.name}</div>
-        <div class="cart-item-price">₹${item.price} x ${item.qty}</div>
-        </div>
-        <div class="cart-qty">
-        <button onclick="updateQty(${i},-1)">−</button>
-        <span>${item.qty}</span>
-        <button onclick="updateQty(${i},1)">+</button>
-        </div>
-        <button class="remove-btn" onclick="removeFromCart(${i})"><i class="bi bi-trash-fill text-danger"></i></button>
-        </div>`;
-    });
+            // re-enable Add to Cart button for that product
+            let btn = document.querySelector(`.addToCart[data-id="${removed.id}"]`);
+            if(btn){
+                btn.disabled = false;
+                btn.innerText = "➕ Add to Cart";
+                btn.classList.remove("btn-success");
+                btn.classList.add("btn-primary");
+            }
+        }
 
-    // Update totals
-    document.getElementById('cartCount').innerText = cart.length;
-    document.getElementById('cartTotal').innerText = total.toFixed(2);
+        // Submit order
+        document.getElementById('orderForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            document.getElementById('cartData').value = JSON.stringify(cart);
 
-    // Update floating cart badge
-    document.getElementById('cartCountBadge').innerText = cart.length;
-}
+            let formData = new FormData(this);
+            fetch('place-online-orders-save.php', { method:'POST', body:formData })
+            .then(res=>res.json())
+            .then(data=>{
+                if(data.status == 'success'){ 
+                    // Clear cart
+                    cart.forEach(p=>{
+                        let btn = document.querySelector(`.addToCart[data-id="${p.id}"]`);
+                        if(btn){
+                            btn.disabled = false;
+                            btn.innerText = "➕ Add to Cart";
+                            btn.classList.remove("btn-success");
+                            btn.classList.add("btn-primary");
+                        }
+                    });
+                    cart = []; 
+                    renderCart(); 
+                    toggleCart();
 
-// Update qty in cart
-function updateQty(i,delta){
-    cart[i].qty += delta;
-    if(cart[i].qty <= 0){
-        removeFromCart(i);
-    }
-    renderCart();
-}
+                    // Close the modal
+                    let checkoutModalEl = document.getElementById('checkoutModal');
+                    let modal = bootstrap.Modal.getInstance(checkoutModalEl);
+                    if(modal) modal.hide();
 
-// Remove item
-function removeFromCart(i){ 
-    let removed = cart.splice(i,1)[0];
-    renderCart();
+                    // Reset the form
+                    document.getElementById('orderForm').reset();
 
-    // re-enable Add to Cart button for that product
-    let btn = document.querySelector(`.addToCart[data-id="${removed.id}"]`);
-    if(btn){
-        btn.disabled = false;
-        btn.innerText = "➕ Add to Cart";
-        btn.classList.remove("btn-success");
-        btn.classList.add("btn-primary");
-    }
-}
-
-// Submit order
-document.getElementById('orderForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    document.getElementById('cartData').value = JSON.stringify(cart);
-
-    let formData = new FormData(this);
-    fetch('place-online-orders-save.php', { method:'POST', body:formData })
-    .then(res=>res.json())
-    .then(data=>{
-        if(data.status == 'success'){ 
-            // Clear cart
-            cart.forEach(p=>{
-                let btn = document.querySelector(`.addToCart[data-id="${p.id}"]`);
-                if(btn){
-                    btn.disabled = false;
-                    btn.innerText = "➕ Add to Cart";
-                    btn.classList.remove("btn-success");
-                    btn.classList.add("btn-primary");
+                    // Show success dialog
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Order Placed!',
+                        text: `Your order number is ${data.order_number}`,
+                        confirmButtonColor: '#28a745'
+                    });
+                } else {
+                    // Show error
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.message,
+                        confirmButtonColor: '#dc3545'
+                    });
                 }
             });
-            cart = []; 
-            renderCart(); 
-            toggleCart();
+        });
 
-            // Close the modal
-            let checkoutModalEl = document.getElementById('checkoutModal');
-            let modal = bootstrap.Modal.getInstance(checkoutModalEl);
-            if(modal) modal.hide();
 
-            // Reset the form
-            document.getElementById('orderForm').reset();
+                // Update floating cart badge
+                document.getElementById('cartCountBadge').innerText = cart.length;
 
-            // Show success dialog
-            Swal.fire({
-                icon: 'success',
-                title: 'Order Placed!',
-                text: `Your order number is ${data.order_number}`,
-                confirmButtonColor: '#28a745'
-            });
-        } else {
-            // Show error
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: data.message,
-                confirmButtonColor: '#dc3545'
-            });
+                if(cart.length === 1) {
+            toggleCart(); // auto open on first item
         }
-    });
-});
 
+        let cartBtn = document.getElementById('floatingCart');
+        cartBtn.classList.add('pulse');
+        setTimeout(() => cartBtn.classList.remove('pulse'), 600);
 
-        // Update floating cart badge
-        document.getElementById('cartCountBadge').innerText = cart.length;
+    </script>
+    <style>
 
-        if(cart.length === 1) {
-    toggleCart(); // auto open on first item
-}
+        .category-wrapper {
+          position: relative;
+      }
 
-let cartBtn = document.getElementById('floatingCart');
-cartBtn.classList.add('pulse');
-setTimeout(() => cartBtn.classList.remove('pulse'), 600);
+      .scroll-arrow {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          background: #fff;
+          border: 1px solid #ddd;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          z-index: 5;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      }
 
-</script>
-<style>
+      .scroll-arrow.left {
+          left: -12px;
+      }
+      .scroll-arrow.right {
+          right: -12px;
+      }
 
-    .category-wrapper {
-      position: relative;
-  }
+      .scroll-arrow:hover {
+          background: #0d6efd;
+          color: #fff;
+      }
 
-  .scroll-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
+      .badge.bg-success {
+        background-color: #28a745 !important;
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+    .badge.bg-danger {
+        background-color: #dc3545 !important;
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+
+    /* Category Filter Wrapper */
+    .category-scroll {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 5;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      gap: 8px;
+      padding-bottom: 6px;
+      scrollbar-width: none; /* Firefox */
+  }
+  .category-scroll::-webkit-scrollbar {
+      display: none; /* Chrome, Safari */
   }
 
-  .scroll-arrow.left {
-      left: -12px;
+  /* Buttons */
+  #categoryFilter .btn {
+      border-radius: 20px;
+      flex-shrink: 0;   /* prevents button from shrinking */
+      white-space: nowrap;
+      font-size: 13px;
+      padding: 5px 14px;
+      transition: 0.3s ease-in-out;
   }
-  .scroll-arrow.right {
-      right: -12px;
-  }
-
-  .scroll-arrow:hover {
-      background: #0d6efd;
+  #categoryFilter .btn:hover {
+      background-color: #0d6efd;
       color: #fff;
   }
+  #categoryFilter .btn.active {
+      background-color: #0d6efd;
+      color: #fff;
+      font-weight: 600;
+  }
 
-  .badge.bg-success {
-    background-color: #28a745 !important;
-    font-size: 12px;
-    padding: 4px 8px;
-}
-.badge.bg-danger {
-    background-color: #dc3545 !important;
-    font-size: 12px;
-    padding: 4px 8px;
-}
-
-/* Category Filter Wrapper */
-.category-scroll {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  gap: 8px;
-  padding-bottom: 6px;
-  scrollbar-width: none; /* Firefox */
-}
-.category-scroll::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-/* Buttons */
-#categoryFilter .btn {
-  border-radius: 20px;
-  flex-shrink: 0;   /* prevents button from shrinking */
-  white-space: nowrap;
-  font-size: 13px;
-  padding: 5px 14px;
-  transition: 0.3s ease-in-out;
-}
-#categoryFilter .btn:hover {
-  background-color: #0d6efd;
-  color: #fff;
-}
-#categoryFilter .btn.active {
-  background-color: #0d6efd;
-  color: #fff;
-  font-weight: 600;
-}
-
-/* On larger screens, keep them inline & centered */
-@media(min-width: 768px){
-  .category-scroll {
-    justify-content: flex-start;
-    overflow-x: visible;
-    flex-wrap: wrap;
-}
+  /* On larger screens, keep them inline & centered */
+  @media(min-width: 768px){
+      .category-scroll {
+        justify-content: flex-start;
+        overflow-x: visible;
+        flex-wrap: wrap;
+    }
 }
 
 /* Pulse animation */
