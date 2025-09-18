@@ -124,7 +124,7 @@ try {
             "iiiidd",
             $new_order_id,
             $product_id,
-            $batch_id
+            $batch_id,
             $quantity,
             $unit_price,
             $total_price
