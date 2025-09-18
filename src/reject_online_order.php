@@ -123,7 +123,7 @@ try {
 
     echo json_encode([
         "success" => true,
-        "message" => "Order rejected successfully & reassigned to store (Pincode: {$new_store['pincode']})"
+        "message" => "Order rejected successfully!"
     ]);
 
 } catch (Exception $e) {

@@ -108,21 +108,23 @@ try {
     $new_order_id = mysqli_insert_id($link);
 
     // --- Insert order items ---
-    $item_sql = "INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price)
+    $item_sql = "INSERT INTO order_items (order_id, product_id, batch_code, quantity, unit_price, total_price)
                  VALUES (?, ?, ?, ?, ?)";
     $item_stmt = safePrepare($link, $item_sql);
 
     foreach ($order_items as $item) {
         $product_id  = $item['product_id'];
+        $batch_id  = $item['batch_id'];
         $quantity    = $item['qty'];
         $unit_price  = (float)$item['price'];
         $total_price = $quantity * $unit_price;
 
         mysqli_stmt_bind_param(
             $item_stmt,
-            "iiidd",
+            "iiiidd",
             $new_order_id,
             $product_id,
+            $batch_id
             $quantity,
             $unit_price,
             $total_price
