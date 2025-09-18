@@ -1,7 +1,14 @@
 <?php
+
+require_once __DIR__ . '/../auth/auth_middleware.php';
+require_once __DIR__ . '/../partials/config.php';
+requireLogin();
+
 $link = $_SERVER[ 'PHP_SELF' ];
 $link_array = explode( '/', $link );
 $page = end( $link_array );
+
+$currentUser = getCurrentUser();
 ?>
 
 <?php  if ($page !== 'pos-2.php' && $page !== 'pos-3.php' && $page !== 'pos-4.php' && $page !== 'pos-5.php' && $page !== 'pos.php'){?>
@@ -83,36 +90,38 @@ $page = end( $link_array );
 
 				<!-- Select Store -->
 				<li class="nav-item dropdown has-arrow main-drop select-store-dropdown">
-					<a href="javascript:void(0);" class="dropdown-toggle nav-link select-store"
-						data-bs-toggle="dropdown">
-						<span class="user-info">
-							<span class="user-letter">
-								<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
-							</span>
-							<span class="user-detail">
-                                                            <!--<span class="user-name">Freshmart</span>-->
-								<span class="user-name">Store 1</span>
-							</span>
-						</span>
+                                    <a href="javascript:void(0);" class="dropdown-toggle nav-link select-store"
+                                       data-bs-toggle="dropdown">
+                                        <span class="user-info">
+                                            <span class="user-letter">
+                                                <img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
+                                            </span>
+                                            <span class="user-detail">
+                                                <span class="user-name"><?= htmlspecialchars($currentUser['full_name']); ?></span>
+                                            </span>
+                                        </span>
+                                    </a>
+                                    <div class="dropdown-menu dropdown-menu-right">
+                                        <a href="switch_store.php?store_id=<?= $currentUser['id']; ?>" class="dropdown-item">
+                                            <img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
+                                            <?= htmlspecialchars($currentUser['full_name']); ?>
+                                        </a>
+        <!--					
+        <a href="javascript:void(0);" class="dropdown-item">
+						<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Freshmart
 					</a>
-					<div class="dropdown-menu dropdown-menu-right">
-						<a href="javascript:void(0);" class="dropdown-item">
-							<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Store 1
-						</a>
-<!--						<a href="javascript:void(0);" class="dropdown-item">
-							<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Freshmart
-						</a>
-						<a href="javascript:void(0);" class="dropdown-item">
-							<img src="assets/img/store/store-02.png" alt="Store Logo" class="img-fluid">Grocery Apex
-						</a>
-						<a href="javascript:void(0);" class="dropdown-item">
-							<img src="assets/img/store/store-03.png" alt="Store Logo" class="img-fluid">Grocery Bevy
-						</a>
-						<a href="javascript:void(0);" class="dropdown-item">
-							<img src="assets/img/store/store-04.png" alt="Store Logo" class="img-fluid">Grocery Eden
-						</a>-->
-					</div>
-				</li>
+					<a href="javascript:void(0);" class="dropdown-item">
+						<img src="assets/img/store/store-02.png" alt="Store Logo" class="img-fluid">Grocery Apex
+					</a>
+					<a href="javascript:void(0);" class="dropdown-item">
+						<img src="assets/img/store/store-03.png" alt="Store Logo" class="img-fluid">Grocery Bevy
+					</a>
+					<a href="javascript:void(0);" class="dropdown-item">
+						<img src="assets/img/store/store-04.png" alt="Store Logo" class="img-fluid">Grocery Eden
+					</a>-->
+        
+                                    </div>
+                                </li>
 				<!-- /Select Store -->
 
 				<li class="nav-item dropdown link-nav">
@@ -419,23 +428,23 @@ $page = end( $link_array );
 
 			<!-- Select Store -->
 			<li class="nav-item dropdown has-arrow main-drop select-store-dropdown">
-				<a href="javascript:void(0);" class="dropdown-toggle nav-link select-store"
-					data-bs-toggle="dropdown">
-					<span class="user-info">
-						<span class="user-letter">
-							<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
-						</span>
-						<span class="user-detail">
-                                                    <!--<span class="user-name">Freshmart</span>-->
-                                                    <span class="user-name">Store 1</span>
-						</span>
-					</span>
-				</a>
-				<div class="dropdown-menu dropdown-menu-right">
-					<a href="javascript:void(0);" class="dropdown-item">
-						<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Store 1
-					</a>
-<!--					<a href="javascript:void(0);" class="dropdown-item">
+                            <a href="javascript:void(0);" class="dropdown-toggle nav-link select-store"
+                               data-bs-toggle="dropdown">
+                                <span class="user-info">
+                                    <span class="user-letter">
+                                        <img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
+                                    </span>
+                                    <span class="user-detail">
+                                        <span class="user-name"><?= htmlspecialchars($currentUser['full_name']); ?></span>
+                                    </span>
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="switch_store.php?store_id=<?= $currentUser['id']; ?>" class="dropdown-item">
+                                    <img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">
+                                    <?= htmlspecialchars($currentUser['full_name']); ?>
+                                </a>
+                                <!--					<a href="javascript:void(0);" class="dropdown-item">
 						<img src="assets/img/store/store-01.png" alt="Store Logo" class="img-fluid">Freshmart
 					</a>
 					<a href="javascript:void(0);" class="dropdown-item">
@@ -447,8 +456,8 @@ $page = end( $link_array );
 					<a href="javascript:void(0);" class="dropdown-item">
 						<img src="assets/img/store/store-04.png" alt="Store Logo" class="img-fluid">Grocery Eden
 					</a>-->
-				</div>
-			</li>
+                            </div>
+                        </li>
 			<!-- /Select Store -->
 			
 			<li class="nav-item nav-item-box">
