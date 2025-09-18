@@ -89,7 +89,7 @@ Start Page Content
 			</ul>
 			<div class="page-btn">
 				<a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-sales-new">
-					<i class="ti ti-circle-plus me-1"></i>Add Sales Return
+					<i class="ti ti-circle-plus me-1"></i>Add Purchase Return
 				</a>
 			</div>
 		</div>
