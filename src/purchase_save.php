@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reference_no  = mysqli_real_escape_string($link, $_POST['reference_no']);
     $order_tax     = floatval($_POST['order_tax'] ?? 0);
     $discount      = floatval($_POST['order_discount'] ?? 0);
-    $shipping      = mysqli_real_escape_string($link, $_POST['shipping'] ?? '');
+    $shipping      = mysqli_real_escape_string($link, $_POST['shipping'] ?? '0.00');
     $status        = mysqli_real_escape_string($link, $_POST['status']);
     $description   = mysqli_real_escape_string($link, $_POST['description'] ?? '');
     // Calculate grand total from items
