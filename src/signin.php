@@ -16,12 +16,12 @@ redirectIfLoggedIn();
                         <div class="login-logo logo-normal">
                             <img src="assets/img/logo.svg" alt="img">
                         </div>
-                        <a href="index.php" class="login-logo logo-white">
+<!--                        <a href="index.php" class="login-logo logo-white">
                             <img src="assets/img/logo-white.svg"  alt="Img">
-                        </a>
+                        </a>-->
                         <div class="login-userheading">
                             <h3>Sign In</h3>
-                            <h4 class="fs-16">Access the Dreamspos panel using your email and passcode.</h4>
+                            <!--<h4 class="fs-16">Access the Dreamspos panel using your email and passcode.</h4>-->
                         </div>
                         
                         <?php if (isset($_SESSION['login_error'])): ?>
@@ -69,10 +69,10 @@ redirectIfLoggedIn();
                             <h4>New on our platform?<a href="register.php" class="hover-a"> Create an account</a></h4>
                         </div>
                         <div class="form-setlogin or-text">
-                            <h4>OR</h4>
+<!--                            <h4>OR</h4>-->
                         </div>
                         <div class="mt-2">
-                            <div class="d-flex align-items-center justify-content-center flex-wrap">
+<!--                            <div class="d-flex align-items-center justify-content-center flex-wrap">
                                 <div class="text-center me-2 flex-fill">
                                     <a href="javascript:void(0);"
                                         class="br-10 p-2 btn btn-info d-flex align-items-center justify-content-center">
@@ -91,10 +91,10 @@ redirectIfLoggedIn();
                                         <img class="img-fluid m-1" src="assets/img/icons/apple-logo.svg" alt="Apple">
                                     </a>
                                 </div>
-                            </div>
+                            </div>-->
                         </div>
                         <div class="my-4 d-flex justify-content-center align-items-center copyright-text">
-                        <p>Copyright &copy; 2025 DreamsPOS</p>
+                        <!--<p>Copyright &copy; 2025 DreamsPOS</p>-->
                     </div>
                     </div>
                 </form>
