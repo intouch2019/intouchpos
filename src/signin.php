@@ -21,7 +21,7 @@ redirectIfLoggedIn();
                         </a>-->
                         <div class="login-userheading">
                             <h3>Sign In</h3>
-                            <!--<h4 class="fs-16">Access the Dreamspos panel using your email and passcode.</h4>-->
+                            <h4 class="fs-16">Access the Intouchpos panel using your email and passcode.</h4>
                         </div>
                         
                         <?php if (isset($_SESSION['login_error'])): ?>
@@ -66,7 +66,7 @@ redirectIfLoggedIn();
                             <button type="submit" class="btn btn-primary w-100">Sign In</button>
                         </div>
                         <div class="signinform">
-                            <h4>New on our platform?<a href="register.php" class="hover-a"> Create an account</a></h4>
+                            <!--<h4>New on our platform?<a href="register.php" class="hover-a"> Create an account</a></h4>-->
                         </div>
                         <div class="form-setlogin or-text">
 <!--                            <h4>OR</h4>-->
