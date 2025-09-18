@@ -3,7 +3,7 @@ require_once __DIR__ . '/../partials/config.php';
 
 // Fetch all purchases to display in the table
 $purchases = [];
-$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id ORDER BY p.purchase_date, p.id  DESC";
+$sql_purchases = "SELECT p.*, s.name as supplier_name FROM purchase p JOIN suppliers s ON p.supplier_id = s.id ORDER BY p.purchase_date DESC, p.id DESC";
 $result_purchases = mysqli_query($link, $sql_purchases);
 if ($result_purchases) {
 	while ($row = mysqli_fetch_assoc($result_purchases)) {
