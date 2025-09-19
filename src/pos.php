@@ -998,7 +998,11 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                                     <a class="delete-icon" href="javascript:void(0);" onclick="removeFromCart(${item.id}, '${item.batch_code}')">
                                         <i class="ti ti-trash-x-filled"></i>
                                     </a>
-                                    <h6 class="fs-13 fw-normal">${item.name}(${item.batch_code})</h6>
+                                    <h6 class="fw-normal text-truncate" 
+    style="max-width: 180px; font-size: 12px;" 
+    title="${item.name} (${item.batch_code.replace(/^BATCH-/, '')})">
+  ${item.name} (${item.batch_code.replace(/^BATCH-/, '')})
+</h6>
                                 </div>
                             </td>
                             <td>
