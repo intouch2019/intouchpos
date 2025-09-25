@@ -1111,48 +1111,76 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
 
         // Function to apply discount based on cart total
         function applyDiscount() {
-            const subtotal = getCartSubtotal();
+            const discountableSubtotal = cart.reduce((total, item) => {
+                if (!item.is_exchange) {
+                    return total + (item.price * item.quantity);
+                }
+                return total;
+            }, 0);
+
             const discountContainer = document.getElementById('discount-item-container');
             const discountAmountEl = document.getElementById('discountAmount');
-            let appliedDiscount = false;
+            
+            let bestDiscount = 0;
+            let bestScheme = null;
 
-            // Find and apply the first valid scheme
+            // Iterate through all schemes to find the best one
             for (const scheme of schemes) {
-                if (subtotal >= scheme.min_purchase) {
-                    let discountValue = 0;
-                    let discountText = '';
-
+                let currentDiscount = 0;
+                if (discountableSubtotal >= scheme.min_purchase) {
                     if (scheme.type === 'percentage') {
-                        discountValue = subtotal * (scheme.value / 100);
-                        discountText = `${scheme.description}`;
-                    } else { // Assuming 'flat'
-                        discountValue = scheme.value;
-                        discountText = `${scheme.description}`;
+                        currentDiscount = discountableSubtotal * (scheme.value / 100);
+                    } else if (scheme.type === 'flat' && scheme.name === 'B2G1') {
+                        // B2G1 logic: Buy 2, Get 1 Free on any item (cheapest is free)
+                        let allItems = [];
+                        cart.forEach(item => {
+                            if (!item.is_exchange) { 
+                                for (let i = 0; i < item.quantity; i++) {
+                                    allItems.push(parseFloat(item.price));
+                                }
+                            }
+                        });
+
+                        const totalQuantity = allItems.length;
+                        // "Buy 2, Get 1 Free" means for every 3 items, 1 is free.
+                        const freeItemsCount = Math.floor(totalQuantity / 3);
+
+                        if (freeItemsCount > 0) {
+                            allItems.sort((a, b) => a - b); // sort cheapest first
+                            for (let i = 0; i < freeItemsCount; i++) {
+                                currentDiscount += allItems[i];
+                            }
+                        }
+                    } else if (scheme.type === 'flat') { // Other generic flat discounts
+                        currentDiscount = parseFloat(scheme.value);
                     }
 
-                    discountAmountEl.textContent = `-${discountValue.toFixed(2)}`;
+                    if (currentDiscount > bestDiscount) {
+                        bestDiscount = currentDiscount;
+                        bestScheme = scheme;
+                    }
+                }
+            }
 
-                    // Show the discount item in the cart
-                    discountContainer.innerHTML = `
+            if (bestScheme) {
+                discountAmountEl.textContent = `-${bestDiscount.toFixed(2)}`;
+
+                // Show the discount item in the cart
+                discountContainer.innerHTML = `
                         <div class="discount-item d-flex align-items-center justify-content-between bg-purple-transparent mt-3 flex-nowrap gap-2">
                             <div class="d-flex align-items-center flex-grow-1 overflow-hidden">
                                 <span class="bg-purple discount-icon br-5 flex-shrink-0 me-2">
                                     <img src="assets/img/icons/discount-icon.svg" alt="img">
                                 </span>
                                 <div>
-                                    <h6 class="fs-14 fw-bold text-purple mb-1">${discountText}</h6>
-                                    <p class="mb-0">${scheme.name}</p>
+                                    <h6 class="fs-14 fw-bold text-purple mb-1">${bestScheme.description}</h6>
+                                    <p class="mb-0">${bestScheme.name}</p>
                                 </div>
                             </div>
                             <a href="javascript:void(0);" class="close-icon" onclick="removeDiscount()"><i class="ti ti-trash"></i></a>
                         </div>
                     `;
-                    appliedDiscount = true;
-                    break; // Apply only the first matching scheme
-                }
-            }
-
-            if (!appliedDiscount) {
+            } else {
                 discountAmountEl.textContent = '0.00';
                 discountContainer.innerHTML = '';
             }
