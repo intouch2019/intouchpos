@@ -69,6 +69,7 @@ $total_amount = (float)$data['total_amount'];
 $payment_method = isset($data['payment_method']) ? $data['payment_method'] : 'cash';
 //$notes = isset($data['notes']) ? $data['notes'] : null;
 $order_number = 'ORD' . date('Ymd') . sprintf('%04d', rand(1, 9999));
+$created_by = $current_user['id'];
 
 // Start transaction
 mysqli_begin_transaction($link);
@@ -89,7 +90,7 @@ try {
         "siidddidss",
         $order_number, 
         $customer_id, 
-        $user_id, 
+        $created_by,
         $subtotal, 
         $tax_amount, 
         $discount_amount, 

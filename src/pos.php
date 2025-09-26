@@ -1664,7 +1664,7 @@ function debugProducts() {
             const discountAmount = appliedScheme ? (parseFloat(document.getElementById('discountAmount').textContent.replace('-', '')) || 0) : 0;
             const schemeId = appliedScheme ? appliedScheme.id : null;
             console.log(schemeId);
-            alert(schemeId);
+//            alert(schemeId);
             // Prepare order data
             const orderData = {
                 cart_items: cart,
