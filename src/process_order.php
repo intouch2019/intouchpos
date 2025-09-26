@@ -7,6 +7,8 @@ requireLogin();
 
 // Set content type to JSON
 //header('Content-Type: application/json');
+// Assuming the input is coming as a JSON POST request
+$data = json_decode(file_get_contents('php://input'), true);
 
 // Only allow POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -47,62 +49,64 @@ if (!$current_user) {
     exit;
 }
 
-try {
-    // Start transaction
-    mysqli_begin_transaction($link);
-    
-    // Generate order number
-    $order_number = 'ORD' . date('Ymd') . sprintf('%04d', rand(1, 9999));
+// Sanitize and extract data
+$cart_items = $data['cart_items'];
+$subtotal = (float)$data['subtotal'];
 
-    // Prepare order data
-    $customer_id = $data['customer_id'] === 'walkin' ? null : (int)$data['customer_id'];
-    $payment_method = mysqli_real_escape_string($link, $data['payment_method']);
-    $subtotal = (float)$data['subtotal'];
-    $tax_amount = isset($data['tax_amount']) ? (float)$data['tax_amount'] : 0;
-    $discount_amount = isset($data['discount_amount']) ? (float)$data['discount_amount'] : 0;
-    $total_amount = (float)$data['total_amount'];
-    $notes = isset($data['notes']) ? mysqli_real_escape_string($link, $data['notes']) : '';
-    $created_by = $current_user['id'];
-    
-    // Insert order
-    $order_sql = "INSERT INTO orders (
-        order_number, 
-        customer_id, 
-        user_id, 
-        payment_method, 
-        subtotal, 
-        tax_amount, 
-        discount_amount, 
-        total_amount, 
-        notes, 
-        order_status
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed')";
-    
-    $order_stmt = mysqli_prepare($link, $order_sql);
+// Generate order number
+$order_number = 'ORD' . date('Ymd') . sprintf('%04d', rand(1, 9999));
+
+// Prepare order data
+$customer_id = $data['customer_id'] === 'walkin' ? null : (int)$data['customer_id'];
+$payment_method = mysqli_real_escape_string($link, $data['payment_method']);
+
+//$user_id = isset($_SESSION['id']) ? (int)$_SESSION['id'] : null; // Assuming user ID is in session
+$subtotal = (float)$data['subtotal'];
+$tax_amount = isset($data['tax_amount']) ? (float)$data['tax_amount'] : 0.00;
+$discount_amount = isset($data['discount_amount']) ? (float)$data['discount_amount'] : 0.00;
+$scheme_id = isset($data['scheme_id']) ? (int)$data['scheme_id'] : null;
+$total_amount = (float)$data['total_amount'];
+$payment_method = isset($data['payment_method']) ? $data['payment_method'] : 'cash';
+//$notes = isset($data['notes']) ? $data['notes'] : null;
+$order_number = 'ORD' . date('Ymd') . sprintf('%04d', rand(1, 9999));
+
+// Start transaction
+mysqli_begin_transaction($link);
+
+try {
+    // Insert into orders table
+    $sql_order = "INSERT INTO orders (order_number, customer_id, user_id, subtotal, tax_amount, discount_amount, scheme_id, total_amount, payment_method, notes) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    $order_stmt = mysqli_prepare($link, $sql_order);
+
     if (!$order_stmt) {
-        throw new Exception('Failed to prepare order statement: ' . mysqli_error($link));
+        throw new Exception('Failed to prepare statement: ' . mysqli_error($link));
     }
-    
-    mysqli_stmt_bind_param($order_stmt, 'siisdddss', 
+
+    mysqli_stmt_bind_param(
+        $order_stmt,
+        "siidddidss",
         $order_number, 
         $customer_id, 
-        $created_by, 
-        $payment_method, 
+        $user_id, 
         $subtotal, 
         $tax_amount, 
         $discount_amount, 
+        $scheme_id, 
         $total_amount, 
+        $payment_method, 
         $notes
     );
-    
+
     if (!mysqli_stmt_execute($order_stmt)) {
         throw new Exception('Failed to insert order: ' . mysqli_stmt_error($order_stmt));
     }
-    
+
     $order_id = mysqli_insert_id($link);
     mysqli_stmt_close($order_stmt);
-    
-    // Insert order items and update stock
+
+// Insert order items and update stock
     // Insert order items and update batch stock
 // Insert order items and update batch stock
 $item_sql = "INSERT INTO order_items (
@@ -151,10 +155,10 @@ foreach ($data['cart_items'] as $item) {
 
     if (!$auto_batch) {
         throw new Exception("No batch available for product ID $product_id with enough stock");
-    }
-
+    }    
+    
     $batch_code = $auto_batch['batch_code'];
-}
+        }
 
     $real_product_id = abs($product_id);
     // Validate batch exists and has enough stock
@@ -167,7 +171,7 @@ foreach ($data['cart_items'] as $item) {
     mysqli_stmt_close($check_stmt);
 
     if (!$batch) {
-        throw new Exception("Batch $batch_code not found for product ID $real_product_id, $batch_code");
+        throw new Exception("Batch $batch_code not found for product ID $real_product_id, $batch_code");        
     }
     if ($batch['stock_quantity'] < $quantity) {
         throw new Exception("Insufficient stock in batch $batch_code for product ID $real_product_id. Available: {$batch['stock_quantity']}, Required: $quantity");
@@ -208,7 +212,7 @@ foreach ($data['cart_items'] as $item) {
     if (!mysqli_stmt_execute($batch_stock_stmt)) {
         throw new Exception('Failed to update batch stock: ' . mysqli_stmt_error($batch_stock_stmt));
     }
-
+    
     if (mysqli_stmt_affected_rows($batch_stock_stmt) === 0) {
         throw new Exception("Failed to update stock for batch $batch_code of product ID $real_product_id - insufficient quantity");
     }
@@ -229,7 +233,7 @@ mysqli_stmt_close($batch_stock_stmt);
     // Commit transaction
     mysqli_commit($link);
     
-    // Return success response
+   // Return success response
     echo json_encode([
         'success' => true,
         'message' => 'Order placed successfully',

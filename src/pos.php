@@ -52,7 +52,7 @@ if ($cust_result) {
 
 // Get active discount schemes
 $schemes = [];
-$scheme_sql = "SELECT name, value, type, min_purchase, valid_from, valid_to, description 
+$scheme_sql = "SELECT id, name, value, type, min_purchase, valid_from, valid_to, description 
                FROM schemes 
                WHERE is_active = 1 
                AND NOW() BETWEEN valid_from AND valid_to";
@@ -622,6 +622,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
     <script>
         // Global cart variable
         let cart = [];
+        let appliedScheme = null; // To hold the currently applied discount scheme
         
         function showModal(type, title, message) {
             const overlay = document.getElementById('modal-overlay');
@@ -1163,6 +1164,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
             }
 
             if (bestScheme) {
+                appliedScheme = bestScheme; // Store the applied scheme object
                 discountAmountEl.textContent = `-${bestDiscount.toFixed(2)}`;
 
                 // Show the discount item in the cart
@@ -1181,6 +1183,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'getOrderItems' && isset($_GET
                         </div>
                     `;
             } else {
+                appliedScheme = null; // Reset when no discount is applied
                 discountAmountEl.textContent = '0.00';
                 discountContainer.innerHTML = '';
             }
@@ -1656,7 +1659,12 @@ function debugProducts() {
             
             // Get customer ID
             const customerId = customerSelect.value;
-            
+
+            // Get discount and scheme details
+            const discountAmount = appliedScheme ? (parseFloat(document.getElementById('discountAmount').textContent.replace('-', '')) || 0) : 0;
+            const schemeId = appliedScheme ? appliedScheme.id : null;
+            console.log(schemeId);
+            alert(schemeId);
             // Prepare order data
             const orderData = {
                 cart_items: cart,
@@ -1664,7 +1672,8 @@ function debugProducts() {
                 customer_id: customerId,
                 subtotal: subtotal,
                 tax_amount: 0, // You can add tax calculation logic here
-                discount_amount: 0, // You can add discount calculation logic here
+                discount_amount: discountAmount, // Use the calculated discount
+                scheme_id: schemeId, // Add the scheme ID
                 total_amount: total,
                 notes: ''
             };

@@ -38,7 +38,18 @@ $order_result = mysqli_stmt_get_result($order_stmt);
 
 if (mysqli_num_rows($order_result) > 0) {
     $order = mysqli_fetch_assoc($order_result);
-    
+
+    if ($order['scheme_id'] != NULL) {
+        echo $scheme_sql = "SELECT id, name, value, type, min_purchase, valid_from, valid_to, description 
+                       FROM schemes 
+                       WHERE is_active = 1 AND id = " . (int)$order['scheme_id'];
+
+        $scheme_result = mysqli_query($link, $scheme_sql);
+
+        if ($scheme_result && $row = mysqli_fetch_assoc($scheme_result)) {
+            $scheme = $row; // single scheme
+        }
+    }
     // Get order items with product details (including exchange items)
     $items_sql = "SELECT oi.*, 
                          CASE 
@@ -199,7 +210,17 @@ function numberToWords($number) {
                         </div>
                     </div>
                     <div>
-                        <p class="fw-medium">Invoice For : <span class="text-dark fw-medium">Product Sales Order</span></p>
+                        <p class="fw-medium d-flex justify-content-between">
+                            <span>Invoice For : <span class="text-dark fw-medium">Product Sales Order</span></span>
+                            <?php if(isset($scheme) && !empty($scheme)){ ?>
+                                <span>
+                                    Scheme : 
+                                    <span class="badge bg-warning text-dark fw-bold">
+                                        <?php echo $scheme['description']; ?>
+                                    </span>
+                                </span>
+                            <?php } ?>
+                        </p>
                         <div class="table-responsive mb-3">
                             <table class="table">
                                 <thead class="thead-light">
