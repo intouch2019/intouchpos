@@ -5,192 +5,204 @@ require_once __DIR__ . '/../partials/config.php';
 $categories = mysqli_query($link, "SELECT * FROM categories WHERE is_active = 1");
 
 // Fetch products
-$products = mysqli_query($link, "SELECT p.*, c.name as category_name 
-    FROM products p 
-    LEFT JOIN categories c ON p.category_id = c.id 
-    WHERE p.is_active = 1"); 
-    ?>
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>Place Online Order</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1"> 
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <style>
-            body { background:#f9fafb; font-family: 'Segoe UI', Tahoma, sans-serif; }
-            .navbar { box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
-            .btn-primary { background:#0069d9; border:none; border-radius:25px; padding:6px 16px; font-size:14px; }
-            .btn-primary:hover { background:#0053b8; }
-            .qty-control { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:6px; }
-            .qty-input { width:40px; text-align:center; border:none; font-weight:600; }
-        </style>
-    </head>
-    <body>
+//$products = mysqli_query($link, "SELECT p.*, c.name as category_name FROM products p LEFT JOIN categories c ON p.category_id = c.id WHERE p.is_active = 1");
+$products = mysqli_query($link, "
+    SELECT 
+        p.*, 
+        c.name AS category_name,
+        COALESCE(SUM(pb.stock_quantity), 0) AS total_stock
+    FROM products p
+    LEFT JOIN categories c ON p.category_id = c.id
+    LEFT JOIN product_batches pb ON pb.product_id = p.id AND (pb.expiry_date >= CURDATE() OR pb.expiry_date IS NULL)
+    WHERE p.is_active = 1
+    GROUP BY p.id
+");
 
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
-            <div class="container-fluid">
-                <a class="navbar-brand fw-bold" href="#">🛍️ Place Online Order</a>
-                <button class="btn btn-warning fw-bold" id="toggleCart">
-                    🛒 Cart (<span id="cartCount">0</span>)
-                </button>
-            </div>
-        </nav>
-        <div class="container mt-3">
-            <div class="mb-2 category-wrapper">
-                <h5 class="fw-bold mb-2" style="font-size: 18px;">
-                    <i class="bi bi-tags-fill text-primary"></i> Categories
-                </h5>
 
-                <!-- Categories -->
-                <div class="category-scroll" id="categoryFilter">
-                    <button class="btn btn-sm btn-outline-primary active" data-category="all">All</button>
-                    <?php while($c = mysqli_fetch_assoc($categories)): ?>
-                        <button class="btn btn-sm btn-outline-primary" 
-                        data-category="<?= (int)$c['id']; ?>">
-                        <?= htmlspecialchars($c['name']); ?>
-                    </button>
-                <?php endwhile; ?>
-            </div>
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Place Online Order</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { background:#f9fafb; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .navbar { box-shadow: 0 3px 10px rgba(0,0,0,0.08); }
+        .btn-primary { background:#0069d9; border:none; border-radius:25px; padding:6px 16px; font-size:14px; }
+        .btn-primary:hover { background:#0053b8; }
+        .qty-control { display:flex; align-items:center; justify-content:center; gap:6px; margin-top:6px; }
+        .qty-input { width:40px; text-align:center; border:none; font-weight:600; }
+    </style>
+</head>
+<body>
 
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="#">🛍️ Place Online Order</a>
+            <button class="btn btn-warning fw-bold" id="toggleCart">
+                🛒 Cart (<span id="cartCount">0</span>)
+            </button>
         </div>
+    </nav>
+    <div class="container mt-3">
+        <div class="mb-2 category-wrapper">
+            <h5 class="fw-bold mb-2" style="font-size: 18px;">
+                <i class="bi bi-tags-fill text-primary"></i> Categories
+            </h5>
+
+            <!-- Categories -->
+            <div class="category-scroll" id="categoryFilter">
+                <button class="btn btn-sm btn-outline-primary active" data-category="all">All</button>
+                <?php while($c = mysqli_fetch_assoc($categories)): ?>
+                    <button class="btn btn-sm btn-outline-primary" 
+                    data-category="<?= (int)$c['id']; ?>">
+                    <?= htmlspecialchars($c['name']); ?>
+                </button>
+            <?php endwhile; ?>
+        </div>
+
     </div>
+</div>
 
-    <!-- Products -->
-    <div class="container my-5">
-        <h4 class="mb-4 fw-bold">✨ Featured Products</h4>
-        <div class="row g-4">
-            <?php while($p = mysqli_fetch_assoc($products)): ?>
-                <?php 
-                $inStock = !empty($p['stock_quantity']) && $p['stock_quantity'] > 0;
-                $img = !empty($p['image']) ? "assets/img/products/{$p['image']}" : "assets/img/products/images(1).jpg";
-                ?>
-                <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 product-item" data-category="<?= (int)$p['category_id']; ?>">
-                    <div class="card product-card h-100 shadow position-relative">
+<!-- Products -->
+<div class="container my-5">
+    <h4 class="mb-4 fw-bold">✨ Featured Products</h4>
+    <div class="row g-4">
+        <?php while($p = mysqli_fetch_assoc($products)): ?>
+            <?php 
+            //$inStock = !empty($p['stock_quantity']) && $p['stock_quantity'] > 0;
+            $inStock = $p['total_stock'] > 0;
+            $img = !empty($p['image']) ? "assets/img/products/{$p['image']}" : "assets/img/products/images(1).jpg";
+            ?>
+            <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-12 product-item" data-category="<?= (int)$p['category_id']; ?>">
+                <div class="card product-card h-100 shadow position-relative">
 
-                        <!-- Stock Ribbon -->
-                        <div class="ribbon <?= $inStock ? 'bg-success' : 'bg-danger'; ?>">
-                            <?= $inStock ? 'In Stock' : 'Out of Stock'; ?>
-                        </div>
+                    <!-- Stock Ribbon -->
+                    <div class="ribbon <?= $inStock ? 'bg-success' : 'bg-danger'; ?>">
+                        <?= $inStock ? 'In Stock' : 'Out of Stock'; ?>
+                    </div>
 
-                        <!-- Product Image -->
-                        <div class="product-img-wrapper">
-                            <img src="<?= htmlspecialchars($img); ?>" class="product-img" alt="<?= htmlspecialchars($p['name']); ?>">
-                        </div>
+                    <!-- Product Image -->
+                    <div class="product-img-wrapper">
+                        <img src="<?= htmlspecialchars($img); ?>" class="product-img" alt="<?= htmlspecialchars($p['name']); ?>">
+                    </div>
 
-                        <div class="card-body d-flex flex-column text-center">
-                            <span class="badge-category mb-2"><?= htmlspecialchars($p['category_name']); ?></span>
-                            <h6 class="product-name mb-2"><?= htmlspecialchars($p['name']); ?></h6>
-                            <p class="product-price mb-3">₹<?= number_format($p['price'], 2); ?></p>
+                    <div class="card-body d-flex flex-column text-center">
+                        <span class="badge-category mb-2"><?= htmlspecialchars($p['category_name']); ?></span>
+                        <h6 class="product-name mb-2"><?= htmlspecialchars($p['name']); ?></h6>
+                        <p class="product-price mb-3">₹<?= number_format($p['price'], 2); ?></p>
+                        <!-- <p class="product-stock text-muted mb-3">Stock: <?= (int)$p['total_stock']; ?></p> -->
 
-                            <!-- Add to Cart / Disabled -->
-                            <div id="product-actions-<?= (int)$p['id']; ?>">
-                                <?php if($inStock): ?>
-                                    <button class="btn btn-primary addToCart w-100" 
-                                    data-id="<?= (int)$p['id']; ?>" 
-                                    data-name="<?= htmlspecialchars($p['name']); ?>" 
-                                    data-price="<?= (float)$p['price']; ?>">
-                                    ➕ Add to Cart
+                        <!-- Add to Cart / Disabled -->
+                        <div id="product-actions-<?= (int)$p['id']; ?>">
+                            <?php if($inStock): ?>
+                                <button class="btn btn-primary addToCart w-100" 
+                                data-id="<?= (int)$p['id']; ?>" 
+                                data-name="<?= htmlspecialchars($p['name']); ?>" 
+                                data-price="<?= (float)$p['price']; ?>">
+                                ➕ Add to Cart
+                            </button>
+                            <?php else: ?>
+                                <button class="btn btn-secondary w-100" disabled>
+                                    🚫 Not Available
                                 </button>
-                                <?php else: ?>
-                                    <button class="btn btn-secondary w-100" disabled>
-                                        🚫 Not Available
-                                    </button>
-                                <?php endif; ?>
-                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-            <?php endwhile; ?>
-        </div>
-    </div>
-
-    <!-- Cart Sidebar -->
-    <div id="cartSidebar" class="cart-sidebar shadow-lg">
-        <!-- Header -->
-        <div class="cart-header d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0">🛒 My Cart</h5>
-            <button class="btn-close" onclick="toggleCart()" aria-label="Close"></button>
-        </div>
-
-        <!-- Items -->
-        <div id="cartItems" class="cart-items mt-3"></div>
-
-        <!-- Footer -->
-        <div class="cart-footer mt-auto">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <span class="fw-semibold">Total:</span>
-                <span class="fw-bold text-success">₹<span id="cartTotal">0.00</span></span>
             </div>
-            <button class="btn btn-success w-100 fw-bold mb-2" data-bs-toggle="modal" data-bs-target="#checkoutModal">
-                ✅ Checkout
-            </button>
-            <button class="btn btn-outline-danger w-100 fw-bold" onclick="toggleCart()">❌ Close</button>
+        <?php endwhile; ?>
+    </div>
+</div>
+
+<!-- Cart Sidebar -->
+<div id="cartSidebar" class="cart-sidebar shadow-lg">
+    <!-- Header -->
+    <div class="cart-header d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0">🛒 My Cart</h5>
+        <button class="btn-close" onclick="toggleCart()" aria-label="Close"></button>
+    </div>
+
+    <!-- Items -->
+    <div id="cartItems" class="cart-items mt-3"></div>
+
+    <!-- Footer -->
+    <div class="cart-footer mt-auto">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="fw-semibold">Total:</span>
+            <span class="fw-bold text-success">₹<span id="cartTotal">0.00</span></span>
+        </div>
+        <button class="btn btn-success w-100 fw-bold mb-2" data-bs-toggle="modal" data-bs-target="#checkoutModal">
+            ✅ Checkout
+        </button>
+        <button class="btn btn-outline-danger w-100 fw-bold" onclick="toggleCart()">❌ Close</button>
+    </div>
+</div>
+
+<!-- Checkout Modal (same as your code) -->
+<div class="modal fade" id="checkoutModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form id="orderForm">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Checkout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 class="fw-semibold">👤 Customer Details</h6>
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Full Name" required>
+                    <input type="text" name="phone" id="phoneInput" class="form-control mb-2" placeholder="Phone" required>
+                    <div id="addressList"></div>
+                    <input type="email" name="email" class="form-control mb-2" placeholder="Email">
+                    <textarea name="address" class="form-control mb-2" placeholder="Full Address" required></textarea>
+                    <div class="row">
+                        <div class="col-md-4"><input type="text" name="city" class="form-control mb-2" placeholder="City" required></div>
+                        <div class="col-md-4"><input type="text" name="state" class="form-control mb-2" placeholder="State" required></div>
+                        <div class="col-md-4"><input type="text" name="pincode" class="form-control mb-2" placeholder="Pincode" required></div>
+                    </div>
+
+                    <h6 class="fw-semibold mt-3">💳 Payment</h6>
+                    <select name="payment_method" class="form-control mb-2">
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="Online">Online Payment</option>
+                    </select>
+                    <input type="hidden" name="channel" value="website">
+                    <input type="hidden" id="cartData" name="cartData">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">✅ Place Order</button>
+                </div>
+            </form>
+            <div id="result" class="p-3"></div>
         </div>
     </div>
+</div>
+<div id="floatingCart" onclick="toggleCart()">
+    🛒 <span id="cartCountBadge">0</span>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
 
-    <!-- Checkout Modal (same as your code) -->
-    <div class="modal fade" id="checkoutModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <form id="orderForm">
-                    <div class="modal-header">
-                        <h5 class="modal-title fw-bold">Checkout</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <h6 class="fw-semibold">👤 Customer Details</h6>
-                        <input type="text" name="name" class="form-control mb-2" placeholder="Full Name" required>
-                        <input type="text" name="phone" id="phoneInput" class="form-control mb-2" placeholder="Phone" required>
-                        <div id="addressList"></div>
-                        <input type="email" name="email" class="form-control mb-2" placeholder="Email">
-                        <textarea name="address" class="form-control mb-2" placeholder="Full Address" required></textarea>
-                        <div class="row">
-                            <div class="col-md-4"><input type="text" name="city" class="form-control mb-2" placeholder="City" required></div>
-                            <div class="col-md-4"><input type="text" name="state" class="form-control mb-2" placeholder="State" required></div>
-                            <div class="col-md-4"><input type="text" name="pincode" class="form-control mb-2" placeholder="Pincode" required></div>
-                        </div>
+    let phoneInput = document.getElementById('phoneInput');
+    let addressListDiv = document.getElementById('addressList');
 
-                        <h6 class="fw-semibold mt-3">💳 Payment</h6>
-                        <select name="payment_method" class="form-control mb-2">
-                            <option value="COD">Cash on Delivery</option>
-                            <option value="Online">Online Payment</option>
-                        </select>
-                        <input type="hidden" name="channel" value="website">
-                        <input type="hidden" id="cartData" name="cartData">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">✅ Place Order</button>
-                    </div>
-                </form>
-                <div id="result" class="p-3"></div>
-            </div>
-        </div>
-    </div>
-    <div id="floatingCart" onclick="toggleCart()">
-        🛒 <span id="cartCountBadge">0</span>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-
-        let phoneInput = document.getElementById('phoneInput');
-let addressListDiv = document.getElementById('addressList');
-
-phoneInput.addEventListener('input', function () {
-    let phone = this.value.trim();
+    phoneInput.addEventListener('input', function () {
+        let phone = this.value.trim();
 
     // Always clear old address list when typing
     addressListDiv.innerHTML = "";
 
     if (phone.length >= 8) {
         fetch('get-customer.php?phone=' + phone)
-            .then(res => res.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    let c = data.data;
+        .then(res => res.json())
+        .then(data => {
+            if (data.status === 'success') {
+                let c = data.data;
 
                     // Fill basic details
                     document.querySelector('[name="name"]').value = c.name || '';
@@ -201,23 +213,23 @@ phoneInput.addEventListener('input', function () {
 
                         c.addresses.forEach(addr => {
                             html += `
-                              <div class="col-md-6">
-                                <div class="card address-card shadow-sm border rounded p-3 h-100">
-                                  <div class="form-check d-flex align-items-start">
-                                    <input class="form-check-input me-2" type="radio" 
-                                           name="address_id" 
-                                           value="${addr.id}" 
-                                           id="addr${addr.id}"
-                                           data-address='${JSON.stringify(addr)}'
-                                           ${addr.is_default == 1 ? 'checked' : ''}>
-                                    <label class="form-check-label w-100" for="addr${addr.id}">
-                                      <div class="fw-semibold" style="font-size:13px;">${addr.address}</div>
-                                      <small class="text-muted" style="font-size:12px;">${addr.city}, ${addr.state} - ${addr.pincode}</small>
-                                      ${addr.is_default == 1 ? '<div><span class="badge bg-success mt-2" style="font-size:10px;">Default</span></div>' : ''}
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>`;
+                            <div class="col-md-6">
+                            <div class="card address-card shadow-sm border rounded p-3 h-100">
+                            <div class="form-check d-flex align-items-start">
+                            <input class="form-check-input me-2" type="radio" 
+                            name="address_id" 
+                            value="${addr.id}" 
+                            id="addr${addr.id}"
+                            data-address='${JSON.stringify(addr)}'
+                            ${addr.is_default == 1 ? 'checked' : ''}>
+                            <label class="form-check-label w-100" for="addr${addr.id}">
+                            <div class="fw-semibold" style="font-size:13px;">${addr.address}</div>
+                            <small class="text-muted" style="font-size:12px;">${addr.city}, ${addr.state} - ${addr.pincode}</small>
+                            ${addr.is_default == 1 ? '<div><span class="badge bg-success mt-2" style="font-size:10px;">Default</span></div>' : ''}
+                            </label>
+                            </div>
+                            </div>
+                            </div>`;
                         });
 
                         html += `</div>`;
